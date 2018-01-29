@@ -53,3 +53,6 @@ PLLJ_PLLSPE_INFO.txt # The generated PLL specification file
 
 # Eclipse generated files
 obj
+*.elf
+*.map
+*.objdump

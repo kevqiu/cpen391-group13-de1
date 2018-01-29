@@ -146,6 +146,10 @@ C_SRCS += arduino.c
 C_SRCS += main.c
 C_SRCS += rs232.c
 C_SRCS += wifi.c
+C_SRCS += Fonts.c
+C_SRCS += OutGraphicsCharFont1.c
+C_SRCS += OutGraphicsCharFont2.c
+C_SRCS += graphics.c
 CXX_SRCS :=
 ASM_SRCS :=
 
