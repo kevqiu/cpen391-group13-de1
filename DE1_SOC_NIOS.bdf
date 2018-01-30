@@ -1209,9 +1209,9 @@ agreement for further details.
 	)
 )
 (symbol
-	(rect 984 816 1288 1072)
+	(rect 984 816 1288 1104)
 	(text "OnChipM68xxIO" (rect 5 0 95 14)(font "Arial" (font_size 8)))
-	(text "inst" (rect 8 240 25 252)(font "Arial" ))
+	(text "inst" (rect 8 272 25 284)(font "Arial" ))
 	(port
 		(pt 0 32)
 		(input)
@@ -1304,6 +1304,13 @@ agreement for further details.
 		(line (pt 0 224)(pt 16 224))
 	)
 	(port
+		(pt 0 240)
+		(input)
+		(text "Camera_RxData" (rect 0 0 92 14)(font "Arial" (font_size 8)))
+		(text "Camera_RxData" (rect 21 235 113 249)(font "Arial" (font_size 8)))
+		(line (pt 0 240)(pt 16 240))
+	)
+	(port
 		(pt 304 32)
 		(output)
 		(text "DataOut[7..0]" (rect 0 0 74 14)(font "Arial" (font_size 8)))
@@ -1359,8 +1366,15 @@ agreement for further details.
 		(text "Arduino_TxData" (rect 191 139 283 153)(font "Arial" (font_size 8)))
 		(line (pt 304 144)(pt 288 144))
 	)
+	(port
+		(pt 304 160)
+		(output)
+		(text "Camera_TxData" (rect 0 0 90 14)(font "Arial" (font_size 8)))
+		(text "Camera_TxData" (rect 193 155 283 169)(font "Arial" (font_size 8)))
+		(line (pt 304 160)(pt 288 160))
+	)
 	(drawing
-		(rectangle (rect 16 16 288 240))
+		(rectangle (rect 16 16 288 272))
 	)
 )
 (connector
@@ -1961,6 +1975,16 @@ agreement for further details.
 	(bus)
 )
 (connector
+	(text "GPIO_1[22]" (rect 770 1040 827 1052)(font "Arial" ))
+	(pt 984 1056)
+	(pt 760 1056)
+)
+(connector
+	(text "GPIO_1[24]" (rect 1298 960 1355 972)(font "Arial" ))
+	(pt 1288 976)
+	(pt 1480 976)
+)
+(connector
 	(pt 664 296)
 	(pt 712 296)
 )
@@ -2145,7 +2169,7 @@ agreement for further details.
 (text "GPS_RXD" (rect 680 976 736 990)(font "Arial" (font_size 8)))
 (text "GPS_TXD" (rect 2256 320 2311 334)(font "Arial" (font_size 8)))
 (text "GPS_RXD" (rect 2256 336 2312 350)(font "Arial" (font_size 8)))
-(text "For these pin-outs - see the GPIO_0 and GPIO1 connectors top right in this file" (rect 888 1088 1487 1105)(font "Arial" (color 255 0 0)(font_size 11)))
+(text "For these pin-outs - see the GPIO_0 and GPIO1 connectors top right in this file" (rect 880 1120 1479 1137)(font "Arial" (color 255 0 0)(font_size 11)))
 (text "BlueTooth_RXD" (rect 2232 368 2320 382)(font "Arial" (font_size 8)))
 (text "BlueTooth_TXD" (rect 2232 384 2319 398)(font "Arial" (font_size 8)))
 (text "TouchScreen_RXD" (rect 1976 160 2084 174)(font "Arial" (font_size 8)))
@@ -2385,5 +2409,8 @@ agreement for further details.
 (text "Arduino_TXD" (rect 2544 272 2619 286)(font "Arial" (font_size 8)))
 (text "Wifi_TXD" (rect 1496 944 1547 958)(font "Arial" (font_size 8)))
 (text "Arduino_TXD" (rect 1496 960 1571 974)(font "Arial" (font_size 8)))
+(text "Camera_RXD" (rect 2232 256 2307 270)(font "Arial" (font_size 8)))
+(text "Camera_TXD" (rect 2232 272 2306 286)(font "Arial" (font_size 8)))
+(text "Camera_RXD" (rect 680 1048 755 1062)(font "Arial" (font_size 8)))
 (rectangle (rect 1736 40 1960 408))
 (rectangle (rect 2320 40 2528 408))

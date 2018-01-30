@@ -21,7 +21,9 @@ entity M68xxIODecoder is
 		Wifi_Port_Enable					: out std_logic;
 		Wifi_Baud_Enable					: out std_logic;
 		Arduino_Port_Enable				: out std_logic;
-		Arduino_Baud_Enable				: out std_logic
+		Arduino_Baud_Enable				: out std_logic;
+		Camera_Port_Enable				: out std_logic;
+		Camera_Baud_Enable				: out std_logic
 	);
 end ;
 
@@ -52,6 +54,9 @@ Begin
 		
 		Arduino_Port_Enable <= '0' ;
 		Arduino_Baud_Enable <= '0' ;
+		
+		Camera_Port_Enable <= '0' ;
+		Camera_Baud_Enable <= '0' ;
 		
 -- IOSelect_H is driven logic 1 whenever the CPU outputs an address in the range A31:A0 = hex [8400_0000] to [8400_FFFF]
 -- that is, IOSelect_H is drive logic for all addresses in range [8400_XXXX]. All we have to do for IO chip is decode the XXXX into 
@@ -141,7 +146,7 @@ Begin
 				
 -- decoder for the 6th 6850 chip (Arduino)- 2 registers at locations 0x8400_0250 and 0x8400_0252 so that they occupy 
 -- same half of data bus on D15-D8 and ByteSelect_L = 0
--- decoder for the Baud Rate generator at 0x8400_0244 on D15-D8 and ByteSelect_L = 0
+-- decoder for the Baud Rate generator at 0x8400_0254 on D15-D8 and ByteSelect_L = 0
 	
 		if(IOSelect_H = '1') then
 			if((Address(15 downto 4) = X"025") and ByteSelect_L = '0') then		-- address = 0x8400_025X
@@ -154,5 +159,24 @@ Begin
 				end if ;
 			end if ;
 		end if ;
+		
+		
+-- decoder for the 7th 6850 chip (Camera)- 2 registers at locations 0x8400_0260 and 0x8400_0262 so that they occupy 
+-- same half of data bus on D15-D8 and ByteSelect_L = 0
+-- decoder for the Baud Rate generator at 0x8400_0264 on D15-D8 and ByteSelect_L = 0
+	
+		if(IOSelect_H = '1') then
+			if((Address(15 downto 4) = X"026") and ByteSelect_L = '0') then		-- address = 0x8400_026X
+			    if((Address(3 downto 0) = X"0") OR (Address(3 downto 0) = X"2")) then	-- address = 0x8400_0260 or 0262
+					Camera_Port_Enable <= '1' ;					-- enable the serial ACIA device
+				end if ;
+				
+				if(Address(3 downto 0) = X"4") then	-- enable baud rate generator at address = 0x8400_0264
+					Camera_Baud_Enable <= '1' ;
+				end if ;
+			end if ;
+		end if ;
+			
+		
 	end process;
 end ;
