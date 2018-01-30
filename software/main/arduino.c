@@ -14,6 +14,20 @@ void init_arduino(void)
 	Arduino_Baud = 0x05;
 }
 
+// 0 = CW, 1 = CCW
+void sweep(int direction) {
+	char arduino_command[512];
+
+	if(direction == CW) {
+		sprintf(arduino_command, "cw:start");
+	}
+	else if(direction == CCW) {
+		sprintf(arduino_command, "ccw:start");
+	}
+	printf("sending sweep command, %i\n", direction);
+	send_message_arduino(arduino_command);
+}
+
 void set_servo(int pos) {
 	char arduino_command[512];
 	sprintf(arduino_command, "set:%d", pos);

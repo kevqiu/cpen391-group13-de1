@@ -12,40 +12,49 @@ int main() {
 
 	DrawScreen();
 
+	init_arduino();
+
+	int btn_lock = 0, sweep_lock = 0;
 	while(1) {
-		if(push_buttons & 0b001) {
+		if(btn_lock == 0 && sweep_lock == 0) {
+			if(push_buttons & 0b001) {
+				btn_lock = 1;
+				set_servo(0);
+			}
+			else if(push_buttons & 0b010) {
+				btn_lock = sweep_lock = 1;
+				sweep(CCW);
+			}
+			else if(push_buttons & 0b100) {
+				btn_lock = sweep_lock = 1;
+				sweep(CW);
+			}
+		}
+		else {
+			// keep lock on as long as a button is pressed
+			btn_lock = push_buttons > 0;
+
+			// stop sweeping if button lock is off
+			if(btn_lock == 0 && sweep_lock == 1) {
+				sweep_lock = 0;
+				sweep(STOP);
+			}
+		}
+
+		if(switches & 0b1) {
 			ClearScreen();
 		}
 	}
 
-//	init_wifi();
-//
-//	send_text("Group 13 Exercise 1.8 Demo!");
+	//	while(1) {
+	//		if(push_buttons & 0b001) {
+	//			ClearScreen();
+	//		}
+	//	}
 
-//	init_arduino();
-//
-//	int btn_lock = 0;
-//	while(1) {
-//		if(btn_lock == 0) {
-//			if(push_buttons & 0b001) {
-//				btn_lock = 1;
-//				set_servo(0);
-//			}
-//			else if(push_buttons & 0b010) {
-//				btn_lock = 1;
-//				set_servo(90);
-//			}
-//			else if(push_buttons & 0b100) {
-//				btn_lock = 1;
-//				set_servo(180);
-//			}
-//		}
-//		else {
-//			btn_lock = push_buttons > 0;
-//		}
-//
-//		leds = push_buttons | (btn_lock << 4);
-//	}
+	//	init_wifi();
+	//
+	//	send_text("Group 13 Exercise 1.8 Demo!");
 
 	printf("Complete!\n");
 	return 0;

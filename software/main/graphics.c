@@ -9,19 +9,23 @@ void DrawScreen()
 {
 	// top left button
 	Rectangle(50, 350, 40, 220, WHITE);
-	WriteStringFont2(155, 125, LIME, BLACK, "Button 1");
+	WriteStringFont2(140, 125, LIME, BLACK, "Sweep Left");
 
 	// top right button
 	Rectangle(450, 750, 40, 220, WHITE);
-	WriteStringFont2(560, 125, LIME, BLACK, "Button 2");
+	WriteStringFont2(540, 125, LIME, BLACK, "Sweep Right");
 
 	// bottom left
-	Rectangle(50, 350, 240, 420, WHITE);
-	WriteStringFont2(155, 330, LIME, BLACK, "Button 3");
+	Rectangle(50, 250, 240, 420, WHITE);
+	WriteStringFont2(90, 330, CYAN, BLACK, "180 degrees");
+
+	// bottom middle
+	Rectangle(300, 500, 240, 420, WHITE);
+	WriteStringFont2(345, 330, CYAN, BLACK, "90 degrees");
 
 	// bottom right
-	Rectangle(450, 750, 240, 420, WHITE);
-	WriteStringFont2(560, 330, LIME, BLACK, "Button 4");
+	Rectangle(550, 750, 240, 420, WHITE);
+	WriteStringFont2(600, 330, CYAN, BLACK, "0 degrees");
 }
 
 void ClearScreen()
