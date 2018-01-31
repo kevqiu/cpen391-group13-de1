@@ -33,7 +33,7 @@ void draw_rectangle(rectangle rect, int fill)
 	else if (fill == FILLED) {
 		FilledRectangle(rect.x1, rect.x2, rect.y1, rect.y2, rect.colour);
 	}
-	else if (fill = BOLDED) {
+	else if (fill == BOLDED) {
 		BoldedRectangle(rect.x1, rect.x2, rect.y1, rect.y2, BOLDED_RECT_THICKNESS, rect.colour);
 	}
 }
