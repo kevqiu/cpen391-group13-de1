@@ -61,7 +61,7 @@ void poll_touchscreen() {
 		update_status();
 		if (TS_STATE == TS_STATE_TOUCHED && !is_sweeping)
 		{
-			if (touch_in_button(POINT, (button) SWEEP_CW_BTN))
+			if (touch_in_button(POINT, (rectangle) SWEEP_CW_BTN))
 			{
 				is_sweeping = 1;
 			}
@@ -73,25 +73,25 @@ void poll_touchscreen() {
 
 			sweep(CW);
 		}
-			else if (touch_in_button(POINT, (button) SWEEP_CCW_BTN)) {
+			else if (touch_in_button(POINT, (rectangle) SWEEP_CCW_BTN)) {
 				is_sweeping = 1;
 			draw_rectangle((rectangle) SWEEP_CCW_BTN, BOLDED);
 
 			sweep(CCW);
 		}
-			else if (touch_in_button(POINT, (button) SET_180_BTN)) {
+			else if (touch_in_button(POINT, (rectangle) SET_180_BTN)) {
 			curr_btn = 2;
 			draw_rectangle((rectangle) SET_180_BTN, BOLDED);
 
 			set_servo(180);
 		}
-			else if (touch_in_button(POINT, (button) SET_90_BTN)) {
+			else if (touch_in_button(POINT, (rectangle) SET_90_BTN)) {
 			curr_btn = 3;
 			draw_rectangle((rectangle) SET_90_BTN, BOLDED);
 
 			set_servo(90);
 		}
-			else if (touch_in_button(POINT, (button) SET_0_BTN)) {
+			else if (touch_in_button(POINT, (rectangle) SET_0_BTN)) {
 			curr_btn = 4;
 			draw_rectangle((rectangle) SET_0_BTN, BOLDED);
 
