@@ -32,7 +32,6 @@
 
 #define TS_STATE_TOUCHED 0x20
 #define TS_STATE_UNTOUCHED 0x21
-#define TS_STATE_HAS_DATA 0x22
 
 // Maintains the state
 static int TS_STATE = TS_STATE_UNTOUCHED;
