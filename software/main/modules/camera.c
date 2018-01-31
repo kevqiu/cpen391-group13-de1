@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "camera.h"
+#include "../headers/camera.h"
 
 // Debugging functions
 void print_byte_as_bits(char val)
@@ -79,13 +79,13 @@ void print_buffer(void)
 int get_char_camera(void)
 {
     while (!(0x01 & Camera_Status)) {}
-    return (int) Arduino_RxData;
+    return (int) Camera_RxData;
 }
 
 int put_char_camera(int c)
 {
     while (!(0x02 & Camera_Status)) {}
-    Arduino_TxData = c;
+    Camera_TxData = c;
     return c;
 }
 
@@ -93,7 +93,7 @@ int put_char_camera(int c)
 int run_command(int command, int args[], int argn, int reslen)
 {
     send_command_camera(command, args, argn);
-    if (read_response(reslen, 0) != reslen) return false;
-    if (!verify_response(command)) return false;
-    return true;
+    if (read_response(reslen, 0) != reslen) return 0;
+    if (!verify_response(command)) return 0;
+    return 1;
 }

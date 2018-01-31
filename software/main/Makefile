@@ -152,7 +152,6 @@ C_SRCS += gui/OutGraphicsCharFont2.c
 C_SRCS += gui/graphics.c
 C_SRCS += gui/gui.c
 C_SRCS += modules/touchscreen.c
-C_SRCS += camera.c
 CXX_SRCS :=
 ASM_SRCS :=
 
