@@ -1,39 +1,33 @@
 #include <string.h>
 
+#ifndef _GRAPHICS_
 #include "graphics.h"
+#endif
+
+extern button buttons[];
+extern button_text button_texts[];
 
 /*********************************************************************************************
 * Graphics library
 *********************************************************************************************/
-void DrawScreen()
+void draw_screen()
 {
-	// top left button
-	Rectangle(50, 350, 40, 220, WHITE);
-	WriteStringFont2(140, 125, LIME, BLACK, "Sweep Left");
+	int i;
+	for(i = 0; i < NUM_BUTTONS; i++) {
+		button btn = buttons[i];
+		button_text txt = button_texts[i];
 
-	// top right button
-	Rectangle(450, 750, 40, 220, WHITE);
-	WriteStringFont2(540, 125, LIME, BLACK, "Sweep Right");
-
-	// bottom left
-	Rectangle(50, 250, 240, 420, WHITE);
-	WriteStringFont2(90, 330, CYAN, BLACK, "180 degrees");
-
-	// bottom middle
-	Rectangle(300, 500, 240, 420, WHITE);
-	WriteStringFont2(345, 330, CYAN, BLACK, "90 degrees");
-
-	// bottom right
-	Rectangle(550, 750, 240, 420, WHITE);
-	WriteStringFont2(600, 330, CYAN, BLACK, "0 degrees");
+		Rectangle(btn.x1, btn.x2, btn.y1, btn.y2, btn.colour);
+		WriteStringFont2(txt.x, txt.y, txt.colour, BLACK, txt.text);
+	}
 }
 
-void ClearScreen()
+void clear_screen()
 {
 	int y = 0;
 	while(y < YRES)
 	{
-		DrawHLine(0, XRES - 1, y++, BLACK);
+		DrawHLine(0, XRES - 1, y++, WHITE);
 	}
 }
 

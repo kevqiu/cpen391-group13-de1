@@ -7,7 +7,7 @@ int servoPos = 0;    // variable to store the servo position
 
 #define CW 1
 #define CCW -1
-#define SWEEP_DELAY 15
+#define SWEEP_DELAY 10
 
 // Serial constants
 String serialInput;
