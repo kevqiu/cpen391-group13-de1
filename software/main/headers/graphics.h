@@ -54,8 +54,13 @@
 #define FONT_SPACING_1 	6
 #define FONT_SPACING_2 	11
 
+#define BOLDED_RECT_THICKNESS 7
+
+#define BG_COLOUR		WHITE
+
 #define EMPTY 			0
 #define FILLED 			1
+#define BOLDED			2
 
 // Graphics library
 void draw_screen();
@@ -63,9 +68,11 @@ void clear_screen();
 
 void draw_rectangle(rectangle rect, int fill);
 void draw_text(text txt);
+void clear_bolded_rectangle(rectangle rect);
 
 void Rectangle(int x1, int x2, int y1, int y2, int colour);
 void FilledRectangle(int x1, int x2, int y1, int y2, int colour);
+void BoldedRectangle(int x1, int x2, int y1, int y2, int thickness, int colour);
 
 // Font writers
 void WriteStringFont1(int x, int y, int color, int bgColor, char* string);
