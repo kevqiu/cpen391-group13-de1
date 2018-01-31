@@ -13,15 +13,16 @@ extern text button_texts[];
 void draw_screen()
 {
 	int i;
+	// render all the buttons
 	for(i = 0; i < NUM_BUTTONS; i++) {
 		rectangle rect = buttons[i];
 		text txt = button_texts[i];
 
 		draw_rectangle(rect, EMPTY);
 		draw_text(txt);
-
-		draw_rectangle((rectangle) TIMESTAMP_BOX, FILLED);
 	}
+
+	draw_rectangle((rectangle) TIMESTAMP_BOX, FILLED);
 }
 
 void draw_rectangle(rectangle rect, int fill)
@@ -31,6 +32,9 @@ void draw_rectangle(rectangle rect, int fill)
 	}
 	else if (fill == FILLED) {
 		FilledRectangle(rect.x1, rect.x2, rect.y1, rect.y2, rect.colour);
+	}
+	else if (fill = BOLDED) {
+		BoldedRectangle(rect.x1, rect.x2, rect.y1, rect.y2, BOLDED_RECT_THICKNESS, rect.colour);
 	}
 }
 
@@ -44,8 +48,13 @@ void clear_screen()
 	int y = 0;
 	while(y < YRES)
 	{
-		DrawHLine(0, XRES - 1, y++, WHITE);
+		DrawHLine(0, XRES - 1, y++, BG_COLOUR);
 	}
+}
+
+void clear_bolded_rectangle(rectangle rect)
+{
+	BoldedRectangle(rect.x1, rect.x2, rect.y1, rect.y2, BOLDED_RECT_THICKNESS, BG_COLOUR);
 }
 
 void Rectangle(int x1, int x2, int y1, int y2, int colour)
@@ -61,6 +70,15 @@ void FilledRectangle(int x1, int x2, int y1, int y2, int colour)
 	int y = y1;
 	while(y < y2) {
 		DrawHLine(x1, x2, y++, colour);
+	}
+}
+
+void BoldedRectangle(int x1, int x2, int y1, int y2, int thickness, int colour)
+{
+	int i;
+	for(i = 0; i < thickness; i++)
+	{
+		Rectangle(x1 - i, x2 + i, y1 - i, y2 + i, colour);
 	}
 }
 
