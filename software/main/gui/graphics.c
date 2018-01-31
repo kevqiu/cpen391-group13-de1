@@ -4,8 +4,8 @@
 #include "graphics.h"
 #endif
 
-extern button buttons[];
-extern button_text button_texts[];
+extern rectangle buttons[];
+extern text button_texts[];
 
 /*********************************************************************************************
 * Graphics library
@@ -14,12 +14,29 @@ void draw_screen()
 {
 	int i;
 	for(i = 0; i < NUM_BUTTONS; i++) {
-		button btn = buttons[i];
-		button_text txt = button_texts[i];
+		rectangle rect = buttons[i];
+		text txt = button_texts[i];
 
-		Rectangle(btn.x1, btn.x2, btn.y1, btn.y2, btn.colour);
-		WriteStringFont2(txt.x, txt.y, txt.colour, BLACK, txt.text);
+		draw_rectangle(rect, EMPTY);
+		draw_text(txt);
+
+		draw_rectangle((rectangle) TIMESTAMP_BOX, FILLED);
 	}
+}
+
+void draw_rectangle(rectangle rect, int fill)
+{
+	if (fill == EMPTY) {
+		Rectangle(rect.x1, rect.x2, rect.y1, rect.y2, rect.colour);
+	}
+	else if (fill == FILLED) {
+		FilledRectangle(rect.x1, rect.x2, rect.y1, rect.y2, rect.colour);
+	}
+}
+
+void draw_text(text txt)
+{
+	WriteStringFont2(txt.x, txt.y, txt.colour, BLACK, txt.text);
 }
 
 void clear_screen()

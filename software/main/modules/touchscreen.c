@@ -27,8 +27,8 @@ void print_bits(unsigned char *bytes, int num_bytes)
 /*****************************************************************************
 ** test if screen touched
 *****************************************************************************/
-int touch_in_button(point p, button b) {
-	return p.x > b.x1 && p.x < b.x2 && p.y > b.y1 && p.y < b.y2;
+int touch_in_button(point p, rectangle r) {
+	return p.x > r.x1 && p.x < r.x2 && p.y > r.y1 && p.y < r.y2;
 }
 
 /**

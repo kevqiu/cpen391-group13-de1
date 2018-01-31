@@ -1,8 +1,9 @@
 #ifndef _GRAPHICS_
 #include "graphics.h"
+#include "gui.h"
 #endif
 
-const button buttons[] = {
+const rectangle buttons[] = {
 	SWEEP_CW_BTN,
 	SWEEP_CCW_BTN,
 	SET_180_BTN,
@@ -10,7 +11,7 @@ const button buttons[] = {
 	SET_0_BTN
 };
 
-const button_text button_texts[] = {
+const text button_texts[] = {
 	SWEEP_CW_TEXT,
 	SWEEP_CCW_TEXT,
 	SET_180_TEXT,

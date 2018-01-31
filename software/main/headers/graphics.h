@@ -1,5 +1,6 @@
 #ifndef _STRUCTS_
 #include "structs.h"
+#include "gui.h"
 #endif
 
 #define GraphicsCommandReg   		(*(volatile unsigned short int *)(0x84000000))
@@ -16,26 +17,6 @@
 ***********************************************************************************************/
 
 #define WAIT_FOR_GRAPHICS		while((GraphicsStatusReg & 0x0001) != 0x0001);
-
-/////////////////////////////////////////////////////
-//                GUI Declaration                  //
-/////////////////////////////////////////////////////
-#define NUM_BUTTONS 5
-
-#define SWEEP_CW_BTN {70, 350, 40, 220, BLACK}
-#define SWEEP_CW_TEXT {160, 125, BLUE, "Sweep CW"}
-
-#define SWEEP_CCW_BTN {450, 730, 40, 220, BLACK}
-#define SWEEP_CCW_TEXT {540, 125, BLUE, "Sweep CCW"}
-
-#define SET_180_BTN {70, 250, 270, 450, BLACK}
-#define SET_180_TEXT {100, 360, RED, "180 degrees"}
-
-#define SET_90_BTN {310, 490, 270, 450, BLACK}
-#define SET_90_TEXT {350, 360, RED, "90 degrees"}
-
-#define SET_0_BTN {550, 730, 270, 450, BLACK}
-#define SET_0_TEXT {590, 360, RED, "0 degrees"}
 
 //Here are some software routines to drive some simple graphics functions
 
@@ -73,10 +54,15 @@
 #define FONT_SPACING_1 	6
 #define FONT_SPACING_2 	11
 
+#define EMPTY 			0
+#define FILLED 			1
 
 // Graphics library
 void draw_screen();
 void clear_screen();
+
+void draw_rectangle(rectangle rect, int fill);
+void draw_text(text txt);
 
 void Rectangle(int x1, int x2, int y1, int y2, int colour);
 void FilledRectangle(int x1, int x2, int y1, int y2, int colour);

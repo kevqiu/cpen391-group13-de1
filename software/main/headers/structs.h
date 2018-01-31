@@ -3,13 +3,13 @@
 typedef struct {
 	int x1, x2, y1, y2;
 	int colour;
-} button;
+} rectangle;
 
 typedef struct {
 	int x, y;
 	int colour;
 	char* text;
-} button_text;
+} text;
 
 typedef struct {
 	int x, y;

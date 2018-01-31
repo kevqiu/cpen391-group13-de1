@@ -33,7 +33,7 @@
 #define TS_RELEASE_EVENT 0x80
 
 // Function Definitions
-int touch_in_button(point p, button b);
+int touch_in_button(point p, rectangle r);
 
 void init_touch(void);
 point get_press(void);
