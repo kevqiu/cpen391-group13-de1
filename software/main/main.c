@@ -8,6 +8,7 @@
 #include "graphics.h"
 #include "touchscreen.h"
 #include "gps.h"
+#include "structs.h"
 #include "io.h"
 
 extern char Pepe[];
@@ -38,9 +39,11 @@ int main() {
 	draw_screen();
 
 	printf("Ready!\n");
-
+	
 	// Main loop
-	while(1) {
+	int is_sweeping = 0;
+	while(1)	
+	{
 		poll_touchscreen();
 		poll_timestamp();
 	}
@@ -55,54 +58,50 @@ int main() {
  * Sends Arduino commands on key press
  */
 void poll_touchscreen() {
-	if (is_screen_touched() && !is_curr_pressed) {
-		point p = get_press();
+		update_status();
+		if (TS_STATE == TS_STATE_TOUCHED && !is_sweeping)
+		{
+			if (touch_in_button(POINT, (button) SWEEP_CW_BTN))
+			{
+				is_sweeping = 1;
+			}
+		}
+
 		if (touch_in_button(p, (rectangle) SWEEP_CW_BTN)) {
 			curr_btn = 0;
 			draw_rectangle((rectangle) SWEEP_CW_BTN, BOLDED);
 
-			is_curr_pressed = is_sweeping = 1;
 			sweep(CW);
 		}
-		else if (touch_in_button(p, (rectangle) SWEEP_CCW_BTN)) {
-			curr_btn = 1;
+			else if (touch_in_button(POINT, (button) SWEEP_CCW_BTN)) {
+				is_sweeping = 1;
 			draw_rectangle((rectangle) SWEEP_CCW_BTN, BOLDED);
 
-			is_curr_pressed = is_sweeping = 1;
 			sweep(CCW);
 		}
-		else if (touch_in_button(p, (rectangle) SET_180_BTN)) {
+			else if (touch_in_button(POINT, (button) SET_180_BTN)) {
 			curr_btn = 2;
 			draw_rectangle((rectangle) SET_180_BTN, BOLDED);
 
-			is_curr_pressed = 1;
 			set_servo(180);
 		}
-		else if (touch_in_button(p, (rectangle) SET_90_BTN)) {
+			else if (touch_in_button(POINT, (button) SET_90_BTN)) {
 			curr_btn = 3;
 			draw_rectangle((rectangle) SET_90_BTN, BOLDED);
 
-			is_curr_pressed = 1;
 			set_servo(90);
 		}
-		else if (touch_in_button(p, (rectangle) SET_0_BTN)) {
+			else if (touch_in_button(POINT, (button) SET_0_BTN)) {
 			curr_btn = 4;
 			draw_rectangle((rectangle) SET_0_BTN, BOLDED);
 
-			is_curr_pressed = 1;
 			set_servo(0);
 		}
-		else {
-			curr_btn = -1;
-		}
-	}
-	else {
-		is_curr_pressed = is_screen_touched();
-		// clear touch buffer
-		if (is_screen_touched()) get_press();
+		} else {
+		curr_btn = -1;
 
-		// stop sweeping if sweeping and not touching
-		if(!is_curr_pressed && is_sweeping == 1) {
+			if (is_sweeping)
+			{
 			is_sweeping = 0;
 			sweep(STOP);
 		}
@@ -114,10 +113,12 @@ void poll_touchscreen() {
 			curr_btn = -1;
 		}
 	}
+	}
+
+
 
 	// FOR DEBUGGING, REMOVE LATER
 	leds = is_screen_touched();
-}
 
 /*
  * Fetches timestamp from GPS and updates the value on the screen
