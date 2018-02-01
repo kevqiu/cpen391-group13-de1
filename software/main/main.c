@@ -11,7 +11,7 @@
 #include "structs.h"
 #include "io.h"
 
-extern char Pepe[];
+//extern char Pepe[];
 
 // Function prototypes for main loop
 void poll_touchscreen(void);
@@ -26,8 +26,8 @@ extern point POINT;
 extern int TS_STATE;
 
 // State variables
-int is_curr_pressed = 0,
-	is_sweeping = 0,
+int is_sweeping = 0,
+	prev_state = TS_STATE_UNTOUCHED;
 	curr_btn = -1;
 char curr_time[30] = "0000/00/0000:00:00";
 
@@ -45,7 +45,6 @@ int main() {
 	printf("Ready!\n");
 	
 	// Main loop
-	int is_sweeping = 0;
 	while(1)	
 	{
 		poll_touchscreen();
@@ -62,80 +61,67 @@ int main() {
  * Sends Arduino commands on key press
  */
 void poll_touchscreen() {
-		update_status();
+	update_status();
 	int is_changed = 0;
-	if (prev_state != TS_STATE)
-	{
+	if (prev_state != TS_STATE) {
 		is_changed = 1;
 		prev_state = TS_STATE;
 	}
-	if (is_changed == 1)
-	{
-		if (TS_STATE == TS_STATE_TOUCHED && !is_sweeping)
-		{
-			if (touch_in_button(POINT, (rectangle) SWEEP_CW_BTN))
-			{
+	if (is_changed == 1) {
+		if (TS_STATE == TS_STATE_TOUCHED && !is_sweeping) {
+			if (touch_in_button(POINT, (rectangle) SWEEP_CW_BTN)) {
+				curr_btn = 0;
+				draw_rectangle((rectangle) SWEEP_CW_BTN, BOLDED);
+
 				is_sweeping = 1;
+				sweep(CW);
+			}
+			else if (touch_in_button(POINT, (rectangle) SWEEP_CCW_BTN)) {
+				curr_btn = 1;
+				draw_rectangle((rectangle) SWEEP_CCW_BTN, BOLDED);
+
+				is_sweeping = 1;
+				sweep(CCW);
+			}
+			else if (touch_in_button(POINT, (rectangle) SET_180_BTN)) {
+				curr_btn = 2;
+				draw_rectangle((rectangle) SET_180_BTN, BOLDED);
+
+				set_servo(180);
+			}
+			else if (touch_in_button(POINT, (rectangle) SET_90_BTN)) {
+				curr_btn = 3;
+				draw_rectangle((rectangle) SET_90_BTN, BOLDED);
+
+				set_servo(90);
+			}
+			else if (touch_in_button(POINT, (rectangle) SET_0_BTN)) {
+				curr_btn = 4;
+				draw_rectangle((rectangle) SET_0_BTN, BOLDED);
+
+				set_servo(0);
+			}
+			else {
+				curr_btn = -1;
 			}
 		}
-
-		if (touch_in_button(p, (rectangle) SWEEP_CW_BTN)) {
-			curr_btn = 0;
-			draw_rectangle((rectangle) SWEEP_CW_BTN, BOLDED);
-
-			sweep(CW);
-		}
-			else if (touch_in_button(POINT, (rectangle) SWEEP_CCW_BTN)) {
-				is_sweeping = 1;
-			draw_rectangle((rectangle) SWEEP_CCW_BTN, BOLDED);
-
-			sweep(CCW);
-		}
-			else if (touch_in_button(POINT, (rectangle) SET_180_BTN)) {
-			curr_btn = 2;
-			draw_rectangle((rectangle) SET_180_BTN, BOLDED);
-
-			set_servo(180);
-		}
-			else if (touch_in_button(POINT, (rectangle) SET_90_BTN)) {
-			curr_btn = 3;
-			draw_rectangle((rectangle) SET_90_BTN, BOLDED);
-
-			set_servo(90);
-		}
-			else if (touch_in_button(POINT, (rectangle) SET_0_BTN)) {
-			curr_btn = 4;
-			draw_rectangle((rectangle) SET_0_BTN, BOLDED);
-
-			set_servo(0);
-		}
-		} else {
-		curr_btn = -1;
-
-		else if (TS_STATE == TS_STATE_TOUCHED && is_sweeping)
-		{
-			printf("Sweeping...\n");
-			return;
-		}
-		else 
-			if (is_sweeping)
-			{
-			is_sweeping = 0;
-			sweep(STOP);
-		}
-
-		// redraw rectangle if not touching and touching a button
-		if(!is_curr_pressed && curr_btn > -1) {
-			clear_bolded_rectangle(buttons[curr_btn]);
-			draw_rectangle(buttons[curr_btn], EMPTY);
-			curr_btn = -1;
+		else {
+			if (is_sweeping) {
+				is_sweeping = 0;
+				sweep(STOP);
+			}
+			
+			// redraw rectangle if not touching and touching a button
+			if (curr_btn > -1) {
+				clear_bolded_rectangle(buttons[curr_btn]);
+				draw_rectangle(buttons[curr_btn], EMPTY);
+				curr_btn = -1;
+			}
 		}
 	}
-	}
-
-
 	// FOR DEBUGGING, REMOVE LATER
 	leds = (TS_STATE == TS_STATE_UNTOUCHED);
+}
 
 /*
  * Fetches timestamp from GPS and updates the value on the screen
