@@ -1,6 +1,4 @@
-#ifndef _STRUCTS_
 #include "structs.h"
-#endif
 
 #define TS_Control (*(volatile unsigned char *)(0x84000230))
 #define TS_Status (*(volatile unsigned char *)(0x84000230))
@@ -32,6 +30,13 @@
 #define TS_PRESS_EVENT 0x81
 #define TS_RELEASE_EVENT 0x80
 
+#define TS_STATE_TOUCHED 0x20
+#define TS_STATE_UNTOUCHED 0x21
+
+// Maintains the state
+int TS_STATE;
+point POINT;
+
 // Function Definitions
 int touch_in_button(point p, rectangle r);
 
@@ -42,6 +47,9 @@ point get_touch_event(int event_type);
 point get_calibrated_point(int raw_x, int raw_y);
 int is_screen_touched(void);
 void wait_for_touch();
+
+// Use to access various states
+void update_status(void);
 
 void send_request(char* request, char* request_size);
 

@@ -1,4 +1,5 @@
-#define _STRUCTS_ 0
+#ifndef _STRUCTS_
+#define _STRUCTS_
 
 typedef struct {
 	int x1, x2, y1, y2;
@@ -14,3 +15,5 @@ typedef struct {
 typedef struct {
 	int x, y;
 } point;
+
+#endif

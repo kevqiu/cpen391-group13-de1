@@ -31,6 +31,32 @@ int touch_in_button(point p, rectangle r) {
 	return p.x > r.x1 && p.x < r.x2 && p.y > r.y1 && p.y < r.y2;
 }
 
+void update_status(void)
+{
+	if (is_screen_touched())
+	{
+		int c = get_char_touchscreen();
+		if (c == TS_PRESS_EVENT) {
+			TS_STATE = TS_STATE_TOUCHED;
+		}
+		else if (c == TS_RELEASE_EVENT) 
+		{
+			TS_STATE = TS_STATE_UNTOUCHED;
+		}
+		else return;
+		int response[4];
+		int i = 0;
+		for (; i < 4; i++)
+		{
+			response[i] = get_char_touchscreen();
+		}
+		int x = (((int)response[1]) << 7) + ((int)response[0]);
+		int y = (((int)response[3]) << 7) + ((int)response[2]);
+		POINT = get_calibrated_point(x, y);
+	}
+
+}
+
 /**
  * Calibrates the raw coordinates from the touchscreen
  * Approximately returns the pixel touched on a 

@@ -1,7 +1,5 @@
-#ifndef _STRUCTS_
 #include "structs.h"
 #include "gui.h"
-#endif
 
 #define GraphicsCommandReg   		(*(volatile unsigned short int *)(0x84000000))
 #define GraphicsStatusReg   		(*(volatile unsigned short int *)(0x84000000))
