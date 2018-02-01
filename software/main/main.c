@@ -1,17 +1,21 @@
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #include "wifi.h"
 #include "arduino.h"
 #include "rs232.h"
 #include "graphics.h"
 #include "touchscreen.h"
+#include "gps.h"
 #include "io.h"
 
 extern char Pepe[];
+
 // Function prototypes for main loop
 void poll_touchscreen(void);
 void poll_timestamp(void);
+void convert_epoch(char* timestamp, int time);
 
 // GUI constants
 extern rectangle buttons[];
@@ -20,7 +24,7 @@ extern rectangle buttons[];
 int is_curr_pressed = 0,
 	is_sweeping = 0,
 	curr_btn = -1;
-char* curr_timestamp = "";
+char curr_time[30] = "0000/00/0000:00:00";
 
 int main() {
 	printf("Initializing...\n");
@@ -34,11 +38,6 @@ int main() {
 	draw_screen();
 
 	printf("Ready!\n");
-
-	// DELETE THIS HARDCODED TIME STAMP AFTER
-	char* timestamp = "18:11:30"; // replace this with GPS data
-	WriteStringFont2(355, 240, WHITE, BLACK, timestamp);
-	// DELETE THIS HARDCODED TIME STAMP AFTER
 
 	// Main loop
 	while(1) {
@@ -125,19 +124,21 @@ void poll_touchscreen() {
  * if the timestamp is different
  */
 void poll_timestamp() {
-	/*
-	 * char* timestamp = get_timestamp_from_gps()
-	 * if(!strcmp(curr_timestamp, timestamp) {
-	 * 	draw_rectangle((rectangle) TIMESTAMP_BOX, FILLED);
-	 * 	WriteStringFont2(355, 240, WHITE, BLACK, timestamp);
-	 * }
-	 */
+	char new_time[30];
+	int epoch_time = get_epoch_time();
+	epoch_time += (switches << 8);
+	convert_epoch(new_time, epoch_time);
 
-	// DELETE THIS IF BLOCK ONCE GPS IS GOOD, USE CODE ABOVE
-	if (push_buttons & 0b001) {
-		// if button pressed, redraw time
+	// if the timestamps are different, redraw the time
+	if(strcmp(curr_time, new_time) != 0) {
+		strcpy(curr_time, new_time);
 		draw_rectangle((rectangle) TIMESTAMP_BOX, FILLED);
-		WriteStringFont2(355, 240, WHITE, BLACK, "23:59:59");
+		WriteStringFont2(296, 240, WHITE, BLACK, curr_time);
 	}
-	// DELETE THIS IF BLOCK ONCE GPS IS GOOD
+}
+
+void convert_epoch(char* timestamp, int time) {
+    time_t t = time;
+    struct tm ts = *gmtime(&t);
+    strftime(timestamp, 30*sizeof(char), "%Y/%m/%d %H:%M:%S", &ts);
 }
