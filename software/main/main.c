@@ -11,7 +11,9 @@
 #include "structs.h"
 #include "io.h"
 
-//extern char Pepe[];
+extern char Pepe[];
+extern char Lena[];
+extern char Trump[];
 
 // Function prototypes for main loop
 void poll_touchscreen(void);
@@ -39,7 +41,7 @@ int main() {
 
 	clear_screen();
 
-	//OutGraphics160x128(100,50, Pepe);
+	OutGraphics160x128(320, 60, Trump);
 	draw_screen();
 
 	printf("Ready!\n");
