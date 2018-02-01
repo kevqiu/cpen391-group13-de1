@@ -34,6 +34,8 @@ void init_camera(void)
     // Baud rate set to 38400
     // !! DO NOT CHANGE !!
     Camera_Baud = 0x03;
+
+    frameptr = 0;
 }
 
 
@@ -97,3 +99,17 @@ int run_command(int command, int args[], int argn, int reslen)
     if (!verify_response(command)) return 0;
     return 1;
 }
+
+int take_picture(void)
+{
+    frameptr = 0;
+    return camera_frame_buff_ctrl(VC0706_STOPCURRENTFRAME);
+}
+
+int camera_frame_buff_ctrl(int command)
+{
+    int args[] = {SERIAL_NUM, command};
+    //TODO: Is the 5 right here? Does this need to be the control flag
+    return run_command(VC0706_FBUF_CTRL, args, sizeof(args), 5);
+}
+
