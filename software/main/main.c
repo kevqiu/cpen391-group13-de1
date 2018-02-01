@@ -21,6 +21,10 @@ void convert_epoch(char* timestamp, int time);
 // GUI constants
 extern rectangle buttons[];
 
+// Touchscreen externs
+extern point POINT;
+extern int TS_STATE;
+
 // State variables
 int is_curr_pressed = 0,
 	is_sweeping = 0,
@@ -59,6 +63,14 @@ int main() {
  */
 void poll_touchscreen() {
 		update_status();
+	int is_changed = 0;
+	if (prev_state != TS_STATE)
+	{
+		is_changed = 1;
+		prev_state = TS_STATE;
+	}
+	if (is_changed == 1)
+	{
 		if (TS_STATE == TS_STATE_TOUCHED && !is_sweeping)
 		{
 			if (touch_in_button(POINT, (rectangle) SWEEP_CW_BTN))
@@ -100,6 +112,12 @@ void poll_touchscreen() {
 		} else {
 		curr_btn = -1;
 
+		else if (TS_STATE == TS_STATE_TOUCHED && is_sweeping)
+		{
+			printf("Sweeping...\n");
+			return;
+		}
+		else 
 			if (is_sweeping)
 			{
 			is_sweeping = 0;
@@ -116,9 +134,8 @@ void poll_touchscreen() {
 	}
 
 
-
 	// FOR DEBUGGING, REMOVE LATER
-	leds = is_screen_touched();
+	leds = (TS_STATE == TS_STATE_UNTOUCHED);
 
 /*
  * Fetches timestamp from GPS and updates the value on the screen

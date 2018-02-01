@@ -34,8 +34,8 @@
 #define TS_STATE_UNTOUCHED 0x21
 
 // Maintains the state
-static int TS_STATE = TS_STATE_UNTOUCHED;
-static point POINT;
+int TS_STATE;
+point POINT;
 
 // Function Definitions
 int touch_in_button(point p, rectangle r);

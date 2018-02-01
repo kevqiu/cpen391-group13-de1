@@ -36,8 +36,13 @@ void update_status(void)
 	if (is_screen_touched())
 	{
 		int c = get_char_touchscreen();
-		if (c == TS_PRESS_EVENT) TS_STATE = TS_STATE_TOUCHED;
-		else if (c == TS_RELEASE_EVENT) TS_STATE = TS_STATE_UNTOUCHED;
+		if (c == TS_PRESS_EVENT) {
+			TS_STATE = TS_STATE_TOUCHED;
+		}
+		else if (c == TS_RELEASE_EVENT) 
+		{
+			TS_STATE = TS_STATE_UNTOUCHED;
+		}
 		else return;
 		int response[4];
 		int i = 0;
