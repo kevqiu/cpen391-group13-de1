@@ -8,6 +8,7 @@
 #include "touchscreen.h"
 #include "io.h"
 
+extern char Pepe[];
 // Function prototypes for main loop
 void poll_touchscreen(void);
 void poll_timestamp(void);
@@ -28,6 +29,8 @@ int main() {
 	init_arduino();
 
 	clear_screen();
+
+	//OutGraphics160x128(100,50, Pepe);
 	draw_screen();
 
 	printf("Ready!\n");
