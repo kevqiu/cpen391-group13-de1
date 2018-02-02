@@ -52,13 +52,16 @@
 #define FONT_SPACING_1 	6
 #define FONT_SPACING_2 	11
 
-#define BOLDED_RECT_THICKNESS 7
+#define BOLDED_RECT_THICKNESS 3
 
 #define BG_COLOUR		WHITE
 
 #define EMPTY 			0
 #define FILLED 			1
 #define BOLDED			2
+
+#define HORIZONTAL      0
+#define VERTICAL        1
 
 // Graphics library
 void draw_screen();
@@ -74,8 +77,8 @@ void BoldedRectangle(int x1, int x2, int y1, int y2, int thickness, int colour);
 
 // Font and Image writers
 void OutGraphics160x128(int x, int y, char* img);
-void WriteStringFont1(int x, int y, int color, int bgColor, char* string);
-void WriteStringFont2(int x, int y, int color, int bgColor, char* string);
+void WriteStringFont1(int x, int y, int color, int bgColor, char* string, int erase);
+void WriteStringFont2(int x, int y, int color, int bgColor, char* string, int erase);
 
 // Helper functions
 void WriteAPixel(int x, int y, int Colour);

@@ -22,7 +22,7 @@ void poll_touchscreen(void);
 void handle_touchscreen(void);
 
 // GUI variables
-extern rectangle buttons[];
+extern rectangle boxes[];
 char curr_time[12] = "00:00:00";
 
 // Touchscreen externs
@@ -35,14 +35,13 @@ int is_sweeping = 0,
 	curr_btn = -1;
 
 // Serial handling
-char gps_buffer[256],
-	touchscreen_buffer[256];
+char gps_buff[256],
+	ts_buff[8];
 
-int gps_inc = 0,
-	touchscreen_inc = 0;
+int gps_inc = 0;
 
 int gps_ready = 0,
-	touchscreen_ready = 0;
+	ts_ready = 0;
 
 int main() {
 	printf("Initializing...\n");
@@ -52,28 +51,28 @@ int main() {
 	init_arduino();
 
 	clear_screen();
-
-	OutGraphics160x128(320, 60, Trump);
 	draw_screen();
+
+	OutGraphics160x128(IMG_LOC.x, IMG_LOC.y, Trump);
 
 	printf("Ready!\n");
 	
 	// Main loop
 	while(1)	
 	{
-		poll_touchscreen();
 		poll_gps();
-
-		if(touchscreen_ready) {
-			handle_touchscreen();
-			touchscreen_ready = 0;
-		}
-
-		//handle_touchscreen();
+		poll_touchscreen();
 
 		if(gps_ready) {
 			handle_gps();
 			gps_inc = gps_ready = 0;
+			strcpy(gps_buff, "");
+		}
+
+		if(ts_ready) {
+			handle_touchscreen();
+			ts_ready = 0;
+			strcpy(ts_buff, "");
 		}
 	}
 
@@ -85,7 +84,7 @@ int main() {
 void poll_gps() {
 	if(is_gps_data_ready()) {
 		char c = get_char_gps();
-		gps_buffer[gps_inc++] = c;
+		gps_buff[gps_inc++] = c;
 		if(c == '\n') {
 			gps_ready = 1;
 		}
@@ -94,37 +93,32 @@ void poll_gps() {
 
 // Poll for Touchscreen data
 void poll_touchscreen() {
-	if (is_screen_touched())
-	{
+	if (is_screen_touched()) {
 		int c = get_char_touchscreen();
 		if (c == TS_PRESS_EVENT) {
 			TS_STATE = TS_STATE_TOUCHED;
 		}
-		else if (c == TS_RELEASE_EVENT)
-		{
+		else if (c == TS_RELEASE_EVENT) {
 			TS_STATE = TS_STATE_UNTOUCHED;
 		}
-		else return;
-		int response[4];
-		int i = 0;
-		for (; i < 4; i++)
-		{
-			response[i] = get_char_touchscreen();
+		else {
+			return; 
 		}
-		int x = (((int)response[1]) << 7) + ((int)response[0]);
-		int y = (((int)response[3]) << 7) + ((int)response[2]);
-		POINT = get_calibrated_point(x, y);
-		touchscreen_ready = 1;
+		int i;
+		for (i = 0; i < 4; i++){
+			ts_buff[i] = get_char_touchscreen();
+		}
+		ts_ready = 1;
 	}
 }
-	
+
 /*
  * Fetches timestamp from GPS and updates the value on the screen
  * if the timestamp is different
  */
 void handle_gps() {
 	char new_time[12] = "";
-	parse_gps_buffer(gps_buffer, new_time);
+	parse_gps_buffer(gps_buff, new_time);
 
 	// if the timestamps are different, redraw the time
 	if(new_time[0] != '\0' && strcmp(curr_time, new_time) != 0) {
@@ -132,8 +126,8 @@ void handle_gps() {
 		strcpy(curr_time, new_time);
 
 		// redraw rectangle
-		draw_rectangle((rectangle) TIMESTAMP_BOX, FILLED);
-		WriteStringFont2(365, 240, WHITE, BLACK, curr_time);
+		WriteStringFont2(CURR_TIME_LOC.x, CURR_TIME_LOC.y, BLACK, BG_COLOUR, curr_time, 1);
+		//WriteStringFont2(SCAN_TIME_LOC.x, SCAN_TIME_LOC.y, BLACK, BG_COLOUR, curr_time, 1);
 	}
 }
 
@@ -144,41 +138,50 @@ void handle_touchscreen() {
 		prev_state = TS_STATE;
 	}
 	if (is_changed == 1) {
-		if (TS_STATE == TS_STATE_TOUCHED && !is_sweeping) {
-			if (touch_in_button(POINT, (rectangle) SWEEP_CW_BTN)) {
-				curr_btn = 0;
-				draw_rectangle((rectangle) SWEEP_CW_BTN, BOLDED);
+		// get the point of touch
+		int x = (((int)ts_buff[1]) << 7) + ((int)ts_buff[0]);
+		int y = (((int)ts_buff[3]) << 7) + ((int)ts_buff[2]);
+		point p = get_calibrated_point(x, y);
 
+		if (TS_STATE == TS_STATE_TOUCHED && !is_sweeping) {
+			if (touch_in_button(p, AUTO_SORT_BTN)) {
+				curr_btn = 0;
+			}
+			else if (touch_in_button(p, STOP_BTN)) {
+				curr_btn = 1;
+			}
+			else if (touch_in_button(p, SWEEP_CW_BTN)) {
+				curr_btn = 2;
 				is_sweeping = 1;
 				sweep(CW);
 			}
-			else if (touch_in_button(POINT, (rectangle) SWEEP_CCW_BTN)) {
-				curr_btn = 1;
-				draw_rectangle((rectangle) SWEEP_CCW_BTN, BOLDED);
-
+			else if (touch_in_button(p, SWEEP_CCW_BTN)) {
+				curr_btn = 3;
 				is_sweeping = 1;
 				sweep(CCW);
 			}
-			else if (touch_in_button(POINT, (rectangle) SET_180_BTN)) {
-				curr_btn = 2;
-				draw_rectangle((rectangle) SET_180_BTN, BOLDED);
-
-				set_servo(180);
-			}
-			else if (touch_in_button(POINT, (rectangle) SET_90_BTN)) {
-				curr_btn = 3;
-				draw_rectangle((rectangle) SET_90_BTN, BOLDED);
-
-				set_servo(90);
-			}
-			else if (touch_in_button(POINT, (rectangle) SET_0_BTN)) {
+			else if (touch_in_button(p, POS_1_BTN)) {
 				curr_btn = 4;
-				draw_rectangle((rectangle) SET_0_BTN, BOLDED);
-
 				set_servo(0);
+			}
+			else if (touch_in_button(p, POS_2_BTN)) {
+				curr_btn = 5;
+				set_servo(60);
+			}
+			else if (touch_in_button(p, POS_3_BTN)) {
+				curr_btn = 6;
+				set_servo(120);
+			}
+			else if (touch_in_button(p, POS_4_BTN)) {
+				curr_btn = 7;
+				set_servo(180);
 			}
 			else {
 				curr_btn = -1;
+			}
+
+			if(curr_btn > -1) {
+				draw_rectangle(boxes[curr_btn], BOLDED);
 			}
 		}
 		else {
@@ -189,8 +192,8 @@ void handle_touchscreen() {
 			
 			// redraw rectangle if not touching and touching a button
 			if (curr_btn > -1) {
-				clear_bolded_rectangle(buttons[curr_btn]);
-				draw_rectangle(buttons[curr_btn], EMPTY);
+				clear_bolded_rectangle(boxes[curr_btn]);
+				draw_rectangle(boxes[curr_btn], EMPTY);
 				curr_btn = -1;
 			}
 		}
