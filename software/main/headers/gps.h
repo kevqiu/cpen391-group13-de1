@@ -6,12 +6,13 @@
 
 #define GPGGA_COMMAND "$GPGGA"
 
-#define TIMEZONE_DIFF 28800
+#define TIMEZONE_DIFF 80000
+
+void parse_gps_buffer(char* command, char* time_buffer);
 
 int init_gps(void);
 void send_command(char* message);
-int get_epoch_time();
-void receive_gpgga(char buffer[]);
 void print_message(char message[]);
 int put_char_gps(char c);
 char get_char_gps(void);
+int is_gps_data_ready(void);

@@ -9,6 +9,10 @@ int servoPos = 0;    // variable to store the servo position
 #define CCW -1
 #define SWEEP_DELAY 10
 
+#define CW_CMD "cw:"
+#define CCW_CMD "ccw:"
+#define SET_CMD "s:"
+
 // Serial constants
 String serialInput;
 enum SerialCommand {
@@ -40,12 +44,12 @@ void loop() {
       }
       // CW sweep command
       else if(cmd == TURN_CW) {
-        if(data == "start") {
+        if(data == "1") {
           sweep(CW);
         }
       }
       else if(cmd == TURN_CCW) {
-        if(data == "start") {
+        if(data == "1") {
           sweep(CCW);
         }
       }
@@ -63,13 +67,13 @@ void loop() {
 // Serial Command Parsing Funcitons //
 // -------------------------------- //
 SerialCommand getCommand() {
-  if(serialInput.startsWith("set:")) {
+  if(serialInput.startsWith(SET_CMD)) {
     return SET;
   }
-  if(serialInput.startsWith("cw:")) {
+  if(serialInput.startsWith(CW_CMD)) {
     return TURN_CW;
   }
-  if(serialInput.startsWith("ccw:")) {
+  if(serialInput.startsWith(CCW_CMD)) {
     return TURN_CCW;
   }
 }

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
@@ -11,17 +12,18 @@
 #include "structs.h"
 #include "io.h"
 
-extern char Pepe[];
-extern char Lena[];
 extern char Trump[];
 
 // Function prototypes for main loop
-void poll_touchscreen(void);
-void poll_timestamp(void);
-void convert_epoch(char* timestamp, int time);
+void poll_gps(void);
+void handle_gps(void);
 
-// GUI constants
+void poll_touchscreen(void);
+void handle_touchscreen(void);
+
+// GUI variables
 extern rectangle buttons[];
+char curr_time[12] = "00:00:00";
 
 // Touchscreen externs
 extern point POINT;
@@ -29,14 +31,24 @@ extern int TS_STATE;
 
 // State variables
 int is_sweeping = 0,
-	prev_state = TS_STATE_UNTOUCHED;
+	prev_state = TS_STATE_UNTOUCHED,
 	curr_btn = -1;
-char curr_time[30] = "0000/00/0000:00:00";
+
+// Serial handling
+char gps_buffer[256],
+	touchscreen_buffer[256];
+
+int gps_inc = 0,
+	touchscreen_inc = 0;
+
+int gps_ready = 0,
+	touchscreen_ready = 0;
 
 int main() {
 	printf("Initializing...\n");
 
 	init_touch();
+	init_gps();
 	init_arduino();
 
 	clear_screen();
@@ -50,20 +62,82 @@ int main() {
 	while(1)	
 	{
 		poll_touchscreen();
-		poll_timestamp();
+		poll_gps();
+
+		if(touchscreen_ready) {
+			handle_touchscreen();
+			touchscreen_ready = 0;
+		}
+
+		//handle_touchscreen();
+
+		if(gps_ready) {
+			handle_gps();
+			gps_inc = gps_ready = 0;
+		}
 	}
 
 	printf("Complete!\n");
 	return 0;
 }
 
-/*
- * Poll for touch screen inputs
- * Handles redrawing of GUI when buttons are pressed/depressed
- * Sends Arduino commands on key press
- */
+// Poll for GPS data
+void poll_gps() {
+	if(is_gps_data_ready()) {
+		char c = get_char_gps();
+		gps_buffer[gps_inc++] = c;
+		if(c == '\n') {
+			gps_ready = 1;
+		}
+	}
+}
+
+// Poll for Touchscreen data
 void poll_touchscreen() {
-	update_status();
+	if (is_screen_touched())
+	{
+		int c = get_char_touchscreen();
+		if (c == TS_PRESS_EVENT) {
+			TS_STATE = TS_STATE_TOUCHED;
+		}
+		else if (c == TS_RELEASE_EVENT)
+		{
+			TS_STATE = TS_STATE_UNTOUCHED;
+		}
+		else return;
+		int response[4];
+		int i = 0;
+		for (; i < 4; i++)
+		{
+			response[i] = get_char_touchscreen();
+		}
+		int x = (((int)response[1]) << 7) + ((int)response[0]);
+		int y = (((int)response[3]) << 7) + ((int)response[2]);
+		POINT = get_calibrated_point(x, y);
+		touchscreen_ready = 1;
+	}
+}
+	
+/*
+ * Fetches timestamp from GPS and updates the value on the screen
+ * if the timestamp is different
+ */
+void handle_gps() {
+	char new_time[12] = "";
+	parse_gps_buffer(gps_buffer, new_time);
+
+	// if the timestamps are different, redraw the time
+	if(new_time[0] != '\0' && strcmp(curr_time, new_time) != 0) {
+		// save new time
+		strcpy(curr_time, new_time);
+
+		// redraw rectangle
+		draw_rectangle((rectangle) TIMESTAMP_BOX, FILLED);
+		WriteStringFont2(365, 240, WHITE, BLACK, curr_time);
+	}
+}
+
+void handle_touchscreen() {
 	int is_changed = 0;
 	if (prev_state != TS_STATE) {
 		is_changed = 1;
@@ -121,30 +195,4 @@ void poll_touchscreen() {
 			}
 		}
 	}
-	// FOR DEBUGGING, REMOVE LATER
-	leds = (TS_STATE == TS_STATE_UNTOUCHED);
-}
-
-/*
- * Fetches timestamp from GPS and updates the value on the screen
- * if the timestamp is different
- */
-void poll_timestamp() {
-	char new_time[30];
-	int epoch_time = get_epoch_time();
-	epoch_time += (switches << 8);
-	convert_epoch(new_time, epoch_time);
-
-	// if the timestamps are different, redraw the time
-	if(strcmp(curr_time, new_time) != 0) {
-		strcpy(curr_time, new_time);
-		draw_rectangle((rectangle) TIMESTAMP_BOX, FILLED);
-		WriteStringFont2(296, 240, WHITE, BLACK, curr_time);
-	}
-}
-
-void convert_epoch(char* timestamp, int time) {
-    time_t t = time;
-    struct tm ts = *gmtime(&t);
-    strftime(timestamp, 30*sizeof(char), "%Y/%m/%d %H:%M:%S", &ts);
 }

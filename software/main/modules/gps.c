@@ -34,74 +34,21 @@ void send_command(char message[]) {
 		i++;
 	}
 	printf("\n");
-	//put_char_gps('\0');
 }
 
-int get_epoch_time() {
-	// remove this once GPS is plugged in
-	return 1517463098  - TIMEZONE_DIFF;
-
-	char buffer[256];
-
-	int i = 0;
-	char c = ' ';
-	while(1) {
-		// fetch a command
-		while(c != '\n') {
-			c = get_char_gps();
-			buffer[i++] = c;
-		}
-		// if command is $GPGGA, return the timestamp
-		if(strstr(buffer, GPGGA_COMMAND) != NULL) {
-			char *time;
-			// remove first split
-			strsep(&buffer, ",");
-			time = strsep(&buffer, ",");
-			// convert to PT
-			return atoi(time) - TIMEZONE_DIFF;
-		}
-		else {
-			i = 0;
-			memset (buffer, '\0', 256);
-		}
-	}
-}
-
-//receives gpgga data from gps
-void receive_gpgga(char buffer[]) {
-
-	int i = 0;
-	char c = get_char_gps();
-	buffer[i]=c;
-
-	while(c!='\n') {
-
-		c = get_char_gps();
-
-			buffer[i] = c;
-
-		i++;
-	}
-	char* gpgga = "GPGGA";
-	if(strstr(buffer,gpgga) != NULL) {
-		printf(buffer);
-		char *gpgga,*time, *lat;
+void parse_gps_buffer(char* command, char* time_buffer) {
+	// command: $GPGGA,xxxxxxxxxxx
+	if(strstr(command,GPGGA_COMMAND) != NULL) {
+		char *gpgga,*time;
 		char *r = malloc(30);
 
-		  strcpy(r, buffer);
-		  gpgga = strsep(&r, ",");
-		  time = strsep(&r, ",");
-		  lat = strsep(&r, ",");
-		  int timeInt= atoi(time)-80000;
+		strcpy(r, command);
+		gpgga = strsep(&r, ",");
+		time = strsep(&r, ",");
 
-		  printf("time = %i\n", timeInt);
-		  //printf("lat = %s\n", lat);
-		  printf("\n");
-
+		sprintf(time_buffer, "%i", atoi(time) - TIMEZONE_DIFF);
 	}
-	else {
-		memset (buffer,'\0', 256);
-	}
+	strcpy(command, "");
 }
 
 void receive_message(char buffer[]){
@@ -131,8 +78,6 @@ void print_message(char* message) {
 	}
 }
 
-
-
 int put_char_gps(char c){
 	// poll Tx bit in 6850 status register. Wait for it to become '1'
 	while (!(0x02 & gps_Status)) {}
@@ -150,4 +95,10 @@ char get_char_gps(void)
 
 	// read received character from 6850 RxData register.
 	return (char) gps_RxData;
+}
+
+int is_gps_data_ready(void) {
+	return 0x01 & gps_Status;
+	// Test Rx bit in 6850 serial comms chip status register
+	// if RX bit is set, return TRUE, otherwise return FALSE
 }

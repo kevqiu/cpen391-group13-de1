@@ -54,7 +54,6 @@ void update_status(void)
 		int y = (((int)response[3]) << 7) + ((int)response[2]);
 		POINT = get_calibrated_point(x, y);
 	}
-
 }
 
 /**

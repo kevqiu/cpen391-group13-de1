@@ -18,4 +18,4 @@
 #define SET_0_BTN {550, 730, 290, 450, BLACK}
 #define SET_0_TEXT {590, 370, RED, "0 degrees"}
 
-#define TIMESTAMP_BOX {290, 508, 235, 260, BLACK}
+#define TIMESTAMP_BOX {352, 445, 235, 260, BLACK}
