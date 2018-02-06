@@ -69,6 +69,7 @@ void clear_screen();
 
 void draw_rectangle(rectangle rect, int fill);
 void draw_text(text txt);
+void draw_counter(point p, int count);
 void clear_bolded_rectangle(rectangle rect);
 
 void Rectangle(int x1, int x2, int y1, int y2, int colour);

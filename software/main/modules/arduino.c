@@ -14,9 +14,21 @@ void init_arduino(void)
 	Arduino_Baud = 0x05;
 }
 
+void set_conveyor(int state) {
+	char arduino_command[5];
+
+	if (state == START) {
+		sprintf(arduino_command, "cv:1");
+	}
+	else if (state == STOP) {
+		sprintf(arduino_command, "cv:0");
+	}
+	send_message_arduino(arduino_command);
+}
+
 // 0 = CW, 1 = CCW
 void sweep(int direction) {
-	char arduino_command[512];
+	char arduino_command[6];
 
 	if(direction == CW) {
 		sprintf(arduino_command, "cw:1");
@@ -24,17 +36,17 @@ void sweep(int direction) {
 	else if(direction == CCW) {
 		sprintf(arduino_command, "ccw:1");
 	}
-	//printf("sending sweep command, %i\n", direction);
 	send_message_arduino(arduino_command);
 }
 
 void set_servo(int pos) {
-	char arduino_command[512];
+	char arduino_command[6];
 	sprintf(arduino_command, "s:%d", pos);
 	send_message_arduino(arduino_command);
 }
 
 void send_message_arduino(char* message) {
+	printf("sending command: %s\n", message);
 	int i = 0;
 	while(message[i] != '\0') {
 		put_char_arduino(message[i++]);
@@ -91,7 +103,7 @@ int get_char_arduino(void)
 // the following function polls the 6850 to determine if any character
 // has been received. It doesn't wait for one, or read it, it simply tests
 // to see if one is available to read
-int test_arduino_data(void)
+int is_arduino_data_ready(void)
 {
 	return 0x01 & Arduino_Status;
 	// Test Rx bit in 6850 serial comms chip status register

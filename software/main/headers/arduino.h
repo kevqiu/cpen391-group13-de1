@@ -6,10 +6,13 @@
 
 #define CW 0
 #define CCW 1
-#define STOP 2
+
+#define START 0
+#define STOP 1
 
 void init_arduino(void);
 
+void set_conveyor(int state);
 void sweep(int direction);
 void set_servo(int position);
 
@@ -19,4 +22,4 @@ void print_message_arduino(char* message);
 
 int get_char_arduino(void);
 int put_char_arduino(int c);
-int test_arduino_data(void);
+int is_arduino_data_ready(void);

@@ -68,6 +68,17 @@ void draw_line(line line, int direction)
 	}
 }
 
+void draw_counter(point p, int count) {
+	char text[3];
+	if (count < 10) {
+		sprintf(text, "0%i", count);
+	}
+	else {
+		sprintf(text, "%i", count);
+	}
+	WriteStringFont2(p.x, p.y, BLACK, WHITE, text, 1);
+}
+
 void clear_screen()
 {
 	int y = 0;

@@ -13,61 +13,86 @@
 #include "io.h"
 #include "main.h"
 
+// ----------- EXTERN VARIABLES ----------- //
+extern rectangle boxes[];
+
 extern char Trump[];
 extern char Pepe[];
 
-int ImageColor[160*128];
-
-// Function prototypes for main loop
-void poll_gps(void);
-void handle_gps(void);
-
-void poll_touchscreen(void);
-void handle_touchscreen(void);
-
-// GUI variables
-extern rectangle boxes[];
-char curr_time[12] = "00:00:00";
-
-// Touchscreen states
-int ts_state,
-	prev_ts_state = TS_STATE_UNTOUCHED,
-	curr_btn = -1,
-	curr_mode = MODE_IDLE;
+// ----------- GLOBAL VARIABLES ----------- //
+// Timestamp
+char curr_time[12];
 
 // Serial handling
 char gps_buff[256],
 	ts_buff[8];
 
 int gps_inc = 0;
-
 int gps_ready = 0,
 	ts_ready = 0;
+
+// Touchscreen states
+int ts_state,
+	prev_ts_state,
+	curr_btn,
+	curr_mode;
+
+// Object counts
+int red_obj_count,
+	green_obj_count,
+	blue_obj_count,
+	other_obj_count;
+
+// ---------- FUNCTION PROTOTYPES --------- //
+void poll_gps(void);
+void handle_gps(void);
+
+void poll_touchscreen(void);
+void handle_touchscreen(void);
 
 int main() {
 	printf("Initializing...\n");
 
+	// Initialize loop variables	
+	curr_time[12] = "00:00:00";
+
+	red_obj_count = 0;
+	green_obj_count = 0;
+	blue_obj_count = 0;
+	other_obj_count = 0;
+
+	ts_state = TS_STATE_UNTOUCHED;
+	prev_ts_state = TS_STATE_UNTOUCHED;
+	curr_btn = -1;
+	curr_mode = MODE_IDLE;
+
+	gps_inc = 0;
+	gps_ready = 0;
+	ts_ready = 0;
+	
+	// Initialiize modules
 	init_touch();
 	init_gps();
 	init_arduino();
 
+	// Reset GUI
 	clear_screen();
 	draw_screen();
 
 	srand(time(NULL));
 	int x;
+	int ImageColor[160*128];
 	for (x = 0; x < 160*128; x++) {
 		ImageColor[x] = rand() % 7 + 1;
 	}
-
+	
 	OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
-	//OutGraphics160x128(IMG_LOC.x, IMG_LOC.y, Trump);
 
 	printf("Ready!\n");
 	
+	int btn_lock = 0;
 	// Main loop
-	while (1)	
-	{
+	while (1) {
 		poll_gps();
 		poll_touchscreen();
 
@@ -84,7 +109,41 @@ int main() {
 		}
 
 		if (curr_mode == MODE_AUTO_SORT) {
+			if (btn_lock == 0) {
+				if (push_buttons & 0b100) {
+					red_obj_count++;
+					draw_counter(RED_OBJ_LOC, red_obj_count);
+					btn_lock = 1;
 
+					for (x = 0; x < 160*128; x++) {
+						ImageColor[x] = RED;
+					}
+					OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
+				}
+				else if (push_buttons & 0b010) {
+					green_obj_count++;
+					draw_counter(GREEN_OBJ_LOC, green_obj_count);
+					btn_lock = 1;
+
+					for (x = 0; x < 160*128; x++) {
+						ImageColor[x] = LIME;
+					}
+					OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
+				}
+				else if (push_buttons & 0b001) {
+					blue_obj_count++;
+					draw_counter(BLUE_OBJ_LOC, blue_obj_count);
+					btn_lock = 1;
+
+					for (x = 0; x < 160*128; x++) {
+						ImageColor[x] = BLUE;
+					}
+					OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
+				}
+			}
+			else {
+				btn_lock = push_buttons > 0;
+			}
 		}
 		
 		leds = curr_mode;
@@ -164,12 +223,14 @@ void handle_touchscreen() {
 				if (touch_in_button(p, STOP_BTN)) {
 					curr_btn = 1;
 					curr_mode = MODE_IDLE;
+					set_conveyor(STOP);
 				}
 			}
 			else if (curr_mode != MODE_SWEEP) {
 				if (touch_in_button(p, AUTO_SORT_BTN)) {
 					curr_btn = 0;
 					curr_mode = MODE_AUTO_SORT;
+					set_conveyor(START);
 				}
 				else if (touch_in_button(p, SWEEP_CW_BTN)) {
 					curr_btn = 2;
