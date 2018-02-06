@@ -155,6 +155,7 @@ C_SRCS += modules/touchscreen.c
 C_SRCS += gui/OutGraphics160x128.c
 C_SRCS += modules/gps.c
 C_SRCS += gui/images.c
+C_SRCS += gui/OutGraphicsImage.c
 CXX_SRCS :=
 ASM_SRCS :=
 
