@@ -24,7 +24,7 @@ void sweep(int direction) {
 	else if(direction == CCW) {
 		sprintf(arduino_command, "ccw:1");
 	}
-	printf("sending sweep command, %i\n", direction);
+	//printf("sending sweep command, %i\n", direction);
 	send_message_arduino(arduino_command);
 }
 

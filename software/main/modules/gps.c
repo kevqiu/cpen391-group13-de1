@@ -48,7 +48,6 @@ void parse_gps_buffer(char* command, char* time_buffer) {
 
 		sprintf(time_buffer, "%i", atoi(time) - TIMEZONE_DIFF);
 	}
-	strcpy(command, "");
 }
 
 void receive_message(char buffer[]){

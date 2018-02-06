@@ -59,9 +59,7 @@ void update_status(void)
 /**
  * Calibrates the raw coordinates from the touchscreen
  * Approximately returns the pixel touched on a 
- * 1024x600 resolution screen.
- * TODO: Double check with display to see if need better returned values
- * 			i.e. Percentage from origin, more resolution, etc.
+ * 800x480 resolution screen.
  */
 point get_calibrated_point(int raw_x, int raw_y)
 {

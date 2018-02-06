@@ -4,25 +4,40 @@
 #include "graphics.h"
 #endif
 
-extern rectangle buttons[];
-extern text button_texts[];
+#include "structs.h"
+
+extern rectangle boxes[];
+extern text labels[];
+extern int boxes_count, labels_count;
 
 /*********************************************************************************************
 * Graphics library
 *********************************************************************************************/
 void draw_screen()
 {
-	int i;
-	// render all the buttons
-	for(i = 0; i < NUM_BUTTONS; i++) {
-		rectangle rect = buttons[i];
-		text txt = button_texts[i];
+	draw_rectangle(AUTO_SORT_BTN, FILLED);
+	draw_rectangle(STOP_BTN, FILLED);
 
+	int i;
+	// render all the boxes
+	for(i = 0; i < boxes_count; i++) {
+		rectangle rect = boxes[i];
 		draw_rectangle(rect, EMPTY);
-		draw_text(txt);
+	}
+	// render all the text
+	for(i = 0; i < labels_count; i++) {
+		text label = labels[i];
+		draw_text(label);
 	}
 
-	draw_rectangle((rectangle) TIMESTAMP_BOX, FILLED);
+	WriteStringFont2(RED_OBJ_LOC.x, RED_OBJ_LOC.y, BLACK, WHITE, "00", 0);
+	WriteStringFont2(GREEN_OBJ_LOC.x, GREEN_OBJ_LOC.y, BLACK, WHITE, "00", 0);
+	WriteStringFont2(BLUE_OBJ_LOC.x, BLUE_OBJ_LOC.y, BLACK, WHITE, "00", 0);
+	WriteStringFont2(OTHER_OBJ_LOC.x, OTHER_OBJ_LOC.y, BLACK, WHITE, "00", 0);
+
+	draw_line((line) CENTER_LINE, VERTICAL);
+	draw_line((line) TOP_RIGHT_LINE, HORIZONTAL);
+	draw_line((line) BTM_RIGHT_LINE, HORIZONTAL);
 }
 
 void draw_rectangle(rectangle rect, int fill)
@@ -34,13 +49,23 @@ void draw_rectangle(rectangle rect, int fill)
 		FilledRectangle(rect.x1, rect.x2, rect.y1, rect.y2, rect.colour);
 	}
 	else if (fill == BOLDED) {
-		BoldedRectangle(rect.x1, rect.x2, rect.y1, rect.y2, BOLDED_RECT_THICKNESS, rect.colour);
+		BoldedRectangle(rect.x1, rect.x2, rect.y1, rect.y2, BOLDED_RECT_THICKNESS, BLACK);
 	}
 }
 
 void draw_text(text txt)
 {
-	WriteStringFont2(txt.x, txt.y, txt.colour, BLACK, txt.text);
+	WriteStringFont2(txt.x, txt.y, txt.colour, BLACK, txt.text, 0);
+}
+
+void draw_line(line line, int direction) 
+{
+	if (direction == HORIZONTAL) {
+		DrawHLine(line.x, line.x + line.len, line.y, line.colour);
+	}
+	else if (direction == VERTICAL) {
+		DrawVLine(line.x, line.y, line.y + line.len, line.colour);
+	}
 }
 
 void clear_screen()
@@ -82,7 +107,7 @@ void BoldedRectangle(int x1, int x2, int y1, int y2, int thickness, int colour)
 	}
 }
 
-void WriteStringFont1(int x, int y, int color, int bgColor, char* string)
+void WriteStringFont1(int x, int y, int color, int bgColor, char* string, int erase)
 {
 	int i;
 	for(i = 0; i < strlen(string); i++)
@@ -91,12 +116,12 @@ void WriteStringFont1(int x, int y, int color, int bgColor, char* string)
 	}
 }
 
-void WriteStringFont2(int x, int y, int color, int bgColor, char* string)
+void WriteStringFont2(int x, int y, int color, int bgColor, char* string, int erase)
 {
 	int i;
 	for(i = 0; i < strlen(string); i++)
 	{
-		OutGraphicsCharFont2(x+(i*FONT_SPACING_2), y, color, bgColor, string[i], 0);
+		OutGraphicsCharFont2(x+(i*FONT_SPACING_2), y, color, bgColor, string[i], erase);
 	}
 }
 
