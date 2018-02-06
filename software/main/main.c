@@ -11,6 +11,7 @@
 #include "gps.h"
 #include "structs.h"
 #include "io.h"
+#include "main.h"
 
 extern char Trump[];
 extern char Pepe[];
@@ -28,14 +29,11 @@ void handle_touchscreen(void);
 extern rectangle boxes[];
 char curr_time[12] = "00:00:00";
 
-// Touchscreen externs
-extern point POINT;
-extern int TS_STATE;
-
-// State variables
-int is_sweeping = 0,
-	prev_state = TS_STATE_UNTOUCHED,
-	curr_btn = -1;
+// Touchscreen states
+int ts_state,
+	prev_ts_state = TS_STATE_UNTOUCHED,
+	curr_btn = -1,
+	curr_mode = MODE_IDLE;
 
 // Serial handling
 char gps_buff[256],
@@ -68,22 +66,28 @@ int main() {
 	printf("Ready!\n");
 	
 	// Main loop
-	while(1)	
+	while (1)	
 	{
 		poll_gps();
 		poll_touchscreen();
 
-		if(gps_ready) {
+		if (gps_ready) {
 			handle_gps();
 			gps_inc = gps_ready = 0;
 			strcpy(gps_buff, "");
 		}
 
-		if(ts_ready) {
+		if (ts_ready) {
 			handle_touchscreen();
 			ts_ready = 0;
 			strcpy(ts_buff, "");
 		}
+
+		if (curr_mode == MODE_AUTO_SORT) {
+
+		}
+		
+		leds = curr_mode;
 	}
 
 	printf("Complete!\n");
@@ -106,10 +110,10 @@ void poll_touchscreen() {
 	if (is_screen_touched()) {
 		int c = get_char_touchscreen();
 		if (c == TS_PRESS_EVENT) {
-			TS_STATE = TS_STATE_TOUCHED;
+			ts_state = TS_STATE_TOUCHED;
 		}
 		else if (c == TS_RELEASE_EVENT) {
-			TS_STATE = TS_STATE_UNTOUCHED;
+			ts_state = TS_STATE_UNTOUCHED;
 		}
 		else {
 			return; 
@@ -143,9 +147,9 @@ void handle_gps() {
 
 void handle_touchscreen() {
 	int is_changed = 0;
-	if (prev_state != TS_STATE) {
+	if (prev_ts_state != ts_state) {
 		is_changed = 1;
-		prev_state = TS_STATE;
+		prev_ts_state = ts_state;
 	}
 	if (is_changed == 1) {
 		// get the point of touch
@@ -153,38 +157,46 @@ void handle_touchscreen() {
 		int y = (((int)ts_buff[3]) << 7) + ((int)ts_buff[2]);
 		point p = get_calibrated_point(x, y);
 
-		if (TS_STATE == TS_STATE_TOUCHED && !is_sweeping) {
-			if (touch_in_button(p, AUTO_SORT_BTN)) {
-				curr_btn = 0;
+		if (ts_state == TS_STATE_TOUCHED) {
+			// special case for touch handle during auto sorting
+			// only button that can pressed is STOP 
+			if (curr_mode == MODE_AUTO_SORT) {
+				if (touch_in_button(p, STOP_BTN)) {
+					curr_btn = 1;
+					curr_mode = MODE_IDLE;
+				}
 			}
-			else if (touch_in_button(p, STOP_BTN)) {
-				curr_btn = 1;
-			}
-			else if (touch_in_button(p, SWEEP_CW_BTN)) {
-				curr_btn = 2;
-				is_sweeping = 1;
-				sweep(CW);
-			}
-			else if (touch_in_button(p, SWEEP_CCW_BTN)) {
-				curr_btn = 3;
-				is_sweeping = 1;
-				sweep(CCW);
-			}
-			else if (touch_in_button(p, POS_1_BTN)) {
-				curr_btn = 4;
-				set_servo(0);
-			}
-			else if (touch_in_button(p, POS_2_BTN)) {
-				curr_btn = 5;
-				set_servo(60);
-			}
-			else if (touch_in_button(p, POS_3_BTN)) {
-				curr_btn = 6;
-				set_servo(120);
-			}
-			else if (touch_in_button(p, POS_4_BTN)) {
-				curr_btn = 7;
-				set_servo(180);
+			else if (curr_mode != MODE_SWEEP) {
+				if (touch_in_button(p, AUTO_SORT_BTN)) {
+					curr_btn = 0;
+					curr_mode = MODE_AUTO_SORT;
+				}
+				else if (touch_in_button(p, SWEEP_CW_BTN)) {
+					curr_btn = 2;
+					curr_mode = MODE_SWEEP;
+					sweep(CW);
+				}
+				else if (touch_in_button(p, SWEEP_CCW_BTN)) {
+					curr_btn = 3;
+					curr_mode = MODE_SWEEP;
+					sweep(CCW);
+				}
+				else if (touch_in_button(p, POS_1_BTN)) {
+					curr_btn = 4;
+					set_servo(0);
+				}
+				else if (touch_in_button(p, POS_2_BTN)) {
+					curr_btn = 5;
+					set_servo(60);
+				}
+				else if (touch_in_button(p, POS_3_BTN)) {
+					curr_btn = 6;
+					set_servo(120);
+				}
+				else if (touch_in_button(p, POS_4_BTN)) {
+					curr_btn = 7;
+					set_servo(180);
+				}
 			}
 			else {
 				curr_btn = -1;
@@ -195,15 +207,24 @@ void handle_touchscreen() {
 			}
 		}
 		else {
-			if (is_sweeping) {
-				is_sweeping = 0;
+			// once touch has been released, stop sweeping
+			if (curr_mode == MODE_SWEEP) {
+				curr_mode = MODE_IDLE;
 				sweep(STOP);
 			}
 			
-			// redraw rectangle if not touching and touching a button
-			if (curr_btn > -1) {
+			// redraw rectangle if not touching a button
+			if (curr_btn > 1) {
 				clear_bolded_rectangle(boxes[curr_btn]);
 				draw_rectangle(boxes[curr_btn], EMPTY);
+				curr_btn = -1;
+			}
+			// special case for AutoSort and STOP buttons
+			else if (curr_btn == 1) {
+				clear_bolded_rectangle(boxes[0]);
+				clear_bolded_rectangle(boxes[1]);
+				draw_rectangle(boxes[0], EMPTY);
+				draw_rectangle(boxes[1], EMPTY);
 				curr_btn = -1;
 			}
 		}
