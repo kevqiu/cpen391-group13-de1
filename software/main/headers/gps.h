@@ -9,6 +9,7 @@
 #define TIMEZONE_DIFF 80000
 
 void parse_gps_buffer(char* command, char* time_buffer);
+void insert_time_colons(char* time);
 
 int init_gps(void);
 void send_command(char* message);

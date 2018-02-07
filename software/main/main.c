@@ -42,6 +42,7 @@ int ts_state,
 
 // Autosort state
 int sort_state;
+int image_scanned;
 
 // Object counts
 int red_obj_count,
@@ -63,12 +64,7 @@ int main() {
 	printf("Initializing...\n");
 
 	// Initialize loop variables	
-	curr_time[12] = "00:00:00";
-
-	red_obj_count = 0;
-	green_obj_count = 0;
-	blue_obj_count = 0;
-	other_obj_count = 0;
+	curr_time[0] = '\0';
 
 	ts_state = 0;
 	prev_ts_state = TS_STATE_UNTOUCHED;
@@ -82,7 +78,13 @@ int main() {
 	ts_ready = 0;
 
 	sort_state = SORT_IDLE;
-	
+	image_scanned = 0;
+
+	red_obj_count = 0;
+	green_obj_count = 0;
+	blue_obj_count = 0;
+	other_obj_count = 0;
+
 	// Initialiize modules
 	init_touch();
 	init_gps();
@@ -122,36 +124,64 @@ int main() {
 
 		if (curr_mode == MODE_AUTO_SORT) {
 			if (sort_state == SORT_ARD_READY) {
-				//printf("handling arduino\n");
 				handle_arduino();
 			}
 
 			else if (sort_state == SORT_CAM_READY) {
-				
-				// "take a picture" using all the buttons
-				if (push_buttons & 0b110) {
-					//printf("pic taken\n");
-
+				// "take a picture" using a button
+				if (push_buttons & 0b100) {
 					sort_state = SORT_IMG_READY;
 				}
 			}
 
 			else if (sort_state == SORT_IMG_READY) {
-				//printf("processing img\n");
 				// process image
 
 				// determine object
+				int img = rand() % 4;
+				int colour;
+				int servo_pos = 0;
 
 				// update object count
+				if (img == 0) {
+					colour = RED;
+					servo_pos = RED_POS;
+					red_obj_count++;
+					draw_counter(RED_OBJ_LOC, red_obj_count);
+				}
+				else if (img == 1) {
+					colour = LIME;
+					servo_pos = GREEN_POS;
+					green_obj_count++;
+					draw_counter(GREEN_OBJ_LOC, green_obj_count);
+				}
+				else if (img == 2) {
+					colour = BLUE;
+					servo_pos = BLUE_POS;
+					blue_obj_count++;
+					draw_counter(BLUE_OBJ_LOC, blue_obj_count);
+				}
+				else if (img == 3) {
+					colour = BLACK;
+					servo_pos = OTHER_POS;
+					other_obj_count++;
+					draw_counter(OTHER_OBJ_LOC, other_obj_count);
+				}
 
 				// draw new object count
 
+
 				// draw image on screen
+				for (x = 0; x < 160*128; x++) {
+					ImageColor[x] = colour;
+				}
+				OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
 
 				// set flag to draw timestamp at time scanned
+				image_scanned = 1;
 
 				// set direction
-				set_servo(rand() % 180);
+				set_servo(servo_pos);
 
 				// run conveyor cycle again
 				auto_sort();
@@ -254,13 +284,19 @@ void poll_arduino() {
 void handle_gps() {
 	char new_time[12] = "";
 	parse_gps_buffer(gps_buff, new_time);
-
+	//insert_time_colons(new_time);
 	// if the timestamps are different, redraw the time
 	if(new_time[0] != '\0' && strcmp(curr_time, new_time) != 0) {
 		// save new time
 		strcpy(curr_time, new_time);
 		// draw new time
 		WriteStringFont2(CURR_TIME_LOC.x, CURR_TIME_LOC.y, BLACK, BG_COLOUR, curr_time, 1);
+		
+		// if camera has taken a picture, write time under image
+		if(image_scanned) {
+			WriteStringFont2(SCAN_TIME_LOC.x, SCAN_TIME_LOC.y, BLACK, BG_COLOUR, curr_time, 1);
+			image_scanned = 0;
+		}
 	}	
 
 	gps_inc = gps_ready = 0;
@@ -309,19 +345,19 @@ void handle_touchscreen() {
 				}
 				else if (touch_in_button(p, POS_1_BTN)) {
 					curr_btn = 4;
-					set_servo(0);
+					set_servo(RED_POS);
 				}
 				else if (touch_in_button(p, POS_2_BTN)) {
 					curr_btn = 5;
-					set_servo(60);
+					set_servo(GREEN_POS);
 				}
 				else if (touch_in_button(p, POS_3_BTN)) {
 					curr_btn = 6;
-					set_servo(120);
+					set_servo(BLUE_POS);
 				}
 				else if (touch_in_button(p, POS_4_BTN)) {
 					curr_btn = 7;
-					set_servo(180);
+					set_servo(OTHER_POS);
 				}
 			}
 			else {

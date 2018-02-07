@@ -4,11 +4,16 @@
 #define Arduino_RxData (*(volatile unsigned char *)(0x84000252))
 #define Arduino_Baud (*(volatile unsigned char *)(0x84000254))
 
-#define CW 0
-#define CCW 1
+#define CW          0
+#define CCW         1
 
-#define START 2
-#define STOP 3
+#define START       2
+#define STOP        3
+
+#define RED_POS     23
+#define GREEN_POS   68
+#define BLUE_POS    113
+#define OTHER_POS   158
 
 void init_arduino(void);
 
