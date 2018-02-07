@@ -5,6 +5,8 @@ Servo servo;
 const int servoPin = 9;
 int servoPos = 0;    // variable to store the servo position
 
+const int switchPin = 7;
+
 #define CW 1
 #define CCW -1
 #define SWEEP_DELAY 10
@@ -12,10 +14,12 @@ int servoPos = 0;    // variable to store the servo position
 #define CW_CMD "cw:"
 #define CCW_CMD "ccw:"
 #define SET_CMD "s:"
+#define AS_CMD "as:"
 
 // Serial constants
 String serialInput;
 enum SerialCommand {
+  AUTO_SORT,
   SET,
   TURN_CW,
   TURN_CCW
@@ -28,6 +32,11 @@ void setup() {
   
   // attaches the servo on pin 9 to the servo object
   servo.attach(servoPin);
+
+  pinMode(LED_BUILTIN, OUTPUT);
+  
+  pinMode(switchPin, INPUT); 
+  digitalWrite(switchPin, LOW);
 }
 
 void loop() {
@@ -37,9 +46,14 @@ void loop() {
       // parse serial command
       SerialCommand cmd = getCommand();
       String data = getSerialData();
-      
+
+      if(cmd == AUTO_SORT) {
+        if(data == "1") {
+          autoSort();  
+        }
+      }
       // set servo command
-      if(cmd == SET) {
+      else if(cmd == SET) {
         setServoPosition(data.toInt());
       }
       // CW sweep command
@@ -67,13 +81,16 @@ void loop() {
 // Serial Command Parsing Funcitons //
 // -------------------------------- //
 SerialCommand getCommand() {
-  if(serialInput.startsWith(SET_CMD)) {
+  if(serialInput.startsWith(AS_CMD)) {
+    return AUTO_SORT;
+  }
+  else if(serialInput.startsWith(SET_CMD)) {
     return SET;
   }
-  if(serialInput.startsWith(CW_CMD)) {
+  else if(serialInput.startsWith(CW_CMD)) {
     return TURN_CW;
   }
-  if(serialInput.startsWith(CCW_CMD)) {
+  else if(serialInput.startsWith(CCW_CMD)) {
     return TURN_CCW;
   }
 }
@@ -85,6 +102,22 @@ String getSerialData() {
 // -------------------------------- //
 //     Servo Movement Functions     //
 // -------------------------------- //
+void autoSort() {
+  // turn on conveyor
+  digitalWrite(LED_BUILTIN, HIGH);
+  // busy wait until limit switch is hit
+  delay(1500);
+//  while(true) {
+//    //Serial.println(digitalRead(switchPin));
+//    if(digitalRead(switchPin) == 1) {
+//      break;
+//    }
+//  }
+  // turn off conveyor
+  digitalWrite(LED_BUILTIN, LOW);
+  // tell DE1-SoC that an object is ready
+  Serial.write("ls\n");
+}
 
 // initializes a loop that continues sweeping the servo until serial command is sent
 void sweep(int dir) {

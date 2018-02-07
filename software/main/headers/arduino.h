@@ -7,8 +7,8 @@
 #define CW 0
 #define CCW 1
 
-#define START 0
-#define STOP 1
+#define START 2
+#define STOP 3
 
 void init_arduino(void);
 

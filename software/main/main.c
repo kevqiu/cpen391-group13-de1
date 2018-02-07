@@ -25,17 +25,23 @@ char curr_time[12];
 
 // Serial handling
 char gps_buff[256],
-	ts_buff[8];
+	ts_buff[8],
+	ard_buff[8];
 
-int gps_inc = 0;
-int gps_ready = 0,
-	ts_ready = 0;
+int gps_inc,
+	ard_inc;
+
+int gps_ready,
+	ts_ready;
 
 // Touchscreen states
 int ts_state,
 	prev_ts_state,
 	curr_btn,
 	curr_mode;
+
+// Autosort state
+int sort_state;
 
 // Object counts
 int red_obj_count,
@@ -50,6 +56,9 @@ void handle_gps(void);
 void poll_touchscreen(void);
 void handle_touchscreen(void);
 
+void poll_arduino(void);
+void handle_arduino(void);
+
 int main() {
 	printf("Initializing...\n");
 
@@ -61,14 +70,18 @@ int main() {
 	blue_obj_count = 0;
 	other_obj_count = 0;
 
-	ts_state = TS_STATE_UNTOUCHED;
+	ts_state = 0;
 	prev_ts_state = TS_STATE_UNTOUCHED;
 	curr_btn = -1;
 	curr_mode = MODE_IDLE;
 
 	gps_inc = 0;
+	ard_inc = 0;
+
 	gps_ready = 0;
 	ts_ready = 0;
+
+	sort_state = SORT_IDLE;
 	
 	// Initialiize modules
 	init_touch();
@@ -90,63 +103,101 @@ int main() {
 
 	printf("Ready!\n");
 	
+	// temp
 	int btn_lock = 0;
+
 	// Main loop
 	while (1) {
 		poll_gps();
 		poll_touchscreen();
+		poll_arduino();
 
 		if (gps_ready) {
 			handle_gps();
-			gps_inc = gps_ready = 0;
-			strcpy(gps_buff, "");
 		}
 
 		if (ts_ready) {
 			handle_touchscreen();
-			ts_ready = 0;
-			strcpy(ts_buff, "");
 		}
 
 		if (curr_mode == MODE_AUTO_SORT) {
-			if (btn_lock == 0) {
-				if (push_buttons & 0b100) {
-					red_obj_count++;
-					draw_counter(RED_OBJ_LOC, red_obj_count);
-					btn_lock = 1;
+			if (sort_state == SORT_ARD_READY) {
+				//printf("handling arduino\n");
+				handle_arduino();
+			}
 
-					for (x = 0; x < 160*128; x++) {
-						ImageColor[x] = RED;
-					}
-					OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
-				}
-				else if (push_buttons & 0b010) {
-					green_obj_count++;
-					draw_counter(GREEN_OBJ_LOC, green_obj_count);
-					btn_lock = 1;
+			else if (sort_state == SORT_CAM_READY) {
+				
+				// "take a picture" using all the buttons
+				if (push_buttons & 0b110) {
+					//printf("pic taken\n");
 
-					for (x = 0; x < 160*128; x++) {
-						ImageColor[x] = LIME;
-					}
-					OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
-				}
-				else if (push_buttons & 0b001) {
-					blue_obj_count++;
-					draw_counter(BLUE_OBJ_LOC, blue_obj_count);
-					btn_lock = 1;
-
-					for (x = 0; x < 160*128; x++) {
-						ImageColor[x] = BLUE;
-					}
-					OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
+					sort_state = SORT_IMG_READY;
 				}
 			}
-			else {
-				btn_lock = push_buttons > 0;
+
+			else if (sort_state == SORT_IMG_READY) {
+				//printf("processing img\n");
+				// process image
+
+				// determine object
+
+				// update object count
+
+				// draw new object count
+
+				// draw image on screen
+
+				// set flag to draw timestamp at time scanned
+
+				// set direction
+				set_servo(rand() % 180);
+
+				// run conveyor cycle again
+				auto_sort();
+
+				// wait for next object to hit limit switch
+				sort_state = SORT_IDLE;
 			}
 		}
-		
-		leds = curr_mode;
+
+		// if (curr_mode == MODE_AUTO_SORT) {
+		// 	if (btn_lock == 0) {
+		// 		if (push_buttons & 0b100) {
+		// 			red_obj_count++;
+		// 			draw_counter(RED_OBJ_LOC, red_obj_count);
+		// 			btn_lock = 1;
+
+		// 			for (x = 0; x < 160*128; x++) {
+		// 				ImageColor[x] = RED;
+		// 			}
+		// 			OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
+		// 		}
+		// 		else if (push_buttons & 0b010) {
+		// 			green_obj_count++;
+		// 			draw_counter(GREEN_OBJ_LOC, green_obj_count);
+		// 			btn_lock = 1;
+
+		// 			for (x = 0; x < 160*128; x++) {
+		// 				ImageColor[x] = LIME;
+		// 			}
+		// 			OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
+		// 		}
+		// 		else if (push_buttons & 0b001) {
+		// 			blue_obj_count++;
+		// 			draw_counter(BLUE_OBJ_LOC, blue_obj_count);
+		// 			btn_lock = 1;
+
+		// 			for (x = 0; x < 160*128; x++) {
+		// 				ImageColor[x] = BLUE;
+		// 			}
+		// 			OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
+		// 		}
+		// 	}
+		// 	else {
+		// 		btn_lock = push_buttons > 0;
+		// 	}
+		// }
 	}
 
 	printf("Complete!\n");
@@ -185,6 +236,17 @@ void poll_touchscreen() {
 	}
 }
 
+// Poll for Arduino data
+void poll_arduino() {
+	if(is_arduino_data_ready()) {
+		char c = get_char_arduino();
+		ard_buff[ard_inc++] = c;
+		if(c == '\n') {
+			sort_state = SORT_ARD_READY;
+		}
+	}
+}
+
 /*
  * Fetches timestamp from GPS and updates the value on the screen
  * if the timestamp is different
@@ -197,13 +259,17 @@ void handle_gps() {
 	if(new_time[0] != '\0' && strcmp(curr_time, new_time) != 0) {
 		// save new time
 		strcpy(curr_time, new_time);
-
-		// redraw rectangle
+		// draw new time
 		WriteStringFont2(CURR_TIME_LOC.x, CURR_TIME_LOC.y, BLACK, BG_COLOUR, curr_time, 1);
-		//WriteStringFont2(SCAN_TIME_LOC.x, SCAN_TIME_LOC.y, BLACK, BG_COLOUR, curr_time, 1);
-	}
+	}	
+
+	gps_inc = gps_ready = 0;
+	strcpy(gps_buff, "");
 }
 
+/*
+ * Performs button actions based on where the touch input is placed.
+ */
 void handle_touchscreen() {
 	int is_changed = 0;
 	if (prev_ts_state != ts_state) {
@@ -223,14 +289,13 @@ void handle_touchscreen() {
 				if (touch_in_button(p, STOP_BTN)) {
 					curr_btn = 1;
 					curr_mode = MODE_IDLE;
-					set_conveyor(STOP);
 				}
 			}
 			else if (curr_mode != MODE_SWEEP) {
 				if (touch_in_button(p, AUTO_SORT_BTN)) {
 					curr_btn = 0;
 					curr_mode = MODE_AUTO_SORT;
-					set_conveyor(START);
+					auto_sort();
 				}
 				else if (touch_in_button(p, SWEEP_CW_BTN)) {
 					curr_btn = 2;
@@ -290,4 +355,24 @@ void handle_touchscreen() {
 			}
 		}
 	}
+
+	ts_ready = 0;
+	strcpy(ts_buff, "");
+}
+
+/*
+ * Check if the Arduino has returned a serial command
+ * ls: limit switch has been triggered,
+ * 		signifying an object is ready to be scanned
+ */
+void handle_arduino() {
+	if (strcmp(ard_buff, "ls\n") == 0) {
+		sort_state = SORT_CAM_READY;
+	}
+	else {
+		sort_state = SORT_IDLE;
+	}
+
+	ard_inc = 0;
+	strcpy(ard_buff, "");
 }

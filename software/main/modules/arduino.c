@@ -12,17 +12,12 @@ void init_arduino(void)
 
 	// program for 9600 baud
 	Arduino_Baud = 0x05;
+
+	get_char_arduino();
 }
 
-void set_conveyor(int state) {
-	char arduino_command[5];
-
-	if (state == START) {
-		sprintf(arduino_command, "cv:1");
-	}
-	else if (state == STOP) {
-		sprintf(arduino_command, "cv:0");
-	}
+void auto_sort() {
+	char* arduino_command = "as:1";
 	send_message_arduino(arduino_command);
 }
 
@@ -36,6 +31,9 @@ void sweep(int direction) {
 	else if(direction == CCW) {
 		sprintf(arduino_command, "ccw:1");
 	}
+	else {
+		sprintf(arduino_command, "");
+	}
 	send_message_arduino(arduino_command);
 }
 
@@ -46,7 +44,7 @@ void set_servo(int pos) {
 }
 
 void send_message_arduino(char* message) {
-	printf("sending command: %s\n", message);
+	//printf("sending command: %s\n", message);
 	int i = 0;
 	while(message[i] != '\0') {
 		put_char_arduino(message[i++]);
