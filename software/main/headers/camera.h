@@ -49,18 +49,21 @@
 #define CAMERADELAY 10
 
 // If using more than one camera
-#define SERIAL_NUM 1
+#define SERIAL_NUM 0
 
 // Global Variable Buffers to hold data from camera
 int camera_buffer[CAMERABUFFSIZ+1];
 int buffer_length;
 long int frameptr;
 
+//void print_byte_as_bits(char val);
+//void print_bits(unsigned char *bytes, int num_bytes);
+
 void init_camera(void);
 void send_command_camera(int command, int args[], int argn);
 int read_response(int num_bytes, int timeout);
 int verify_response(int command);
-int run_command(int command, int args[], int argn, int reslen, int flush);
+int run_command(int command, int args[], int argn, int reslen);
 
 void print_buffer(void);
 
@@ -69,3 +72,8 @@ int camera_frame_buffer_ctrl(int command);
 
 int get_char_camera(void);
 int put_char_camera(int c);
+
+int * read_picture(int n);
+
+int get_image_size(void);
+int set_image_size(int x);

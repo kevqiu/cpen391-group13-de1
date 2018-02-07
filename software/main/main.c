@@ -10,6 +10,16 @@
 
 int main() {
 	printf("Initializing...\n");
+	init_camera();
+	int size = get_image_size();
+	printf("Image size: %d\n", size);
+
+	printf("Complete!\n");
+	return 0;
+}
+/*
+int main() {
+	printf("Initializing...\n");
 
 	init_touch();
 	init_arduino();
@@ -101,4 +111,4 @@ int main() {
 
 	printf("Complete!\n");
 	return 0;
-}
+}*/

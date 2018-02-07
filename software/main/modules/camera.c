@@ -4,6 +4,7 @@
 #include "../headers/camera.h"
 
 // Debugging functions
+/*
 void print_byte_as_bits(char val)
 {
 	int i = 7;
@@ -23,7 +24,7 @@ void print_bits(unsigned char *bytes, int num_bytes)
 		printf(" ");
 	}
 	printf("]\n");
-}
+}*/
 
 void init_camera(void)
 {
@@ -36,6 +37,7 @@ void init_camera(void)
     Camera_Baud = 0x03;
 
     frameptr = 0;
+    printf("Initialize complete.\n");
 }
 
 
@@ -57,7 +59,8 @@ int read_response(int num_bytes, int timeout)
     int buffer_index = 0;
     while (buffer_index != num_bytes)
     {
-        camera_buffer[buffer_index] - get_char_camera();
+    	//printf("Buffer index: %d\nNum_bytes: %d\n", buffer_index, num_bytes);
+        camera_buffer[buffer_index] = get_char_camera();
         buffer_index++;
     }
     return buffer_index;
@@ -69,8 +72,8 @@ int verify_response(int command)
       (camera_buffer[1] != SERIAL_NUM) ||
       (camera_buffer[2] != command) ||
       (camera_buffer[3] != 0x0))
-      return false;
-  return true;
+      return 0;
+  return 1;
 }
 
 void print_buffer(void)
@@ -95,8 +98,11 @@ int put_char_camera(int c)
 int run_command(int command, int args[], int argn, int reslen)
 {
     send_command_camera(command, args, argn);
+    printf("send_command_camera done.\n");
     if (read_response(reslen, 0) != reslen) return 0;
+    printf("read_response finished.\n");
     if (!verify_response(command)) return 0;
+    printf("run_command finished\n");
     return 1;
 }
 
@@ -113,3 +119,39 @@ int camera_frame_buff_ctrl(int command)
     return run_command(VC0706_FBUF_CTRL, args, sizeof(args), 5);
 }
 
+int * read_picture(int n) 
+{
+    //TODO: Check args
+    int args[] = {0x0C, 0x0, 0x0A,
+                0, 0, frameptr >> 8, frameptr & 0xFF,
+                0, 0, 0, n,
+                CAMERADELAY >> 8, CAMERADELAY & 0xFF};
+    if (!run_command(VC0706_READ_FBUF, args, sizeof(args), 5))
+        return 0;
+    
+    if (read_response(n+5, CAMERADELAY) == 0)
+        return 0;
+
+    frameptr += n;
+
+    return camera_buffer;
+}
+
+int get_image_size()
+{
+    //TODO: Check args
+    int args[] = {0x4, 0x4, 0x1, 0x00, 0x19};
+    printf("Currently in get image size\n");
+    if (!run_command(VC0706_READ_DATA, args, sizeof(args), 6))
+        return -1;
+    
+    return camera_buffer[5];
+}
+
+int set_image_size(int x)
+{
+    //TODO: Check args
+    int args[] = {0x05, 0x04, 0x01, 0x00, 0x19, x};
+
+    return run_command(VC0706_WRITE_DATA, args, sizeof(args), 5);
+}
