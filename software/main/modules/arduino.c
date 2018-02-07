@@ -22,13 +22,13 @@ void auto_sort() {
 }
 
 // 0 = CW, 1 = CCW
-void sweep(int direction) {
+void sweep(sweep_state state) {
 	char arduino_command[6];
 
-	if(direction == CW) {
+	if(state == CW) {
 		sprintf(arduino_command, "cw:1");
 	}
-	else if(direction == CCW) {
+	else if(state == CCW) {
 		sprintf(arduino_command, "ccw:1");
 	}
 	else {

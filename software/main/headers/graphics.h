@@ -56,19 +56,24 @@
 
 #define BG_COLOUR		WHITE
 
-#define EMPTY 			0
-#define FILLED 			1
-#define BOLDED			2
+typedef enum {
+    EMPTY,
+    FILLED,
+    BOLDED
+} rect_fill;
 
-#define HORIZONTAL      0
-#define VERTICAL        1
+typedef enum {
+    HORIZONTAL,
+    VERTICAL
+} line_dir;
 
 // Graphics library
 void draw_screen();
 void clear_screen();
 
-void draw_rectangle(rectangle rect, int fill);
+void draw_rectangle(rectangle rect, rect_fill fill);
 void draw_text(text txt);
+void draw_line(line line, line_dir direction);
 void draw_counter(point p, int count);
 void clear_bolded_rectangle(rectangle rect);
 

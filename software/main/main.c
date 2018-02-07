@@ -37,11 +37,11 @@ int gps_ready,
 // Touchscreen states
 int ts_state,
 	prev_ts_state,
-	curr_btn,
-	curr_mode;
+	curr_btn;
+mode_state curr_mode;
 
 // Autosort state
-int sort_state;
+sort_state curr_sort;
 int image_scanned;
 
 // Object counts
@@ -77,7 +77,7 @@ int main() {
 	gps_ready = 0;
 	ts_ready = 0;
 
-	sort_state = SORT_IDLE;
+	curr_sort = SORT_IDLE;
 	image_scanned = 0;
 
 	red_obj_count = 0;
@@ -123,18 +123,18 @@ int main() {
 		}
 
 		if (curr_mode == MODE_AUTO_SORT) {
-			if (sort_state == SORT_ARD_READY) {
+			if (curr_sort == SORT_ARD_READY) {
 				handle_arduino();
 			}
 
-			else if (sort_state == SORT_CAM_READY) {
+			else if (curr_sort == SORT_CAM_READY) {
 				// "take a picture" using a button
 				if (push_buttons & 0b100) {
-					sort_state = SORT_IMG_READY;
+					curr_sort = SORT_IMG_READY;
 				}
 			}
 
-			else if (sort_state == SORT_IMG_READY) {
+			else if (curr_sort == SORT_IMG_READY) {
 				// process image
 
 				// determine object
@@ -187,7 +187,7 @@ int main() {
 				auto_sort();
 
 				// wait for next object to hit limit switch
-				sort_state = SORT_IDLE;
+				curr_sort = SORT_IDLE;
 			}
 		}
 
@@ -272,7 +272,7 @@ void poll_arduino() {
 		char c = get_char_arduino();
 		ard_buff[ard_inc++] = c;
 		if(c == '\n') {
-			sort_state = SORT_ARD_READY;
+			curr_sort = SORT_ARD_READY;
 		}
 	}
 }
@@ -403,10 +403,10 @@ void handle_touchscreen() {
  */
 void handle_arduino() {
 	if (strcmp(ard_buff, "ls\n") == 0) {
-		sort_state = SORT_CAM_READY;
+		curr_sort = SORT_CAM_READY;
 	}
 	else {
-		sort_state = SORT_IDLE;
+		curr_sort = SORT_IDLE;
 	}
 
 	ard_inc = 0;

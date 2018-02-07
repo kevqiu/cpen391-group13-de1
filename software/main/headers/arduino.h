@@ -4,11 +4,11 @@
 #define Arduino_RxData (*(volatile unsigned char *)(0x84000252))
 #define Arduino_Baud (*(volatile unsigned char *)(0x84000254))
 
-#define CW          0
-#define CCW         1
-
-#define START       2
-#define STOP        3
+typedef enum {
+    CW,
+    CCW,
+    STOP
+} sweep_state;
 
 #define RED_POS     23
 #define GREEN_POS   68
@@ -18,7 +18,7 @@
 void init_arduino(void);
 
 void set_conveyor(int state);
-void sweep(int direction);
+void sweep(sweep_state state);
 void set_servo(int position);
 
 void send_message_arduino(char* message);

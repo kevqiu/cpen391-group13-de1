@@ -40,7 +40,7 @@ void draw_screen()
 	draw_line((line) BTM_RIGHT_LINE, HORIZONTAL);
 }
 
-void draw_rectangle(rectangle rect, int fill)
+void draw_rectangle(rectangle rect, rect_fill fill)
 {
 	if (fill == EMPTY) {
 		Rectangle(rect.x1, rect.x2, rect.y1, rect.y2, rect.colour);
@@ -58,7 +58,7 @@ void draw_text(text txt)
 	WriteStringFont2(txt.x, txt.y, txt.colour, BLACK, txt.text, 0);
 }
 
-void draw_line(line line, int direction) 
+void draw_line(line line, line_dir direction) 
 {
 	if (direction == HORIZONTAL) {
 		DrawHLine(line.x, line.x + line.len, line.y, line.colour);
