@@ -17,7 +17,6 @@
 extern rectangle boxes[];
 
 extern char Trump[];
-extern char Pepe[];
 
 // ----------- GLOBAL VARIABLES ----------- //
 // Timestamp
@@ -44,11 +43,11 @@ mode_state curr_mode;
 sort_state curr_sort;
 int image_scanned;
 
-// Object counts
-int red_obj_count,
-	green_obj_count,
-	blue_obj_count,
-	other_obj_count;
+// Scanned objects
+scanned_obj* red_object;
+scanned_obj* green_object;
+scanned_obj* blue_object;
+scanned_obj* other_object;
 
 // ---------- FUNCTION PROTOTYPES --------- //
 void poll_gps(void);
@@ -59,6 +58,8 @@ void handle_touchscreen(void);
 
 void poll_arduino(void);
 void handle_arduino(void);
+
+scanned_obj* init_scanned_obj(int colour, int position, point location);
 
 int main() {
 	printf("Initializing...\n");
@@ -80,10 +81,17 @@ int main() {
 	curr_sort = SORT_IDLE;
 	image_scanned = 0;
 
-	red_obj_count = 0;
-	green_obj_count = 0;
-	blue_obj_count = 0;
-	other_obj_count = 0;
+	red_object = init_scanned_obj(RED, RED_POS, RED_OBJ_LOC);
+	green_object = init_scanned_obj(LIME, GREEN_POS, GREEN_OBJ_LOC);
+	blue_object = init_scanned_obj(BLUE, BLUE_POS, BLUE_OBJ_LOC);
+	other_object = init_scanned_obj(BLACK, OTHER_POS, OTHER_OBJ_LOC);
+
+	scanned_obj* objects[4] = {
+		red_object,
+		green_object,
+		blue_object,
+		other_object
+	};
 
 	// Initialiize modules
 	init_touch();
@@ -104,9 +112,6 @@ int main() {
 	OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
 
 	printf("Ready!\n");
-	
-	// temp
-	int btn_lock = 0;
 
 	// Main loop
 	while (1) {
@@ -136,44 +141,17 @@ int main() {
 
 			else if (curr_sort == SORT_IMG_READY) {
 				// process image
+				int x = 0;//rand() % 4;
 
 				// determine object
-				int img = rand() % 4;
-				int colour;
-				int servo_pos = 0;
+				scanned_obj* obj = objects[x];			
 
-				// update object count
-				if (img == 0) {
-					colour = RED;
-					servo_pos = RED_POS;
-					red_obj_count++;
-					draw_counter(RED_OBJ_LOC, red_obj_count);
-				}
-				else if (img == 1) {
-					colour = LIME;
-					servo_pos = GREEN_POS;
-					green_obj_count++;
-					draw_counter(GREEN_OBJ_LOC, green_obj_count);
-				}
-				else if (img == 2) {
-					colour = BLUE;
-					servo_pos = BLUE_POS;
-					blue_obj_count++;
-					draw_counter(BLUE_OBJ_LOC, blue_obj_count);
-				}
-				else if (img == 3) {
-					colour = BLACK;
-					servo_pos = OTHER_POS;
-					other_obj_count++;
-					draw_counter(OTHER_OBJ_LOC, other_obj_count);
-				}
-
-				// draw new object count
-
+				// update and draw new object count
+				draw_counter(obj->loc, ++obj->count);
 
 				// draw image on screen
 				for (x = 0; x < 160*128; x++) {
-					ImageColor[x] = colour;
+					ImageColor[x] = obj->colour;
 				}
 				OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
 
@@ -181,7 +159,7 @@ int main() {
 				image_scanned = 1;
 
 				// set direction
-				set_servo(servo_pos);
+				set_servo(obj->pos);
 
 				// run conveyor cycle again
 				auto_sort();
@@ -190,44 +168,6 @@ int main() {
 				curr_sort = SORT_IDLE;
 			}
 		}
-
-		// if (curr_mode == MODE_AUTO_SORT) {
-		// 	if (btn_lock == 0) {
-		// 		if (push_buttons & 0b100) {
-		// 			red_obj_count++;
-		// 			draw_counter(RED_OBJ_LOC, red_obj_count);
-		// 			btn_lock = 1;
-
-		// 			for (x = 0; x < 160*128; x++) {
-		// 				ImageColor[x] = RED;
-		// 			}
-		// 			OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
-		// 		}
-		// 		else if (push_buttons & 0b010) {
-		// 			green_obj_count++;
-		// 			draw_counter(GREEN_OBJ_LOC, green_obj_count);
-		// 			btn_lock = 1;
-
-		// 			for (x = 0; x < 160*128; x++) {
-		// 				ImageColor[x] = LIME;
-		// 			}
-		// 			OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
-		// 		}
-		// 		else if (push_buttons & 0b001) {
-		// 			blue_obj_count++;
-		// 			draw_counter(BLUE_OBJ_LOC, blue_obj_count);
-		// 			btn_lock = 1;
-
-		// 			for (x = 0; x < 160*128; x++) {
-		// 				ImageColor[x] = BLUE;
-		// 			}
-		// 			OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
-		// 		}
-		// 	}
-		// 	else {
-		// 		btn_lock = push_buttons > 0;
-		// 	}
-		// }
 	}
 
 	printf("Complete!\n");
@@ -411,4 +351,15 @@ void handle_arduino() {
 
 	ard_inc = 0;
 	strcpy(ard_buff, "");
+}
+
+scanned_obj* init_scanned_obj(int colour, int position, point location) {
+	scanned_obj* obj = malloc(sizeof(scanned_obj));
+
+	obj->colour = colour;
+	obj->pos = position;
+	obj->loc = location;
+	obj->count = 0;
+
+	return obj;
 }

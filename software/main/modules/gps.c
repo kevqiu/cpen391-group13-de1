@@ -12,7 +12,7 @@
 **
 ** Refer to 6850 data sheet for details of registers and
 ***************************************************************************/
-int init_gps(void)
+void init_gps(void)
 {
 	// set up 6850 Control Register to utilise a divide by 16 clock,
 	// set RTS low, use 8 bits of data, no parity, 1 stop bit,

@@ -18,6 +18,7 @@ typedef enum {
 void init_arduino(void);
 
 void set_conveyor(int state);
+void auto_sort();
 void sweep(sweep_state state);
 void set_servo(int position);
 

@@ -11,7 +11,7 @@
 void parse_gps_buffer(char* command, char* time_buffer);
 void insert_time_colons(char* time);
 
-int init_gps(void);
+void init_gps(void);
 void send_command(char* message);
 void print_message(char message[]);
 int put_char_gps(char c);
