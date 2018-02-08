@@ -37,6 +37,23 @@ void sweep(sweep_state state) {
 	send_message_arduino(arduino_command);
 }
 
+void conveyor(conv_state state) {
+	char arduino_command[6];
+
+	if(state == ON) {
+		sprintf(arduino_command, "cv:1");
+	}
+	else if(state == OFF) {
+		sprintf(arduino_command, "cv:0");
+	}
+	send_message_arduino(arduino_command);
+}
+
+void stop() {
+	char* arduino_command = "stop";
+	send_message_arduino(arduino_command);
+}
+
 void set_servo(int pos) {
 	char arduino_command[6];
 	sprintf(arduino_command, "s:%d", pos);

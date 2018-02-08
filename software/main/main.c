@@ -133,15 +133,17 @@ int main() {
 			}
 
 			else if (curr_sort == SORT_CAM_READY) {
+				leds = 0b111111111;
 				// "take a picture" using a button
 				if (push_buttons & 0b100) {
+					leds = 0;
 					curr_sort = SORT_IMG_READY;
 				}
 			}
 
 			else if (curr_sort == SORT_IMG_READY) {
 				// process image
-				int x = 0;//rand() % 4;
+				int x = rand() % 4;
 
 				// determine object
 				scanned_obj* obj = objects[x];			
@@ -260,11 +262,19 @@ void handle_touchscreen() {
 
 		if (ts_state == TS_STATE_TOUCHED) {
 			// special case for touch handle during auto sorting
-			// only button that can pressed is STOP 
 			if (curr_mode == MODE_AUTO_SORT) {
 				if (touch_in_button(p, STOP_BTN)) {
 					curr_btn = 1;
 					curr_mode = MODE_IDLE;
+					conveyor(OFF);
+				}
+			}
+			// special case for touch handle during position override
+			else if(curr_mode == MODE_OVERRIDE) {
+				if (touch_in_button(p, STOP_BTN)) {
+					curr_btn = 1;
+					curr_mode = MODE_IDLE;
+					conveyor(OFF);
 				}
 			}
 			else if (curr_mode != MODE_SWEEP) {
@@ -285,19 +295,27 @@ void handle_touchscreen() {
 				}
 				else if (touch_in_button(p, POS_1_BTN)) {
 					curr_btn = 4;
+					curr_mode = MODE_OVERRIDE;
 					set_servo(RED_POS);
+					conveyor(ON);
 				}
 				else if (touch_in_button(p, POS_2_BTN)) {
 					curr_btn = 5;
+					curr_mode = MODE_OVERRIDE;
 					set_servo(GREEN_POS);
+					conveyor(ON);
 				}
 				else if (touch_in_button(p, POS_3_BTN)) {
 					curr_btn = 6;
+					curr_mode = MODE_OVERRIDE;
 					set_servo(BLUE_POS);
+					conveyor(ON);
 				}
 				else if (touch_in_button(p, POS_4_BTN)) {
 					curr_btn = 7;
+					curr_mode = MODE_OVERRIDE;
 					set_servo(OTHER_POS);
+					conveyor(ON);
 				}
 			}
 			else {

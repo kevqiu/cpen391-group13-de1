@@ -10,6 +10,11 @@ typedef enum {
     STOP
 } sweep_state;
 
+typedef enum {
+    ON,
+    OFF
+} conv_state;
+
 #define RED_POS     23
 #define GREEN_POS   68
 #define BLUE_POS    113
@@ -20,6 +25,8 @@ void init_arduino(void);
 void set_conveyor(int state);
 void auto_sort();
 void sweep(sweep_state state);
+void conveyor(conv_state state);
+void stop();
 void set_servo(int position);
 
 void send_message_arduino(char* message);
