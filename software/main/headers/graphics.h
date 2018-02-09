@@ -76,6 +76,7 @@ void FilledRectangle(int x1, int x2, int y1, int y2, int colour);
 void BoldedRectangle(int x1, int x2, int y1, int y2, int thickness, int colour);
 
 // Font and Image writers
+void OutGraphicsImage(int x, int y, int x_size, int y_size, char* img, int* colour_map);
 void OutGraphics160x128(int x, int y, char* img);
 void WriteStringFont1(int x, int y, int color, int bgColor, char* string, int erase);
 void WriteStringFont2(int x, int y, int color, int bgColor, char* string, int erase);

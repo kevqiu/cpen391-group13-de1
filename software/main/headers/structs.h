@@ -1,4 +1,5 @@
 #ifndef _STRUCTS_
+
 #define _STRUCTS_
 
 // GUI Structs

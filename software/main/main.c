@@ -13,6 +13,9 @@
 #include "io.h"
 
 extern char Trump[];
+extern char Pepe[];
+
+int ImageColor[160*128];
 
 // Function prototypes for main loop
 void poll_gps(void);
@@ -53,7 +56,14 @@ int main() {
 	clear_screen();
 	draw_screen();
 
-	OutGraphics160x128(IMG_LOC.x, IMG_LOC.y, Trump);
+	srand(time(NULL));
+	int x;
+	for (x = 0; x < 160*128; x++) {
+		ImageColor[x] = rand() % 7 + 1;
+	}
+
+	OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
+	//OutGraphics160x128(IMG_LOC.x, IMG_LOC.y, Trump);
 
 	printf("Ready!\n");
 	
