@@ -30,17 +30,14 @@ void draw_screen()
 		draw_text(label);
 	}
 
-	WriteStringFont2(RED_OBJ_LOC.x, RED_OBJ_LOC.y, BLACK, WHITE, "00", 0);
-	WriteStringFont2(GREEN_OBJ_LOC.x, GREEN_OBJ_LOC.y, BLACK, WHITE, "00", 0);
-	WriteStringFont2(BLUE_OBJ_LOC.x, BLUE_OBJ_LOC.y, BLACK, WHITE, "00", 0);
-	WriteStringFont2(OTHER_OBJ_LOC.x, OTHER_OBJ_LOC.y, BLACK, WHITE, "00", 0);
+	reset_counters();
 
 	draw_line((line) CENTER_LINE, VERTICAL);
 	draw_line((line) TOP_RIGHT_LINE, HORIZONTAL);
 	draw_line((line) BTM_RIGHT_LINE, HORIZONTAL);
 }
 
-void draw_rectangle(rectangle rect, int fill)
+void draw_rectangle(rectangle rect, rect_fill fill)
 {
 	if (fill == EMPTY) {
 		Rectangle(rect.x1, rect.x2, rect.y1, rect.y2, rect.colour);
@@ -58,7 +55,7 @@ void draw_text(text txt)
 	WriteStringFont2(txt.x, txt.y, txt.colour, BLACK, txt.text, 0);
 }
 
-void draw_line(line line, int direction) 
+void draw_line(line line, line_dir direction) 
 {
 	if (direction == HORIZONTAL) {
 		DrawHLine(line.x, line.x + line.len, line.y, line.colour);
@@ -66,6 +63,29 @@ void draw_line(line line, int direction)
 	else if (direction == VERTICAL) {
 		DrawVLine(line.x, line.y, line.y + line.len, line.colour);
 	}
+}
+
+void draw_counter(point p, int count) {
+	char text[3];
+	if (count < 10) {
+		sprintf(text, "0%i", count);
+	}
+	else {
+		sprintf(text, "%i", count);
+	}
+	WriteStringFont2(p.x, p.y, BLACK, WHITE, text, 1);
+}
+
+void reset_counters() {
+	draw_counter(RED_OBJ_LOC, 0);
+	draw_counter(GREEN_OBJ_LOC, 0);
+	draw_counter(BLUE_OBJ_LOC, 0);
+	draw_counter(OTHER_OBJ_LOC, 0);
+}
+
+void reset_button(rectangle rect) {
+	clear_bolded_rectangle(rect);
+	draw_rectangle(rect, EMPTY);
 }
 
 void clear_screen()

@@ -12,7 +12,7 @@
 **
 ** Refer to 6850 data sheet for details of registers and
 ***************************************************************************/
-int init_gps(void)
+void init_gps(void)
 {
 	// set up 6850 Control Register to utilise a divide by 16 clock,
 	// set RTS low, use 8 bits of data, no parity, 1 stop bit,
@@ -47,7 +47,22 @@ void parse_gps_buffer(char* command, char* time_buffer) {
 		time = strsep(&r, ",");
 
 		sprintf(time_buffer, "%i", atoi(time) - TIMEZONE_DIFF);
+		insert_time_colons(time_buffer);
 	}
+}
+
+void insert_time_colons(char* time) {
+	char hr[3], min[3], sec[3];
+	hr[0] = time[0];
+	hr[1] = time[1];
+	hr[2] = '\0';
+	min[0] = time[2];
+	min[1] = time[3];
+	min[2] = '\0';
+	sec[0] = time[4];
+	sec[1] = time[5];
+	sec[2] = '\0';
+	sprintf(time, "%s:%s:%s", hr, min, sec);
 }
 
 void receive_message(char buffer[]){

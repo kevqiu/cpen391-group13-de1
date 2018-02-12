@@ -23,4 +23,11 @@ typedef struct {
 	int x, y;
 } point;
 
+typedef struct {
+	int colour;
+	int pos;
+	int count;
+	point loc;
+} scanned_obj;
+
 #endif

@@ -24,24 +24,24 @@
 #define POS_1_TXT       {50, 295, RED, "Position 1"}
 #define POS_2_TXT       {235, 295, LIME, "Position 2"}
 #define POS_3_TXT       {50, 395, BLUE, "Position 3"}
-#define POS_4_TXT       {235, 395, MAGENTA, "Position 4"}
+#define POS_4_TXT       {235, 395, BLACK, "Position 4"}
 #define CONTROLS_TXT    {150, 30, BLACK, "Controls"}
 #define SCANNED_IMG_TXT {530, 30, BLACK, "Scanned Image"}
-#define TIME_SCAN_TXT   {490, 240, BLACK, "Time Scanned:"}
+#define TIME_SCAN_TXT   {480, 240, BLACK, "Time Scanned:"}
 #define SCANNED_OBJ_TXT {515, 290, BLACK, "Scanned Objects"}
 #define RED_OBJ_TXT     {445, 395, RED, "red"}
 #define GREEN_OBJ_TXT   {524, 395, LIME, "green"}
 #define BLUE_OBJ_TXT    {619, 395, BLUE, "blue"}
 #define OTHER_OBJ_TXT   {704, 395, BLACK, "other"}
-#define CURR_TIME_TXT   {490, 455, BLACK, "Current Time:"}
+#define CURR_TIME_TXT   {480, 455, BLACK, "Current Time:"}
 
 #define IMG_LOC         ((point) {520, 80})
-#define SCAN_TIME_LOC   ((point) {640, 240})
+#define SCAN_TIME_LOC   ((point) {630, 240})
 #define RED_OBJ_LOC     ((point) {450, 350})
 #define GREEN_OBJ_LOC   ((point) {540, 350})
 #define BLUE_OBJ_LOC    ((point) {630, 350})
 #define OTHER_OBJ_LOC   ((point) {720, 350})
-#define CURR_TIME_LOC   ((point) {640, 455})
+#define CURR_TIME_LOC   ((point) {630, 455})
 
 #define CENTER_LINE     {400, 0, 480, BLACK}
 #define TOP_RIGHT_LINE  {400, 270, 480, BLACK}
