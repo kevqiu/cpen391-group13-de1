@@ -15,10 +15,10 @@ typedef enum {
     OFF
 } conv_state;
 
-#define RED_POS     23
-#define GREEN_POS   68
-#define BLUE_POS    113
-#define OTHER_POS   158
+#define RED_POS     180
+#define GREEN_POS   120
+#define BLUE_POS    60
+#define OTHER_POS   0
 
 void init_arduino(void);
 

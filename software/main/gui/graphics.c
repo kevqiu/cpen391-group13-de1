@@ -30,10 +30,7 @@ void draw_screen()
 		draw_text(label);
 	}
 
-	WriteStringFont2(RED_OBJ_LOC.x, RED_OBJ_LOC.y, BLACK, WHITE, "00", 0);
-	WriteStringFont2(GREEN_OBJ_LOC.x, GREEN_OBJ_LOC.y, BLACK, WHITE, "00", 0);
-	WriteStringFont2(BLUE_OBJ_LOC.x, BLUE_OBJ_LOC.y, BLACK, WHITE, "00", 0);
-	WriteStringFont2(OTHER_OBJ_LOC.x, OTHER_OBJ_LOC.y, BLACK, WHITE, "00", 0);
+	reset_counters();
 
 	draw_line((line) CENTER_LINE, VERTICAL);
 	draw_line((line) TOP_RIGHT_LINE, HORIZONTAL);
@@ -77,6 +74,18 @@ void draw_counter(point p, int count) {
 		sprintf(text, "%i", count);
 	}
 	WriteStringFont2(p.x, p.y, BLACK, WHITE, text, 1);
+}
+
+void reset_counters() {
+	WriteStringFont2(RED_OBJ_LOC.x, RED_OBJ_LOC.y, BLACK, WHITE, "00", 1);
+	WriteStringFont2(GREEN_OBJ_LOC.x, GREEN_OBJ_LOC.y, BLACK, WHITE, "00", 1);
+	WriteStringFont2(BLUE_OBJ_LOC.x, BLUE_OBJ_LOC.y, BLACK, WHITE, "00", 1);
+	WriteStringFont2(OTHER_OBJ_LOC.x, OTHER_OBJ_LOC.y, BLACK, WHITE, "00", 1);
+}
+
+void reset_button(rectangle rect) {
+	clear_bolded_rectangle(rect);
+	draw_rectangle(rect, EMPTY);
 }
 
 void clear_screen()

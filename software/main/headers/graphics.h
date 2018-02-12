@@ -75,6 +75,8 @@ void draw_rectangle(rectangle rect, rect_fill fill);
 void draw_text(text txt);
 void draw_line(line line, line_dir direction);
 void draw_counter(point p, int count);
+void reset_counters();
+void reset_button(rectangle rect);
 void clear_bolded_rectangle(rectangle rect);
 
 void Rectangle(int x1, int x2, int y1, int y2, int colour);

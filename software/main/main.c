@@ -12,6 +12,7 @@
 #include "structs.h"
 #include "io.h"
 #include "main.h"
+#include "sys/alt_alarm.h"
 
 // ----------- EXTERN VARIABLES ----------- //
 extern rectangle boxes[];
@@ -36,7 +37,8 @@ int gps_ready,
 // Touchscreen states
 int ts_state,
 	prev_ts_state,
-	curr_btn;
+	curr_btn,
+	stop_btn_pressed;
 mode_state curr_mode;
 
 // Autosort state
@@ -70,6 +72,7 @@ int main() {
 	ts_state = 0;
 	prev_ts_state = TS_STATE_UNTOUCHED;
 	curr_btn = -1;
+	stop_btn_pressed = 0;
 	curr_mode = MODE_IDLE;
 
 	gps_inc = 0;
@@ -97,6 +100,7 @@ int main() {
 	init_touch();
 	init_gps();
 	init_arduino();
+	init_wifi();
 
 	// Reset GUI
 	clear_screen();
@@ -162,6 +166,14 @@ int main() {
 
 				// set direction
 				set_servo(obj->pos);
+
+				// ADD A TIMER DELAY HERE FOR LIKE 0.5 SEC?
+				usleep(1000000);
+
+				// RUN CONVEYOR
+				conveyor(ON);
+
+				// ADD A TIMER DELAY HERE FOR LIKE 0.5 SEC TOO TO LET THE BOX LEAVE THE SWITCH
 
 				// run conveyor cycle again
 				auto_sort();
@@ -261,18 +273,10 @@ void handle_touchscreen() {
 		point p = get_calibrated_point(x, y);
 
 		if (ts_state == TS_STATE_TOUCHED) {
-			// special case for touch handle during auto sorting
-			if (curr_mode == MODE_AUTO_SORT) {
+			// special case for touch handle during auto sorting or override
+			if (curr_mode == MODE_AUTO_SORT || curr_mode == MODE_OVERRIDE) {
 				if (touch_in_button(p, STOP_BTN)) {
-					curr_btn = 1;
-					curr_mode = MODE_IDLE;
-					conveyor(OFF);
-				}
-			}
-			// special case for touch handle during position override
-			else if(curr_mode == MODE_OVERRIDE) {
-				if (touch_in_button(p, STOP_BTN)) {
-					curr_btn = 1;
+					stop_btn_pressed = 1;
 					curr_mode = MODE_IDLE;
 					conveyor(OFF);
 				}
@@ -281,6 +285,8 @@ void handle_touchscreen() {
 				if (touch_in_button(p, AUTO_SORT_BTN)) {
 					curr_btn = 0;
 					curr_mode = MODE_AUTO_SORT;
+					red_object->count = green_object->count = blue_object->count = other_object->count = 0;
+					reset_counters();
 					auto_sort();
 				}
 				else if (touch_in_button(p, SWEEP_CW_BTN)) {
@@ -322,8 +328,12 @@ void handle_touchscreen() {
 				curr_btn = -1;
 			}
 
-			if(curr_btn > -1) {
+			// if pressing a button
+			if(curr_btn > -1 && !stop_btn_pressed) {
 				draw_rectangle(boxes[curr_btn], BOLDED);
+			}
+			else if(stop_btn_pressed) {
+				draw_rectangle(boxes[1], BOLDED);
 			}
 		}
 		else {
@@ -332,19 +342,17 @@ void handle_touchscreen() {
 				curr_mode = MODE_IDLE;
 				sweep(STOP);
 			}
-			
-			// redraw rectangle if not touching a button
-			if (curr_btn > 1) {
-				clear_bolded_rectangle(boxes[curr_btn]);
-				draw_rectangle(boxes[curr_btn], EMPTY);
+
+			// redraw rectangle if releasing a sweep button
+			if (curr_btn == 2 || curr_btn == 3) {
+				reset_button(boxes[curr_btn]);
 				curr_btn = -1;
 			}
 			// special case for AutoSort and STOP buttons
-			else if (curr_btn == 1) {
-				clear_bolded_rectangle(boxes[0]);
-				clear_bolded_rectangle(boxes[1]);
-				draw_rectangle(boxes[0], EMPTY);
-				draw_rectangle(boxes[1], EMPTY);
+			else if (stop_btn_pressed) {
+				reset_button(boxes[curr_btn]);
+				reset_button(boxes[1]);
+				stop_btn_pressed = 0;
 				curr_btn = -1;
 			}
 		}
@@ -362,6 +370,17 @@ void handle_touchscreen() {
 void handle_arduino() {
 	if (strcmp(ard_buff, "ls\n") == 0) {
 		curr_sort = SORT_CAM_READY;
+	}
+	else if (strcmp(ard_buff, "dn\n") == 0) {
+		char text[512];
+		sprintf(text, "Sorting complete!\\\nResults - Red: %i   Green: %i   Blue: %i   Other: %i",
+			red_object->count, green_object->count, blue_object->count, other_object->count);
+		//send_text(text);
+		reset_button(boxes[curr_btn]);
+		reset_button(boxes[1]);
+		curr_btn = -1;
+		curr_sort = SORT_IDLE;
+		curr_mode = MODE_IDLE;		
 	}
 	else {
 		curr_sort = SORT_IDLE;

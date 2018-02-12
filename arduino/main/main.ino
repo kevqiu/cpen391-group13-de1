@@ -3,7 +3,9 @@
 #define CW 1
 #define CCW -1
 #define SWEEP_DELAY 10
-#define CONVEYOR_SPD 120
+#define CONVEYOR_SPD 255
+#define DEBOUNCE_DELAY 50
+#define TIMEOUT 5000
 
 #define CW_CMD "cw:"
 #define CCW_CMD "ccw:"
@@ -14,12 +16,16 @@
 #define FORWARD 1
 #define BACKWARD 0
 
-const int switchPin = 2;
+int laserPin = 12;
+int photoPin = 5;
+
+#define LASER_BREAK 800
 
 // Servo defines
 Servo servo;  
 int servoPin = 3;
-int servoPos = 0;    // variable to store the servo position
+// variable to store the servo position
+int servoPos = 0;
 
 // Motor defines
 int E1 = 5;  
@@ -48,8 +54,9 @@ void setup() {
 
   // set up motor output
   pinMode(M1, OUTPUT); 
-  
-  pinMode(switchPin, INPUT); 
+
+  // set up limit switch
+  pinMode(laserPin, OUTPUT); 
 }
 
 void loop() {
@@ -99,73 +106,62 @@ void loop() {
 }
 
 // -------------------------------- //
-// Serial Command Parsing Funcitons //
-// -------------------------------- //
-SerialCommand getCommand(String input) {
-  if(input.startsWith(AS_CMD)) {
-    return AUTO_SORT;
-  }
-  else if(input.startsWith(SET_CMD)) {
-    return SET;
-  }
-  else if(input.startsWith(CW_CMD)) {
-    return TURN_CW;
-  }
-  else if(input.startsWith(CCW_CMD)) {
-    return TURN_CCW;
-  }
-  else if(input.startsWith(CV_CMD)) {
-    return CONVEYOR;
-  }
-}
-
-String getSerialData(String input) {
-  return input.substring(input.indexOf(':')+1);
-}
-
-// -------------------------------- //
 //         Movement Functions       //
 // -------------------------------- //
 void autoSort() {
+  // allow laser to turn on
+  digitalWrite(laserPin, HIGH);
+  delay(750);
+  
   // turn on conveyor
   conveyor(FORWARD, CONVEYOR_SPD);
 
   // debouncing variables
-  unsigned long lastDebounceTime = 0;
-  unsigned long debounceDelay = 50;
-  int currButtonState, lastButtonState = LOW;
-  // wait until limit switch is triggered, or stop is sent
+  unsigned long lastLaserTime = 0;
+  int currLaserState, lastLaserState = (analogRead(photoPin) < LASER_BREAK);
+  unsigned long timeElapsed = millis();
   while(1) {
-    int reading = digitalRead(switchPin);
-    if (reading != lastButtonState) {
-      lastDebounceTime = millis();
+    // laser debounce logic
+    int photoReading = (analogRead(photoPin) < LASER_BREAK);
+    if(photoReading != lastLaserState) {
+      lastLaserTime = millis();
     }
-    if ((millis() - lastDebounceTime) > debounceDelay) {
-      if (reading != currButtonState) {
-        currButtonState = reading;
-        if (currButtonState == HIGH) {
+    if(millis() - lastLaserTime > DEBOUNCE_DELAY) {
+      if(photoReading != currLaserState) {
+        currLaserState = (analogRead(laserPin) < LASER_BREAK);
+        if(currLaserState) {
+          digitalWrite(laserPin, LOW);
           break;
         }
       }
     }
-    lastButtonState = reading;
+    lastLaserState = photoReading;
 
+    // check if conveyor has been running for more than TIMEOUT seconds
+    if(millis() - timeElapsed > TIMEOUT) {
+      conveyor(FORWARD, 0);
+      digitalWrite(laserPin, LOW);
+      Serial.write("dn\n");
+      sortBuffer = "";
+      return;
+    }
+
+    // check if DE1-SoC has sent a STOP command
     if(Serial.available() > 0) {
       char c = Serial.read();
       if(c == '\r') {
         // parse serial command
         if(getCommand(sortBuffer) == CONVEYOR && getSerialData(sortBuffer) == "0") {
           conveyor(FORWARD, 0);
+          digitalWrite(laserPin, LOW);
+          sortBuffer = "";
           return;
         }
         else {
           sortBuffer = "";
         }
       }
-      else {
-        // if command hasn't finished sending, append char string
-        sortBuffer += c;
-      }
+      sortBuffer += c;
     }
   }
   
@@ -207,5 +203,30 @@ int getServoPosition(int pos) {
   return pos > 180 ? 180 :
         pos < 0 ? 0 :
         pos;
+}
+
+// -------------------------------- //
+// Serial Command Parsing Funcitons //
+// -------------------------------- //
+SerialCommand getCommand(String input) {
+  if(input.startsWith(AS_CMD)) {
+    return AUTO_SORT;
+  }
+  else if(input.startsWith(SET_CMD)) {
+    return SET;
+  }
+  else if(input.startsWith(CW_CMD)) {
+    return TURN_CW;
+  }
+  else if(input.startsWith(CCW_CMD)) {
+    return TURN_CCW;
+  }
+  else if(input.startsWith(CV_CMD)) {
+    return CONVEYOR;
+  }
+}
+
+String getSerialData(String input) {
+  return input.substring(input.indexOf(':')+1);
 }
 
