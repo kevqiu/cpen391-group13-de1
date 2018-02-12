@@ -49,11 +49,6 @@ void conveyor(conv_state state) {
 	send_message_arduino(arduino_command);
 }
 
-void stop() {
-	char* arduino_command = "stop";
-	send_message_arduino(arduino_command);
-}
-
 void set_servo(int pos) {
 	char arduino_command[6];
 	sprintf(arduino_command, "s:%d", pos);
@@ -61,7 +56,6 @@ void set_servo(int pos) {
 }
 
 void send_message_arduino(char* message) {
-	//printf("sending command: %s\n", message);
 	int i = 0;
 	while(message[i] != '\0') {
 		put_char_arduino(message[i++]);

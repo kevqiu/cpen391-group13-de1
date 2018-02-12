@@ -126,17 +126,16 @@ int main() {
 		if (gps_ready) {
 			handle_gps();
 		}
-
 		if (ts_ready) {
 			handle_touchscreen();
 		}
-
 		if (curr_mode == MODE_AUTO_SORT) {
 			if (curr_sort == SORT_ARD_READY) {
 				handle_arduino();
 			}
 
 			else if (curr_sort == SORT_CAM_READY) {
+				// TODO: REPLACE WITH CAMERA CODE
 				leds = 0b111111111;
 				// "take a picture" using a button
 				if (push_buttons & 0b100) {
@@ -148,37 +147,27 @@ int main() {
 			else if (curr_sort == SORT_IMG_READY) {
 				// process image
 				int x = rand() % 4;
-
-				// determine object
 				scanned_obj* obj = objects[x];			
-
 				// update and draw new object count
 				draw_counter(obj->loc, ++obj->count);
-
 				// draw image on screen
 				for (x = 0; x < 160*128; x++) {
 					ImageColor[x] = obj->colour;
 				}
 				OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
-
 				// set flag to draw timestamp at time scanned
 				image_scanned = 1;
-
 				// set direction
 				set_servo(obj->pos);
-
-				// ADD A TIMER DELAY HERE FOR LIKE 0.5 SEC?
-				usleep(1000000);
-
-				// RUN CONVEYOR
+				// allow servo to reach a position
+				usleep(500000);
+				// run conveyor
 				conveyor(ON);
-
-				// ADD A TIMER DELAY HERE FOR LIKE 0.5 SEC TOO TO LET THE BOX LEAVE THE SWITCH
-
-				// run conveyor cycle again
+				// allow object to be dumped into a bin before sort cycle is run
+				usleep(500000);
+				// run sort cycle again
 				auto_sort();
-
-				// wait for next object to hit limit switch
+				// wait for next object to arrive
 				curr_sort = SORT_IDLE;
 			}
 		}
@@ -222,10 +211,10 @@ void poll_touchscreen() {
 
 // Poll for Arduino data
 void poll_arduino() {
-	if(is_arduino_data_ready()) {
+	if (is_arduino_data_ready()) {
 		char c = get_char_arduino();
 		ard_buff[ard_inc++] = c;
-		if(c == '\n') {
+		if (c == '\n') {
 			curr_sort = SORT_ARD_READY;
 		}
 	}
@@ -238,21 +227,18 @@ void poll_arduino() {
 void handle_gps() {
 	char new_time[12] = "";
 	parse_gps_buffer(gps_buff, new_time);
-	//insert_time_colons(new_time);
 	// if the timestamps are different, redraw the time
-	if(new_time[0] != '\0' && strcmp(curr_time, new_time) != 0) {
+	if (new_time[0] != '\0' && strcmp(curr_time, new_time) != 0) {
 		// save new time
 		strcpy(curr_time, new_time);
 		// draw new time
 		WriteStringFont2(CURR_TIME_LOC.x, CURR_TIME_LOC.y, BLACK, BG_COLOUR, curr_time, 1);
-		
 		// if camera has taken a picture, write time under image
-		if(image_scanned) {
+		if (image_scanned) {
 			WriteStringFont2(SCAN_TIME_LOC.x, SCAN_TIME_LOC.y, BLACK, BG_COLOUR, curr_time, 1);
 			image_scanned = 0;
 		}
 	}	
-
 	gps_inc = gps_ready = 0;
 	strcpy(gps_buff, "");
 }
@@ -329,10 +315,10 @@ void handle_touchscreen() {
 			}
 
 			// if pressing a button
-			if(curr_btn > -1 && !stop_btn_pressed) {
+			if (curr_btn > -1 && !stop_btn_pressed) {
 				draw_rectangle(boxes[curr_btn], BOLDED);
 			}
-			else if(stop_btn_pressed) {
+			else if (stop_btn_pressed) {
 				draw_rectangle(boxes[1], BOLDED);
 			}
 		}
@@ -366,6 +352,8 @@ void handle_touchscreen() {
  * Check if the Arduino has returned a serial command
  * ls: limit switch has been triggered,
  * 		signifying an object is ready to be scanned
+ * dn: timeout has been triggered,
+ * 		send a text notifying user the scanning process has been completed
  */
 void handle_arduino() {
 	if (strcmp(ard_buff, "ls\n") == 0) {
@@ -375,7 +363,7 @@ void handle_arduino() {
 		char text[512];
 		sprintf(text, "Sorting complete!\\\nResults - Red: %i   Green: %i   Blue: %i   Other: %i",
 			red_object->count, green_object->count, blue_object->count, other_object->count);
-		//send_text(text);
+		send_text(text);
 		reset_button(boxes[curr_btn]);
 		reset_button(boxes[1]);
 		curr_btn = -1;

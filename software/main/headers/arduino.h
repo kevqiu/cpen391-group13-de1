@@ -26,7 +26,6 @@ void set_conveyor(int state);
 void auto_sort();
 void sweep(sweep_state state);
 void conveyor(conv_state state);
-void stop();
 void set_servo(int position);
 
 void send_message_arduino(char* message);

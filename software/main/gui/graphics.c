@@ -77,10 +77,10 @@ void draw_counter(point p, int count) {
 }
 
 void reset_counters() {
-	WriteStringFont2(RED_OBJ_LOC.x, RED_OBJ_LOC.y, BLACK, WHITE, "00", 1);
-	WriteStringFont2(GREEN_OBJ_LOC.x, GREEN_OBJ_LOC.y, BLACK, WHITE, "00", 1);
-	WriteStringFont2(BLUE_OBJ_LOC.x, BLUE_OBJ_LOC.y, BLACK, WHITE, "00", 1);
-	WriteStringFont2(OTHER_OBJ_LOC.x, OTHER_OBJ_LOC.y, BLACK, WHITE, "00", 1);
+	draw_counter(RED_OBJ_LOC, 0);
+	draw_counter(GREEN_OBJ_LOC, 0);
+	draw_counter(BLUE_OBJ_LOC, 0);
+	draw_counter(OTHER_OBJ_LOC, 0);
 }
 
 void reset_button(rectangle rect) {
