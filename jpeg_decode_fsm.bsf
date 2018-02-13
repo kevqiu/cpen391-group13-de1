@@ -1,0 +1,355 @@
+/*
+WARNING: Do NOT edit the input and output ports in this file in a text
+editor if you plan to continue editing the block that represents it in
+the Block Editor! File corruption is VERY likely to occur.
+*/
+/*
+Copyright (C) 1991-2015 Altera Corporation. All rights reserved.
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, the Altera Quartus II License Agreement,
+the Altera MegaCore Function License Agreement, or other 
+applicable license agreement, including, without limitation, 
+that your use is for the sole purpose of programming logic 
+devices manufactured by Altera and sold by Altera or its 
+authorized distributors.  Please refer to the applicable 
+agreement for further details.
+*/
+(header "symbol" (version "1.1"))
+(symbol
+	(rect 16 16 264 384)
+	(text "jpeg_decode_fsm" (rect 5 0 76 12)(font "Arial" ))
+	(text "inst" (rect 8 352 20 364)(font "Arial" ))
+	(port
+		(pt 0 32)
+		(input)
+		(text "rst" (rect 0 0 10 12)(font "Arial" ))
+		(text "rst" (rect 21 27 31 39)(font "Arial" ))
+		(line (pt 0 32)(pt 16 32)(line_width 1))
+	)
+	(port
+		(pt 0 48)
+		(input)
+		(text "clk" (rect 0 0 10 12)(font "Arial" ))
+		(text "clk" (rect 21 43 31 55)(font "Arial" ))
+		(line (pt 0 48)(pt 16 48)(line_width 1))
+	)
+	(port
+		(pt 0 64)
+		(input)
+		(text "DataInEnable" (rect 0 0 53 12)(font "Arial" ))
+		(text "DataInEnable" (rect 21 59 74 71)(font "Arial" ))
+		(line (pt 0 64)(pt 16 64)(line_width 1))
+	)
+	(port
+		(pt 0 80)
+		(input)
+		(text "DataIn[31..0]" (rect 0 0 49 12)(font "Arial" ))
+		(text "DataIn[31..0]" (rect 21 75 70 87)(font "Arial" ))
+		(line (pt 0 80)(pt 16 80)(line_width 3))
+	)
+	(port
+		(pt 0 96)
+		(input)
+		(text "OutEnable" (rect 0 0 41 12)(font "Arial" ))
+		(text "OutEnable" (rect 21 91 62 103)(font "Arial" ))
+		(line (pt 0 96)(pt 16 96)(line_width 1))
+	)
+	(port
+		(pt 0 112)
+		(input)
+		(text "OutPixelX[15..0]" (rect 0 0 61 12)(font "Arial" ))
+		(text "OutPixelX[15..0]" (rect 21 107 82 119)(font "Arial" ))
+		(line (pt 0 112)(pt 16 112)(line_width 3))
+	)
+	(port
+		(pt 0 128)
+		(input)
+		(text "OutPixelY[15..0]" (rect 0 0 62 12)(font "Arial" ))
+		(text "OutPixelY[15..0]" (rect 21 123 83 135)(font "Arial" ))
+		(line (pt 0 128)(pt 16 128)(line_width 3))
+	)
+	(port
+		(pt 248 32)
+		(output)
+		(text "JpegDecodeIdle" (rect 0 0 62 12)(font "Arial" ))
+		(text "JpegDecodeIdle" (rect 165 27 227 39)(font "Arial" ))
+		(line (pt 248 32)(pt 232 32)(line_width 1))
+	)
+	(port
+		(pt 248 48)
+		(output)
+		(text "OutWidth[15..0]" (rect 0 0 61 12)(font "Arial" ))
+		(text "OutWidth[15..0]" (rect 166 43 227 55)(font "Arial" ))
+		(line (pt 248 48)(pt 232 48)(line_width 3))
+	)
+	(port
+		(pt 248 64)
+		(output)
+		(text "OutHeight[15..0]" (rect 0 0 62 12)(font "Arial" ))
+		(text "OutHeight[15..0]" (rect 165 59 227 71)(font "Arial" ))
+		(line (pt 248 64)(pt 232 64)(line_width 3))
+	)
+	(port
+		(pt 248 80)
+		(output)
+		(text "OutBlockWidth[11..0]" (rect 0 0 81 12)(font "Arial" ))
+		(text "OutBlockWidth[11..0]" (rect 146 75 227 87)(font "Arial" ))
+		(line (pt 248 80)(pt 232 80)(line_width 3))
+	)
+	(port
+		(pt 248 96)
+		(output)
+		(text "DqtEnable" (rect 0 0 41 12)(font "Arial" ))
+		(text "DqtEnable" (rect 186 91 227 103)(font "Arial" ))
+		(line (pt 248 96)(pt 232 96)(line_width 1))
+	)
+	(port
+		(pt 248 112)
+		(output)
+		(text "DqtTable" (rect 0 0 35 12)(font "Arial" ))
+		(text "DqtTable" (rect 192 107 227 119)(font "Arial" ))
+		(line (pt 248 112)(pt 232 112)(line_width 1))
+	)
+	(port
+		(pt 248 128)
+		(output)
+		(text "DqtCount[5..0]" (rect 0 0 57 12)(font "Arial" ))
+		(text "DqtCount[5..0]" (rect 170 123 227 135)(font "Arial" ))
+		(line (pt 248 128)(pt 232 128)(line_width 3))
+	)
+	(port
+		(pt 248 144)
+		(output)
+		(text "DqtData[7..0]" (rect 0 0 53 12)(font "Arial" ))
+		(text "DqtData[7..0]" (rect 174 139 227 151)(font "Arial" ))
+		(line (pt 248 144)(pt 232 144)(line_width 3))
+	)
+	(port
+		(pt 248 160)
+		(output)
+		(text "DhtEnable" (rect 0 0 41 12)(font "Arial" ))
+		(text "DhtEnable" (rect 186 155 227 167)(font "Arial" ))
+		(line (pt 248 160)(pt 232 160)(line_width 1))
+	)
+	(port
+		(pt 248 176)
+		(output)
+		(text "DhtTable[1..0]" (rect 0 0 54 12)(font "Arial" ))
+		(text "DhtTable[1..0]" (rect 173 171 227 183)(font "Arial" ))
+		(line (pt 248 176)(pt 232 176)(line_width 3))
+	)
+	(port
+		(pt 248 192)
+		(output)
+		(text "DhtCount[7..0]" (rect 0 0 57 12)(font "Arial" ))
+		(text "DhtCount[7..0]" (rect 170 187 227 199)(font "Arial" ))
+		(line (pt 248 192)(pt 232 192)(line_width 3))
+	)
+	(port
+		(pt 248 208)
+		(output)
+		(text "DhtData[7..0]" (rect 0 0 53 12)(font "Arial" ))
+		(text "DhtData[7..0]" (rect 174 203 227 215)(font "Arial" ))
+		(line (pt 248 208)(pt 232 208)(line_width 3))
+	)
+	(port
+		(pt 248 224)
+		(output)
+		(text "HuffmanEnable" (rect 0 0 63 12)(font "Arial" ))
+		(text "HuffmanEnable" (rect 164 219 227 231)(font "Arial" ))
+		(line (pt 248 224)(pt 232 224)(line_width 1))
+	)
+	(port
+		(pt 248 240)
+		(output)
+		(text "HuffmanTable[1..0]" (rect 0 0 76 12)(font "Arial" ))
+		(text "HuffmanTable[1..0]" (rect 151 235 227 247)(font "Arial" ))
+		(line (pt 248 240)(pt 232 240)(line_width 3))
+	)
+	(port
+		(pt 248 256)
+		(output)
+		(text "HuffmanCount[3..0]" (rect 0 0 80 12)(font "Arial" ))
+		(text "HuffmanCount[3..0]" (rect 147 251 227 263)(font "Arial" ))
+		(line (pt 248 256)(pt 232 256)(line_width 3))
+	)
+	(port
+		(pt 248 272)
+		(output)
+		(text "HuffmanData[15..0]" (rect 0 0 79 12)(font "Arial" ))
+		(text "HuffmanData[15..0]" (rect 148 267 227 279)(font "Arial" ))
+		(line (pt 248 272)(pt 232 272)(line_width 3))
+	)
+	(port
+		(pt 248 288)
+		(output)
+		(text "HuffmanStart[7..0]" (rect 0 0 75 12)(font "Arial" ))
+		(text "HuffmanStart[7..0]" (rect 152 283 227 295)(font "Arial" ))
+		(line (pt 248 288)(pt 232 288)(line_width 3))
+	)
+	(port
+		(pt 248 304)
+		(output)
+		(text "ImageEnable" (rect 0 0 51 12)(font "Arial" ))
+		(text "ImageEnable" (rect 176 299 227 311)(font "Arial" ))
+		(line (pt 248 304)(pt 232 304)(line_width 1))
+	)
+	(port
+		(pt 248 320)
+		(output)
+		(text "UseByte" (rect 0 0 35 12)(font "Arial" ))
+		(text "UseByte" (rect 192 315 227 327)(font "Arial" ))
+		(line (pt 248 320)(pt 232 320)(line_width 1))
+	)
+	(port
+		(pt 248 336)
+		(output)
+		(text "UseWord" (rect 0 0 40 12)(font "Arial" ))
+		(text "UseWord" (rect 187 331 227 343)(font "Arial" ))
+		(line (pt 248 336)(pt 232 336)(line_width 1))
+	)
+	(parameter
+		"S_Idle"
+		"00000"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_GetMarker"
+		"00001"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_ImageData"
+		"00010"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_APPLength"
+		"00011"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_APPRead"
+		"00100"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_DQTLength"
+		"00101"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_DQTTable"
+		"00110"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_DQTRead"
+		"00111"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_DHTLength"
+		"01000"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_DHTTable"
+		"01001"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_DHTMakeHm0"
+		"01010"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_DHTMakeHm1"
+		"01011"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_DHTMakeHm2"
+		"01100"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_DHTReadTable"
+		"01101"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_SOSLength"
+		"01110"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_SOSRead0"
+		"01111"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_SOSRead1"
+		"10000"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_SOSRead2"
+		"10001"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_SOSRead3"
+		"10010"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_SOSRead4"
+		"10011"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_SOFLength"
+		"10100"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_SOFRead0"
+		"10101"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_SOFReadY"
+		"10110"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_SOFReadX"
+		"10111"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_SOFReadComp"
+		"11000"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_SOFMakeBlock0"
+		"11001"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(parameter
+		"S_SOFMakeBlock1"
+		"11010"
+		""
+		(type "PARAMETER_UNSIGNED_BIN")	)
+	(drawing
+		(rectangle (rect 16 16 232 352)(line_width 1))
+	)
+	(annotation_block (parameter)(rect 264 -64 364 16))
+)

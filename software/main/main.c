@@ -138,6 +138,7 @@ int main() {
 				// TODO: REPLACE WITH CAMERA CODE
 				leds = 0b111111111;
 				// "take a picture" using a button
+				// freeze a frame here
 				if (push_buttons & 0b100) {
 					leds = 0;
 					curr_sort = SORT_IMG_READY;

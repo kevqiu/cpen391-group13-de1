@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "graphics.h": "c",
+        "gui.h": "c",
+        "structs.h": "c",
+        "io.h": "c"
+    }
+}
