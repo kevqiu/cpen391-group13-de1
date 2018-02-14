@@ -144,7 +144,6 @@ ELF := main.elf
 # Paths to C, C++, and assembly source files.
 C_SRCS += main.c
 C_SRCS += modules/arduino.c
-C_SRCS += modules/rs232.c
 C_SRCS += modules/wifi.c
 C_SRCS += gui/Fonts.c
 C_SRCS += gui/OutGraphicsCharFont1.c
@@ -152,10 +151,12 @@ C_SRCS += gui/OutGraphicsCharFont2.c
 C_SRCS += gui/graphics.c
 C_SRCS += gui/gui.c
 C_SRCS += modules/touchscreen.c
-C_SRCS += gui/OutGraphics160x128.c
 C_SRCS += modules/gps.c
-C_SRCS += gui/images.c
 C_SRCS += gui/OutGraphicsImage.c
+C_SRCS += gui/ColourPalette.c
+C_SRCS += image/image_converter.c
+C_SRCS += image/images.c
+C_SRCS += image/image_processor.c
 CXX_SRCS :=
 ASM_SRCS :=
 

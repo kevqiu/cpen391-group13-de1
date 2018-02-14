@@ -3,6 +3,10 @@
 #include "gui.h"
 #endif
 
+/*
+ * Boxes to be called externally in draw_screen.
+ * Contains all rectangles (containers and buttons) to be displayed on GUI
+ */
 const rectangle boxes[] = {
 	AUTO_SORT_BTN,
 	STOP_BTN,
@@ -19,6 +23,10 @@ const rectangle boxes[] = {
 	SCANNED_BOX_4
 };
 
+/*
+ * Labels to be called externally in draw_screen.
+ * Contains all labels (headers and buttons) to be displayed on GUI
+ */
 const text labels[] = {
 	AUTOMATED_TXT,
 	SORT_TXT,
@@ -40,5 +48,8 @@ const text labels[] = {
 	CURR_TIME_TXT
 };
 
+/*
+ * Counts of above arrays. To be called externally in draw_screen.
+ */
 int boxes_count = sizeof(boxes)/sizeof(boxes[0]);
 int labels_count = sizeof(labels)/sizeof(labels[0]);
