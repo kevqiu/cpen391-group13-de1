@@ -9,12 +9,15 @@
 extern rectangle boxes[];
 extern text labels[];
 extern int boxes_count, labels_count;
+extern unsigned int ColourPaletteData[];
 
 /*********************************************************************************************
 * Graphics library
 *********************************************************************************************/
 void draw_screen()
 {
+	initialize_colour_space();
+
 	draw_rectangle(AUTO_SORT_BTN, FILLED);
 	draw_rectangle(STOP_BTN, FILLED);
 
@@ -100,6 +103,13 @@ void clear_screen()
 void clear_bolded_rectangle(rectangle rect)
 {
 	BoldedRectangle(rect.x1, rect.x2, rect.y1, rect.y2, BOLDED_RECT_THICKNESS, BG_COLOUR);
+}
+
+void initialize_colour_space() {
+	int i;
+	for(i = 0; i < 64; i++) {
+		ProgramPalette(i, ColourPaletteData[i]);
+	}
 }
 
 void Rectangle(int x1, int x2, int y1, int y2, int colour)

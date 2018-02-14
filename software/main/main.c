@@ -9,6 +9,7 @@
 #include "graphics.h"
 #include "touchscreen.h"
 #include "gps.h"
+#include "image_converter.h"
 #include "structs.h"
 #include "io.h"
 #include "main.h"
@@ -110,8 +111,33 @@ int main() {
 	int x;
 	int ImageColor[160*128];
 	for (x = 0; x < 160*128; x++) {
-		ImageColor[x] = rand() % 7 + 1;
+		ImageColor[x] = rand() % 64 + 1;
 	}
+
+	// int size_x = 40;
+	// int size_y = 2;
+	// int dim = size_x * size_y;
+	// // TEST IMAGE
+	// colour_t test[dim];
+	// int test_out[dim];
+	// char test_pixel[dim/8];
+	// int test_i;
+	// printf("test1\n");
+	// for (test_i = 0; test_i < dim; test_i++) {
+	// 	//test[test_i] = NTSC_40x2[test_i];
+	// }
+	// printf("test2\n");
+	
+	// for (test_i = 0; test_i < dim/8; test_i++) {
+	// 	test_pixel[test_i] = 0b11111111;
+	// }
+	// printf("test3\n");
+
+	// convert_8_bit_to_16_bit(NTSC_40x2_R, NTSC_40x2_G, NTSC_40x2_B, test, dim);
+	// map_image_to_palette(test, test_out, dim);
+	// printf("test4\n");
+	
+	// OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, size_x, size_y, test_pixel, test_out);
 	
 	OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
 
@@ -151,8 +177,9 @@ int main() {
 				// update and draw new object count
 				draw_counter(obj->loc, ++obj->count);
 				// draw image on screen
+				int random = rand() % 64 + 1;
 				for (x = 0; x < 160*128; x++) {
-					ImageColor[x] = obj->colour;
+					ImageColor[x] = random;
 				}
 				OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
 				// set flag to draw timestamp at time scanned
