@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <inttypes.h>
 
 #include "wifi.h"
 #include "arduino.h"
@@ -9,7 +10,7 @@
 #include "graphics.h"
 #include "touchscreen.h"
 #include "gps.h"
-#include "image_converter.h"
+#include "image_processor.h"
 #include "structs.h"
 #include "io.h"
 #include "main.h"
@@ -19,6 +20,10 @@
 extern rectangle boxes[];
 
 extern char Trump[];
+
+extern colour_t red_lego_R[];
+extern colour_t red_lego_G[];
+extern colour_t red_lego_B[];
 
 // ----------- GLOBAL VARIABLES ----------- //
 // Timestamp
@@ -108,11 +113,24 @@ int main() {
 	draw_screen();
 
 	srand(time(NULL));
+
+	int size_x = 160;
+	int size_y = 128;
+
+	int res = size_x * size_y;
+
+	colour_t img_in_rgb[res];
+	convert_8_bit_to_16_bit(red_lego_R, red_lego_G, red_lego_B, test, res);
+
+	image_t* img = process_image(img_in_rgb, res);
+
 	int x;
-	int ImageColor[160*128];
-	for (x = 0; x < 160*128; x++) {
-		ImageColor[x] = rand() % 64 + 1;
+	int ImageColor[res];
+	for (x = 0; x < res; x++) {
+		ImageColor[x] = img->colour;
 	}
+
+	OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, size_x, size_y, img->relevant_pixels, ImageColor);
 
 	// int size_x = 40;
 	// int size_y = 2;
@@ -139,7 +157,7 @@ int main() {
 	
 	// OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, size_x, size_y, test_pixel, test_out);
 	
-	OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
+	//OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
 
 	printf("Ready!\n");
 

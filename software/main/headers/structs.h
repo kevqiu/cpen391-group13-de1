@@ -34,6 +34,11 @@ typedef struct {
 	uint16_t r, g, b;
 } rgb_t;
 
+typedef struct {
+	int colour;
+	char* relevant_pixels;
+} image_t;
+
 typedef uint16_t colour_t;
 
 #endif

@@ -21,7 +21,6 @@ void map_image_to_palette(colour_t* input, int* output, int size) {
 int map_rgb_to_palette(rgb_t val) {
     int closest_colour = 1; // default value is white;
     int min_dist = INT_MAX;
-    rgb_t final;
 
     // iterate through each palette colour, find colour closest to value
     int i;
@@ -33,22 +32,22 @@ int map_rgb_to_palette(rgb_t val) {
         if (dist < min_dist) {
             closest_colour = i;
             min_dist = dist;
-            final = p;
         }
     }
-    //printf("Value - R:%i G:%i B:%i, Closest Palette:%i, R:%i G:%i B:%i\n",
-    //    val.r, val.g, val.b, closest_colour, final.r, final.g, final.b);
     return closest_colour;
 }
 
-void convert_8_bit_to_16_bit(colour_t* r, colour_t* g, colour_t* b, colour_t* img, int size) {
+void convert_8_bit_to_16_bit(int* r, int* g, int* b, colour_t* img, int size) {
 	int i;
 	for(i = 0; i < size; i++) {
-        colour_t new_val = (((r[i] >> 3) & 0b11111) << 11) | (((g[i] >> 2) & 0b111111) << 5) | ((b[i] >> 3) & 0b11111);
-		rgb_t test = convert_16_bit_to_rgb(new_val);
+		int red = ((r[i] >> 3) & 0b00011111);
+		int green = ((g[i] >> 2) & 0b00111111);
+		int blue = ((b[i] >> 3) & 0b00011111);
+        //printf("convert 8 to 16 r: %d, g: %d, b: %d\n", red, green, blue);
+        colour_t new_val = (red << 11) | (green << 5) | (blue);
         img[i] = new_val;
-		printf("Value - R:%i G:%i B:%i\n", img[i], test.r, test.g, test.b);
 	}
+	printf("done converting 8 to 16\n");
 }
 
 /*
