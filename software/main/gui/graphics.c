@@ -9,12 +9,18 @@
 extern rectangle boxes[];
 extern text labels[];
 extern int boxes_count, labels_count;
+extern unsigned int ColourPaletteData[];
 
 /*********************************************************************************************
 * Graphics library
 *********************************************************************************************/
+/*
+ * Main GUI rendering function, draws buttons, boxes, and text
+ */
 void draw_screen()
 {
+	initialize_colour_space();
+
 	draw_rectangle(AUTO_SORT_BTN, FILLED);
 	draw_rectangle(STOP_BTN, FILLED);
 
@@ -37,6 +43,12 @@ void draw_screen()
 	draw_line((line) BTM_RIGHT_LINE, HORIZONTAL);
 }
 
+/*
+ * Helper function to draw rectangles
+ * Input: 
+ * 	rectangle: struct of x1, x2, y1, y2, colour
+ * 	fill: possible values - EMPTY, FILLED, BOLDED
+ */
 void draw_rectangle(rectangle rect, rect_fill fill)
 {
 	if (fill == EMPTY) {
@@ -50,11 +62,22 @@ void draw_rectangle(rectangle rect, rect_fill fill)
 	}
 }
 
+/*
+ * Helper function to draw rectangles
+ * Input: 
+ * 	text: struct of x, y coordinates, colour, and text
+ */
 void draw_text(text txt)
 {
 	WriteStringFont2(txt.x, txt.y, txt.colour, BLACK, txt.text, 0);
 }
 
+/*
+ * Helper function to hardware accelerated lines
+ * Input: 
+ * 	line: struct of x, y coordinates, length, colour
+ * 	direction: possible values - HORIZONTAL, VERTICAL
+ */
 void draw_line(line line, line_dir direction) 
 {
 	if (direction == HORIZONTAL) {
@@ -65,6 +88,12 @@ void draw_line(line line, line_dir direction)
 	}
 }
 
+/*
+ * Helper function to write object count inside counter box
+ * Input: 
+ * 	point: x, y coordinate of count text
+ *  count: number of objects counted
+ */
 void draw_counter(point p, int count) {
 	char text[3];
 	if (count < 10) {
@@ -76,6 +105,9 @@ void draw_counter(point p, int count) {
 	WriteStringFont2(p.x, p.y, BLACK, WHITE, text, 1);
 }
 
+/*
+ * Helper function to reset object counts inside counter boxes to 0
+ */
 void reset_counters() {
 	draw_counter(RED_OBJ_LOC, 0);
 	draw_counter(GREEN_OBJ_LOC, 0);
@@ -83,11 +115,17 @@ void reset_counters() {
 	draw_counter(OTHER_OBJ_LOC, 0);
 }
 
+/*
+ * Helper function to reset button to default non-bolded state
+ */
 void reset_button(rectangle rect) {
 	clear_bolded_rectangle(rect);
 	draw_rectangle(rect, EMPTY);
 }
 
+/*
+ * Helper function to wipe screen with background colour
+ */
 void clear_screen()
 {
 	int y = 0;
@@ -97,11 +135,27 @@ void clear_screen()
 	}
 }
 
+/*
+ * Helper function to remove bolding from a rectangle
+ */
 void clear_bolded_rectangle(rectangle rect)
 {
 	BoldedRectangle(rect.x1, rect.x2, rect.y1, rect.y2, BOLDED_RECT_THICKNESS, BG_COLOUR);
 }
 
+/*
+ * Helper function to initialize first 64 colours in the provided palette
+ */
+void initialize_colour_space() {
+	int i;
+	for(i = 0; i < 64; i++) {
+		ProgramPalette(i, ColourPaletteData[i]);
+	}
+}
+
+/*
+ * Function to draw a rectangle
+ */
 void Rectangle(int x1, int x2, int y1, int y2, int colour)
 {
 	DrawHLine(x1, x2, y1, colour);
@@ -110,6 +164,9 @@ void Rectangle(int x1, int x2, int y1, int y2, int colour)
 	DrawVLine(x2, y1, y2, colour);
 }
 
+/*
+ * Function to draw a filled rectangle
+ */
 void FilledRectangle(int x1, int x2, int y1, int y2, int colour)
 {
 	int y = y1;
@@ -118,6 +175,9 @@ void FilledRectangle(int x1, int x2, int y1, int y2, int colour)
 	}
 }
 
+/*
+ * Function to draw a rectangle wtih bolded edges
+ */
 void BoldedRectangle(int x1, int x2, int y1, int y2, int thickness, int colour)
 {
 	int i;
@@ -127,6 +187,9 @@ void BoldedRectangle(int x1, int x2, int y1, int y2, int thickness, int colour)
 	}
 }
 
+/*
+ * Function to draw the smaller text
+ */
 void WriteStringFont1(int x, int y, int color, int bgColor, char* string, int erase)
 {
 	int i;
@@ -136,6 +199,9 @@ void WriteStringFont1(int x, int y, int color, int bgColor, char* string, int er
 	}
 }
 
+/*
+ * Function to draw the bigger text
+ */
 void WriteStringFont2(int x, int y, int color, int bgColor, char* string, int erase)
 {
 	int i;

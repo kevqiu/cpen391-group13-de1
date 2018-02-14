@@ -16,12 +16,18 @@ void init_arduino(void)
 	get_char_arduino();
 }
 
+/*
+ * Begins the auto sort process on the Arduino
+ */ 
 void auto_sort() {
 	char* arduino_command = "as:1";
 	send_message_arduino(arduino_command);
 }
 
-// 0 = CW, 1 = CCW
+/*
+ * Begins the sweep process on the Arduino
+ * Possible states: CW, CCW
+ */ 
 void sweep(sweep_state state) {
 	char arduino_command[6];
 
@@ -37,6 +43,10 @@ void sweep(sweep_state state) {
 	send_message_arduino(arduino_command);
 }
 
+/*
+ * Begins the conveyor process on the Arduino
+ * Possible states: ON, OFF
+ */
 void conveyor(conv_state state) {
 	char arduino_command[6];
 
@@ -49,12 +59,20 @@ void conveyor(conv_state state) {
 	send_message_arduino(arduino_command);
 }
 
+/*
+ * Begins the conveyor process on the Arduino
+ * Input: position of servo, range: 0 to 180
+ */
 void set_servo(int pos) {
 	char arduino_command[6];
 	sprintf(arduino_command, "s:%d", pos);
 	send_message_arduino(arduino_command);
 }
 
+/*
+ * Sends serial message to Arduino
+ * Terminates in carriage return to tell Arduino command has been fully sent
+ */
 void send_message_arduino(char* message) {
 	int i = 0;
 	while(message[i] != '\0') {
