@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <inttypes.h>
 
+#include "ram.h"
 #include "wifi.h"
 #include "arduino.h"
 #include "rs232.h"
@@ -13,6 +15,7 @@
 #include "io.h"
 #include "main.h"
 #include "sys/alt_alarm.h"
+#include "ram.h"
 
 // ----------- EXTERN VARIABLES ----------- //
 extern rectangle boxes[];
@@ -108,17 +111,20 @@ int main() {
 
 	srand(time(NULL));
 	int x;
-	int ImageColor[160*128];
-	for (x = 0; x < 160*128; x++) {
-		ImageColor[x] = rand() % 7 + 1;
+	int ImageColor[320*240];
+	for (x = 0; x < 320*240; x++) {
+		ImageColor[x] = BLACK;
 	}
 	
-	OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
+	//OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
 
 	printf("Ready!\n");
 
 	// Main loop
 	while (1) {
+
+
+
 		poll_gps();
 		poll_touchscreen();
 		poll_arduino();
@@ -142,7 +148,34 @@ int main() {
 				if (push_buttons & 0b100) {
 					leds = 0;
 					curr_sort = SORT_IMG_READY;
+
+					// -----------------------------
+					// MEMORY ACCESS TEST
+					// ----------------------------
+					char tmp[320*240/8];
+					int q = 0;
+					for (; q < 320*240/8; q++){
+						int r = 0;
+						char c = 0;
+						for (; r < 8; r++){
+							int pixel = *(RAMStart + q*8 + r);
+							printf("%x\n", pixel);
+							int red = (pixel >> 5) & 0b111;
+							int green = (pixel >> 2) & 0b111;
+							int blue = pixel & 0b11;
+							int sum = red + green + blue;
+							int turn_on = 0;
+							if (sum > 10) {
+								turn_on = 1;
+							}
+							c |= turn_on << (7 - r);
+						}
+						tmp[q] = c;
+					}
+					OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 320, 240, tmp, ImageColor);
 				}
+
+
 			}
 
 			else if (curr_sort == SORT_IMG_READY) {
@@ -155,7 +188,7 @@ int main() {
 				for (x = 0; x < 160*128; x++) {
 					ImageColor[x] = obj->colour;
 				}
-				OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
+				//OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
 				// set flag to draw timestamp at time scanned
 				image_scanned = 1;
 				// set direction

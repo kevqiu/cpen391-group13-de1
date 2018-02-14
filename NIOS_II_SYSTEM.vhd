@@ -60,9 +60,9 @@ ENTITY NIOS_II_SYSTEM IS
 		----------------------------------------------------------------
 		TD_CLK27 					: in std_logic;
 		TD_DATA						: in std_logic_vector(7 downto 0);
-		TD_HS						: in std_logic;
+		TD_HS						   : in std_logic;
 		TD_VS 						: in std_logic;
-		TD_RESET_N					: out std_logic;
+		TD_RESET_N					: out std_logic
 		 -- Not used ? 
 		-- ntsc_decoder_clk27_reset	: in std_logic;
 		-- ntsc_decoder_overflow_flag 	: out std_logic;
@@ -70,15 +70,13 @@ ENTITY NIOS_II_SYSTEM IS
 		-----------------------------------------------------------------
 		-- SRAM 
 		-----------------------------------------------------------------
-		image_address         : in    std_logic_vector(16 downto 0); -- address
-		image_chipselect      : in    std_logic;                              -- chipselect
-		image_clken           : in    std_logic;                              -- clken
-		image_write           : in    std_logic;                              -- write
-		image_readdata        : out   std_logic_vector(15 downto 0);          -- readdata
-		image_writedata       : in    std_logic_vector(15 downto 0); -- writedata
-		image_byteenable      : in    std_logic_vector(1 downto 0)  -- byteenable
-
-
+		-- image_address         : in    std_logic_vector(16 downto 0); -- address
+		-- image_chipselect      : in    std_logic;                              -- chipselect
+		-- image_clken           : in    std_logic;                              -- clken
+		-- image_write           : in    std_logic;                              -- write
+		-- image_readdata        : out   std_logic_vector(15 downto 0);          -- readdata
+		-- image_writedata       : in    std_logic_vector(15 downto 0); -- writedata
+		-- image_byteenable      : in    std_logic_vector(1 downto 0)  -- byteenable
 	);
 END NIOS_II_SYSTEM;
 
@@ -133,24 +131,25 @@ ARCHITECTURE NIOS_II_SYSTEM_rtl OF NIOS_II_SYSTEM IS
 		-----------------------------------------------------------------
 		-- NTSC Decoder
 		-----------------------------------------------------------------
+
 		ntsc_decoder_TD_CLK27      : in    std_logic                     := 'X';             -- TD_CLK27
 		ntsc_decoder_TD_DATA       : in    std_logic_vector(7 downto 0)  := (others => 'X'); -- TD_DATA
 		ntsc_decoder_TD_HS         : in    std_logic                     := 'X';             -- TD_HS
 		ntsc_decoder_TD_VS         : in    std_logic                     := 'X';             -- TD_VS
 		ntsc_decoder_clk27_reset   : in    std_logic                     := 'X';             -- clk27_reset
 		ntsc_decoder_TD_RESET      : out   std_logic;                                        -- TD_RESET
-		ntsc_decoder_overflow_flag : out   std_logic;                                        -- overflow_flag
-
+		ntsc_decoder_overflow_flag : out   std_logic                                        -- overflow_flag
+		
 		---------------------------------------------------------------
 		-- Image data SRAM
 		---------------------------------------------------------------
-		image_data_address         : in    std_logic_vector(16 downto 0) := (others => 'X'); -- address
-		image_data_chipselect      : in    std_logic                     := 'X';             -- chipselect
-		image_data_clken           : in    std_logic                     := 'X';             -- clken
-		image_data_write           : in    std_logic                     := 'X';             -- write
-		image_data_readdata        : out   std_logic_vector(15 downto 0);                    -- readdata
-		image_data_writedata       : in    std_logic_vector(15 downto 0) := (others => 'X'); -- writedata
-		image_data_byteenable      : in    std_logic_vector(1 downto 0)  := (others => 'X')  -- byteenable
+		--image_data_address         : in    std_logic_vector(16 downto 0) := (others => 'X'); -- address
+		--image_data_chipselect      : in    std_logic                     := 'X';             -- chipselect
+		--image_data_clken           : in    std_logic                     := 'X';             -- clken
+		--image_data_write           : in    std_logic                     := 'X';             -- write
+		--image_data_readdata        : out   std_logic_vector(15 downto 0);                    -- readdata
+		--image_data_writedata       : in    std_logic_vector(15 downto 0) := (others => 'X'); -- writedata
+		--image_data_byteenable      : in    std_logic_vector(1 downto 0)  := (others => 'X')  -- byteenable
 
 	);
 	END COMPONENT;
@@ -204,21 +203,20 @@ BEGIN
 		hex2_3_export 			=> Hex2_3,
 		hex4_5_export 			=> Hex4_5,
 
-
 		ntsc_decoder_TD_CLK27      => TD_CLK27,      -- ntsc_decoder.TD_CLK27
 		ntsc_decoder_TD_DATA       => TD_DATA,       --             .TD_DATA
 		ntsc_decoder_TD_HS         => TD_HS,         --             .TD_HS
 		ntsc_decoder_TD_VS         => TD_VS,         --             .TD_VS
-		ntsc_decoder_TD_RESET      => TD_RESET_N,      --             .TD_RESET
+		ntsc_decoder_TD_RESET      => TD_RESET_N      --             .TD_RESET
 		--ntsc_decoder_clk27_reset   => ,   --             .clk27_reset
 		--ntsc_decoder_overflow_flag => CONNECTED_TO_ntsc_decoder_overflow_flag, --             .overflow_flag
 		
-		image_data_address         => image_address,         --   image_data.address
-		image_data_chipselect      => image_chipselect,      --             .chipselect
-		image_data_clken           => image_clken,           --             .clken
-		image_data_write           => image_write,           --             .write
-		image_data_readdata        => image_readdata,        --             .readdata
-		image_data_writedata       => image_writedata,       --             .writedata
-		image_data_byteenable      => image_byteenable		 --             .byteenable
+		--image_data_address         => image_address,         --   image_data.address
+		--image_data_chipselect      => image_chipselect,      --             .chipselect
+		--image_data_clken           => image_clken,           --             .clken
+		--image_data_write           => image_write,           --             .write
+		--image_data_readdata        => image_readdata,        --             .readdata
+		--image_data_writedata       => image_writedata,       --             .writedata
+		--image_data_byteenable      => image_byteenable		 --             .byteenable
 	);
 END NIOS_II_SYSTEM_rtl;
