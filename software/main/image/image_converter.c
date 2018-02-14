@@ -43,11 +43,9 @@ void convert_8_bit_to_16_bit(int* r, int* g, int* b, colour_t* img, int size) {
 		int red = ((r[i] >> 3) & 0b00011111);
 		int green = ((g[i] >> 2) & 0b00111111);
 		int blue = ((b[i] >> 3) & 0b00011111);
-        //printf("convert 8 to 16 r: %d, g: %d, b: %d\n", red, green, blue);
         colour_t new_val = (red << 11) | (green << 5) | (blue);
         img[i] = new_val;
 	}
-	printf("done converting 8 to 16\n");
 }
 
 /*

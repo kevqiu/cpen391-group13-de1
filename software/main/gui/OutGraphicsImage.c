@@ -20,7 +20,7 @@ void OutGraphicsImage(int x, int y, int x_size, int y_size, char* img, int* colo
 				else {
 					WriteAPixel(x + (col * 8) + bit,
 						y+row,
-						BG_COLOUR);
+						BLACK);
 				}
 				BitMask = BitMask >> 1;
 			}

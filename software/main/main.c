@@ -19,11 +19,9 @@
 // ----------- EXTERN VARIABLES ----------- //
 extern rectangle boxes[];
 
-extern char Trump[];
-
-extern colour_t red_lego_R[];
-extern colour_t red_lego_G[];
-extern colour_t red_lego_B[];
+extern colour_t whacky_R[];
+extern colour_t whacky_G[];
+extern colour_t whacky_B[];
 
 // ----------- GLOBAL VARIABLES ----------- //
 // Timestamp
@@ -120,7 +118,7 @@ int main() {
 	int res = size_x * size_y;
 
 	colour_t img_in_rgb[res];
-	convert_8_bit_to_16_bit(red_lego_R, red_lego_G, red_lego_B, test, res);
+	convert_8_bit_to_16_bit(whacky_R, whacky_G, whacky_B, img_in_rgb, res);
 
 	image_t* img = process_image(img_in_rgb, res);
 
@@ -199,7 +197,7 @@ int main() {
 				for (x = 0; x < 160*128; x++) {
 					ImageColor[x] = random;
 				}
-				OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
+				//OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
 				// set flag to draw timestamp at time scanned
 				image_scanned = 1;
 				// set direction
