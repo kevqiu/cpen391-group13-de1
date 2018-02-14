@@ -272,8 +272,8 @@ agreement for further details.
 	(port
 		(pt 272 448)
 		(output)
-		(text "TD_RESET_N" (rect 0 0 66 12)(font "Arial" ))
-		(text "TD_RESET_N" (rect 185 443 251 455)(font "Arial" ))
+		(text "TD_RESET" (rect 0 0 53 12)(font "Arial" ))
+		(text "TD_RESET" (rect 198 443 251 455)(font "Arial" ))
 		(line (pt 272 448)(pt 256 448)(line_width 1))
 	)
 	(port

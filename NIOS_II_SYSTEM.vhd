@@ -59,10 +59,10 @@ ENTITY NIOS_II_SYSTEM IS
 		-- NTSC Decoder
 		----------------------------------------------------------------
 		TD_CLK27 					: in std_logic;
-		TD_DATA						: in std_logic_vector(7 downto 0);
-		TD_HS						   : in std_logic;
+		TD_DATA					: in std_logic_vector(7 downto 0);
+		TD_HS						: in std_logic;
 		TD_VS 						: in std_logic;
-		TD_RESET_N					: out std_logic
+		TD_RESET					: out std_logic
 		 -- Not used ? 
 		-- ntsc_decoder_clk27_reset	: in std_logic;
 		-- ntsc_decoder_overflow_flag 	: out std_logic;
@@ -131,14 +131,11 @@ ARCHITECTURE NIOS_II_SYSTEM_rtl OF NIOS_II_SYSTEM IS
 		-----------------------------------------------------------------
 		-- NTSC Decoder
 		-----------------------------------------------------------------
-
 		ntsc_decoder_TD_CLK27      : in    std_logic                     := 'X';             -- TD_CLK27
 		ntsc_decoder_TD_DATA       : in    std_logic_vector(7 downto 0)  := (others => 'X'); -- TD_DATA
 		ntsc_decoder_TD_HS         : in    std_logic                     := 'X';             -- TD_HS
 		ntsc_decoder_TD_VS         : in    std_logic                     := 'X';             -- TD_VS
-		ntsc_decoder_clk27_reset   : in    std_logic                     := 'X';             -- clk27_reset
-		ntsc_decoder_TD_RESET      : out   std_logic;                                        -- TD_RESET
-		ntsc_decoder_overflow_flag : out   std_logic                                        -- overflow_flag
+		ntsc_decoder_TD_RESET      : out   std_logic                                        -- TD_RESET
 		
 		---------------------------------------------------------------
 		-- Image data SRAM
@@ -207,7 +204,7 @@ BEGIN
 		ntsc_decoder_TD_DATA       => TD_DATA,       --             .TD_DATA
 		ntsc_decoder_TD_HS         => TD_HS,         --             .TD_HS
 		ntsc_decoder_TD_VS         => TD_VS,         --             .TD_VS
-		ntsc_decoder_TD_RESET      => TD_RESET_N      --             .TD_RESET
+		ntsc_decoder_TD_RESET      => TD_RESET      --             .TD_RESET
 		--ntsc_decoder_clk27_reset   => ,   --             .clk27_reset
 		--ntsc_decoder_overflow_flag => CONNECTED_TO_ntsc_decoder_overflow_flag, --             .overflow_flag
 		

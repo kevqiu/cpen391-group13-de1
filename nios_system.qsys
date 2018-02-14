@@ -1155,17 +1155,17 @@
    kind="clock"
    version="15.0"
    start="clocks.sys_clk"
-   end="dma_stream_to_mem.clk" />
- <connection
-   kind="clock"
-   version="15.0"
-   start="clocks.sys_clk"
    end="rgb_resampler_24_to_16.clk" />
  <connection
    kind="clock"
    version="15.0"
    start="clocks.sys_clk"
    end="to_external_bus_bridge_0.clk" />
+ <connection
+   kind="clock"
+   version="15.0"
+   start="clocks.sys_clk"
+   end="dma_stream_to_mem.clk" />
  <connection
    kind="interrupt"
    version="15.0"

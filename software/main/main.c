@@ -100,10 +100,10 @@ int main() {
 	};
 
 	// Initialiize modules
-	init_touch();
-	init_gps();
-	init_arduino();
-	init_wifi();
+	//init_touch();
+	//init_gps();
+	//init_arduino();
+	//init_wifi();
 
 	// Reset GUI
 	clear_screen();
@@ -119,15 +119,39 @@ int main() {
 	//OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
 
 	printf("Ready!\n");
+	// -----------------------------
+	// MEMORY ACCESS TEST
+	// ----------------------------
+	char tmp[320*240/8];
+	int q = 0;
+	for (; q < 320*240/8; q++){
+		int r = 0;
+		char c = 0;
+		for (; r < 8; r++){
+			int pixel = *(RAMStart + q*8 + r);
+			//printf("%x\n", pixel);
+			int red = (pixel >> 5) & 0b111;
+			int green = (pixel >> 2) & 0b111;
+			int blue = pixel & 0b11;
+			int sum = red + green + blue;
+			int turn_on = 0;
+			if (sum > 10) {
+				turn_on = 1;
+			}
+			c |= turn_on << (7 - r);
+		}
+		tmp[q] = c;
+	}
+	OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 320, 240, tmp, ImageColor);
 
 	// Main loop
 	while (1) {
 
 
 
-		poll_gps();
-		poll_touchscreen();
-		poll_arduino();
+		//poll_gps();
+		//poll_touchscreen();
+		//poll_arduino();
 
 		if (gps_ready) {
 			handle_gps();
@@ -149,30 +173,7 @@ int main() {
 					leds = 0;
 					curr_sort = SORT_IMG_READY;
 
-					// -----------------------------
-					// MEMORY ACCESS TEST
-					// ----------------------------
-					char tmp[320*240/8];
-					int q = 0;
-					for (; q < 320*240/8; q++){
-						int r = 0;
-						char c = 0;
-						for (; r < 8; r++){
-							int pixel = *(RAMStart + q*8 + r);
-							printf("%x\n", pixel);
-							int red = (pixel >> 5) & 0b111;
-							int green = (pixel >> 2) & 0b111;
-							int blue = pixel & 0b11;
-							int sum = red + green + blue;
-							int turn_on = 0;
-							if (sum > 10) {
-								turn_on = 1;
-							}
-							c |= turn_on << (7 - r);
-						}
-						tmp[q] = c;
-					}
-					OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 320, 240, tmp, ImageColor);
+
 				}
 
 
