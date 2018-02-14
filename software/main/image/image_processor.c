@@ -80,6 +80,7 @@ image_t* process_image(colour_t* img, int res) {
             image->relevant_pixels[i] = relevant_pixels(blues, i);
         }
     }
+    // NO DOMINANCE
     else {
         image->colour = BLACK;
         for (i = 0; i < res / 8; i++) {

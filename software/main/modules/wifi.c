@@ -18,7 +18,7 @@ void init_wifi(void)
 }
 
 // 604-670-3470 is the Twilio number
-// this sends it to Kevin's number, pls don't spam me :(
+// this sends it to Kevin's number
 void send_text(char* text) {
 	char text_message[1024];
 	sprintf(text_message, "send_sms(\"(604) 670-3470\", \"(604) 779-2689\", \"%s\")", text);

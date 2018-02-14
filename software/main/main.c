@@ -6,7 +6,6 @@
 
 #include "wifi.h"
 #include "arduino.h"
-#include "rs232.h"
 #include "graphics.h"
 #include "touchscreen.h"
 #include "gps.h"
@@ -55,18 +54,6 @@ scanned_obj* green_object;
 scanned_obj* blue_object;
 scanned_obj* other_object;
 
-// ---------- FUNCTION PROTOTYPES --------- //
-void poll_gps(void);
-void handle_gps(void);
-
-void poll_touchscreen(void);
-void handle_touchscreen(void);
-
-void poll_arduino(void);
-void handle_arduino(void);
-
-scanned_obj* init_scanned_obj(int colour, int position, point location);
-
 int main() {
 	printf("Initializing...\n");
 
@@ -112,9 +99,9 @@ int main() {
 
 	srand(time(NULL));
 
+	// TEST IMAGE START
 	int size_x = 160;
 	int size_y = 128;
-
 	int res = size_x * size_y;
 
 	colour_t img_in_rgb[res];
@@ -129,53 +116,33 @@ int main() {
 	}
 
 	OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, size_x, size_y, img->relevant_pixels, ImageColor);
+	// TEST IMAGE END
 
-	// int size_x = 40;
-	// int size_y = 2;
-	// int dim = size_x * size_y;
-	// // TEST IMAGE
-	// colour_t test[dim];
-	// int test_out[dim];
-	// char test_pixel[dim/8];
-	// int test_i;
-	// printf("test1\n");
-	// for (test_i = 0; test_i < dim; test_i++) {
-	// 	//test[test_i] = NTSC_40x2[test_i];
-	// }
-	// printf("test2\n");
-	
-	// for (test_i = 0; test_i < dim/8; test_i++) {
-	// 	test_pixel[test_i] = 0b11111111;
-	// }
-	// printf("test3\n");
-
-	// convert_8_bit_to_16_bit(NTSC_40x2_R, NTSC_40x2_G, NTSC_40x2_B, test, dim);
-	// map_image_to_palette(test, test_out, dim);
-	// printf("test4\n");
-	
-	// OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, size_x, size_y, test_pixel, test_out);
-	
 	//OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
 
 	printf("Ready!\n");
 
 	// Main loop
 	while (1) {
+		// Handle module Rx inputs
 		poll_gps();
 		poll_touchscreen();
 		poll_arduino();
-
+		
+		// Check if any module has finished sending a command
 		if (gps_ready) {
 			handle_gps();
 		}
 		if (ts_ready) {
 			handle_touchscreen();
 		}
+		// Auto sort process
 		if (curr_mode == MODE_AUTO_SORT) {
+			// Check if Arduino has detected object in laser or has timed out
 			if (curr_sort == SORT_ARD_READY) {
 				handle_arduino();
 			}
-
+			// If object detected, capture image
 			else if (curr_sort == SORT_CAM_READY) {
 				// TODO: REPLACE WITH CAMERA CODE
 				leds = 0b111111111;
@@ -185,7 +152,7 @@ int main() {
 					curr_sort = SORT_IMG_READY;
 				}
 			}
-
+			// Once image has been captured, process image
 			else if (curr_sort == SORT_IMG_READY) {
 				// process image
 				int x = rand() % 4;
@@ -215,8 +182,6 @@ int main() {
 			}
 		}
 	}
-
-	printf("Complete!\n");
 	return 0;
 }
 
@@ -232,6 +197,8 @@ void poll_gps() {
 }
 
 // Poll for Touchscreen data
+// Update state if event has touched
+// eg. touch to release or new touch
 void poll_touchscreen() {
 	if (is_screen_touched()) {
 		int c = get_char_touchscreen();
@@ -304,6 +271,7 @@ void handle_touchscreen() {
 		if (ts_state == TS_STATE_TOUCHED) {
 			// special case for touch handle during auto sorting or override
 			if (curr_mode == MODE_AUTO_SORT || curr_mode == MODE_OVERRIDE) {
+				// Terminates auto sort or override processes
 				if (touch_in_button(p, STOP_BTN)) {
 					stop_btn_pressed = 1;
 					curr_mode = MODE_IDLE;
@@ -311,6 +279,7 @@ void handle_touchscreen() {
 				}
 			}
 			else if (curr_mode != MODE_SWEEP) {
+				// Reset object counters and begin auto sort process
 				if (touch_in_button(p, AUTO_SORT_BTN)) {
 					curr_btn = 0;
 					curr_mode = MODE_AUTO_SORT;
@@ -318,6 +287,7 @@ void handle_touchscreen() {
 					reset_counters();
 					auto_sort();
 				}
+				// SWEEP_CW and SWEEP_CCW sweep the servo in it's respective direction
 				else if (touch_in_button(p, SWEEP_CW_BTN)) {
 					curr_btn = 2;
 					curr_mode = MODE_SWEEP;
@@ -328,6 +298,7 @@ void handle_touchscreen() {
 					curr_mode = MODE_SWEEP;
 					sweep(CCW);
 				}
+				// POS_1 to POS_4 buttons are overrides. Sets servo position and runs conveyor
 				else if (touch_in_button(p, POS_1_BTN)) {
 					curr_btn = 4;
 					curr_mode = MODE_OVERRIDE;
@@ -353,11 +324,12 @@ void handle_touchscreen() {
 					conveyor(ON);
 				}
 			}
+			// No button is pressed
 			else {
 				curr_btn = -1;
 			}
 
-			// if pressing a button
+			// If pressing a button, bold the pressed button
 			if (curr_btn > -1 && !stop_btn_pressed) {
 				draw_rectangle(boxes[curr_btn], BOLDED);
 			}
@@ -386,27 +358,31 @@ void handle_touchscreen() {
 			}
 		}
 	}
-
+	// clear ready flag and buffer
 	ts_ready = 0;
 	strcpy(ts_buff, "");
 }
 
 /*
  * Check if the Arduino has returned a serial command
- * ls: limit switch has been triggered,
+ * ls: laser has been triggered,
  * 		signifying an object is ready to be scanned
  * dn: timeout has been triggered,
  * 		send a text notifying user the scanning process has been completed
  */
 void handle_arduino() {
+	// laser has been broken, prepare to capture object
 	if (strcmp(ard_buff, "ls\n") == 0) {
 		curr_sort = SORT_CAM_READY;
 	}
+	// timeout has been reached, stop process and send completion text
 	else if (strcmp(ard_buff, "dn\n") == 0) {
 		char text[512];
 		sprintf(text, "Sorting complete!\\\nResults - Red: %i   Green: %i   Blue: %i   Other: %i",
 			red_object->count, green_object->count, blue_object->count, other_object->count);
 		send_text(text);
+
+		// reset GUI and states
 		reset_button(boxes[curr_btn]);
 		reset_button(boxes[1]);
 		curr_btn = -1;
@@ -416,11 +392,14 @@ void handle_arduino() {
 	else {
 		curr_sort = SORT_IDLE;
 	}
-
+	// clear ready flag and buffer
 	ard_inc = 0;
 	strcpy(ard_buff, "");
 }
 
+/*
+ * Helper to initialize scanned object structs.
+ */
 scanned_obj* init_scanned_obj(int colour, int position, point location) {
 	scanned_obj* obj = malloc(sizeof(scanned_obj));
 

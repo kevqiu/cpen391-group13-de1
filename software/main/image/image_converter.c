@@ -6,6 +6,22 @@
 extern unsigned int ColourPaletteData[];
 
 /*
+ * Given three arrays of 8 bit values in RGB spaces, generate an array representing
+ * an image in 16 bit colour space. Each entry in the output array contains the RGB values
+ * in this format: RRRRR GGGGGG BBBBB
+ */
+void convert_8_bit_to_16_bit(int* r, int* g, int* b, colour_t* img, int size) {
+	int i;
+	for(i = 0; i < size; i++) {
+		int red = ((r[i] >> 3) & 0b00011111);
+		int green = ((g[i] >> 2) & 0b00111111);
+		int blue = ((b[i] >> 3) & 0b00011111);
+        colour_t new_val = (red << 11) | (green << 5) | (blue);
+        img[i] = new_val;
+	}
+}
+
+/*
  * Converts an image in 16 bit colour space to an image to be
  * consumed by OutGraphics.
  * input: array in 16 bit colour space, from memory
@@ -18,6 +34,11 @@ void map_image_to_palette(colour_t* input, int* output, int size) {
     }
 }
 
+/*
+ * Given an RGB value, calculate the closest palette colour in the RGB space.
+ * Uses closest neighbour methodology.
+ * VERY SLOW, AVOID USING
+ */
 int map_rgb_to_palette(rgb_t val) {
     int closest_colour = 1; // default value is white;
     int min_dist = INT_MAX;
@@ -35,17 +56,6 @@ int map_rgb_to_palette(rgb_t val) {
         }
     }
     return closest_colour;
-}
-
-void convert_8_bit_to_16_bit(int* r, int* g, int* b, colour_t* img, int size) {
-	int i;
-	for(i = 0; i < size; i++) {
-		int red = ((r[i] >> 3) & 0b00011111);
-		int green = ((g[i] >> 2) & 0b00111111);
-		int blue = ((b[i] >> 3) & 0b00011111);
-        colour_t new_val = (red << 11) | (green << 5) | (blue);
-        img[i] = new_val;
-	}
 }
 
 /*
