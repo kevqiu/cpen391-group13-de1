@@ -11,6 +11,7 @@
 #include "touchscreen.h"
 #include "gps.h"
 #include "image_processor.h"
+#include "image_converter.h"
 #include "structs.h"
 #include "io.h"
 #include "main.h"
@@ -23,7 +24,7 @@ extern rectangle boxes[];
 extern colour_t whacky_R[];
 extern colour_t whacky_G[];
 extern colour_t whacky_B[];
-
+extern char Trump[];
 // ----------- GLOBAL VARIABLES ----------- //
 // Timestamp
 char curr_time[12];
@@ -49,6 +50,7 @@ mode_state curr_mode;
 // Autosort state
 sort_state curr_sort;
 int image_scanned;
+int colour_scanned;
 
 // Scanned objects
 scanned_obj* red_object;
@@ -61,6 +63,7 @@ int main() {
 
 	// Initialize loop variables	
 	curr_time[0] = '\0';
+
 
 	ts_state = 0;
 	prev_ts_state = TS_STATE_UNTOUCHED;
@@ -76,6 +79,7 @@ int main() {
 
 	curr_sort = SORT_IDLE;
 	image_scanned = 0;
+	colour_scanned = 0;
 
 	red_object = init_scanned_obj(RED, RED_POS, RED_OBJ_LOC);
 	green_object = init_scanned_obj(LIME, GREEN_POS, GREEN_OBJ_LOC);
@@ -90,10 +94,10 @@ int main() {
 	};
 
 	// Initialiize modules
-	//init_touch();
-	//init_gps();
-	//init_arduino();
-	//init_wifi();
+	init_touch();
+	init_gps();
+	init_arduino();
+	init_wifi();
 
 	// Reset GUI
 	clear_screen();
@@ -106,48 +110,7 @@ int main() {
 	int size_y = 128;
 	int res = size_x * size_y;
 
-	colour_t img_in_rgb[res];
-	convert_8_bit_to_16_bit(whacky_R, whacky_G, whacky_B, img_in_rgb, res);
-
-	image_t* img = process_image(img_in_rgb, res);
-
-	int x;
-	int ImageColor[res];
-	for (x = 0; x < res; x++) {
-		ImageColor[x] = img->colour;
-	}
-
-	OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, size_x, size_y, img->relevant_pixels, ImageColor);
-	// TEST IMAGE END
-
-	//OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
-
 	printf("Ready!\n");
-	// -----------------------------
-	// MEMORY ACCESS TEST
-	// ----------------------------
-	char tmp[320*240/8];
-	int q = 0;
-	for (; q < 320*240/8; q++){
-		int r = 0;
-		char c = 0;
-		for (; r < 8; r++){
-			int pixel = *(RAMStart + q*8 + r);
-			//printf("%x\n", pixel);
-			int red = (pixel >> 5) & 0b111;
-			int green = (pixel >> 2) & 0b111;
-			int blue = pixel & 0b11;
-			int sum = red + green + blue;
-			int turn_on = 0;
-			if (sum > 10) {
-				turn_on = 1;
-			}
-			c |= turn_on << (7 - r);
-		}
-		tmp[q] = c;
-	}
-	OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 320, 240, tmp, ImageColor);
-
 	// Main loop
 	while (1) {
 		// Handle module Rx inputs
@@ -170,32 +133,119 @@ int main() {
 			}
 			// If object detected, capture image
 			else if (curr_sort == SORT_CAM_READY) {
-				// TODO: REPLACE WITH CAMERA CODE
-				leds = 0b111111111;
-				// "take a picture" using a button
-				// freeze a frame here
-				if (push_buttons & 0b100) {
-					leds = 0;
-					curr_sort = SORT_IMG_READY;
-
-
+				// Signify that an image is being taken
+				colour_scanned = rand() % 4 + 2;
+				int ImageColor[res];
+				int x;
+				for (x = 0; x < res; x++) {
+					ImageColor[x] = colour_scanned;
 				}
 
+				char tmp[160*128/8];
+				int q = 0;
+				usleep(500000);
+				for (; q < 160*128/8; q++){
+					int r = 0;
+					char c = 0;
+					for (; r < 8; r++){
+						int pixel = *(RAMStart + q*8 + r);
+						//printf("%x\n", pixel);
+						int red = (pixel >> 5) & 0b111;
+						int green = (pixel >> 2) & 0b111;
+						int blue = pixel & 0b11;
+						//printf("R: %d, G: %d, B: %d\n", red, green, blue);
+						int sum = red + green + blue;
+						int turn_on = 0;
+						if (sum > 10) {
+							turn_on = 1;
+						}
+						c |= turn_on << (7 - r);
+					}
+					tmp[q] = c;
+				}
+				OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, size_x, size_y, tmp, ImageColor);
+				curr_sort = SORT_IMG_READY;
 
+				// char tmp[160*128/8];
+				// uint16_t pixels[res];
+				// int q = 0;
+				// //*(RAMControl) = 0b000;
+				// for (; q < 160*128/8; q++) {
+				// 	int r = 0;
+				// 	char ch = 0;
+				// 	for (; r < 8; r++){
+				// 		//char pixel = *(RAMStart + q*8 + r);
+				// 		//char pixel2 = *(RAMStart + q*8 + r + 1);
+				// 		uint16_t c = *(RAMStart + q*8 + r); //(pixel << 8) | pixel2;
+				// 		pixels[q*8 + r/2] = c;
+				// 		//printf("%x\n", pixel);
+				// 		int red = (c >> 11) & 0b11111;
+				// 		int green = (c >> 6) & 0b11111;
+				// 		int blue = c & 0b11111;
+				// 		/printf("R: %d, G: %d, B: %d\n", red, green, blue);
+				// 		int sum = red + green + blue;
+				// 		int turn_on = 0;
+				// 		if (sum > 50) {
+				// 			turn_on = 1;
+				// 		}
+				// 		ch = ch | (turn_on << (7 - (r/2)));
+				// 	}
+				// 	tmp[q] = ch;
+				// }
+
+				//*(RAMControl) = 0b100;
+				// image8_t* img = process_8_bit_image(pixels, res);
+				// int colour_scanned = img->colour;
+				// if (colour_scanned == RED)
+				// {
+				// 	printf("Red\n");
+				// } else if (colour_scanned == LIME) {
+				// 	printf("Green\n");
+				// } else if (colour_scanned == BLUE) {
+				// 	printf("Blue\n");
+				// } else {
+				// 	printf("Other\n");
+				// }
+
+
+				/**
+				*(RAMControl) = 0b0;
+				leds = 0b111111111;
+				int q;
+				char tmp[res];
+				for (q = 0; q < res; q++) {
+					tmp[q] = *(RAMStart + q);
+					//printf("%x\n", tmp[q]);
+				}
+				// Image array
+				colour_t img_in_rgb[res];
+				convert_8_bit_to_16_bit_byte(tmp, img_in_rgb, res);
+				image_t* img = process_image(img_in_rgb, res);
+				char rp[res];
+				calculate_relevant_pixels(img->colour_data, rp, res);
+				int m;
+				for (m = 0; m < res/8; m++){
+					//printf("%x\n", rp[m]);
+				}
+				int x;
+				int ImageColor[res];// = malloc(res*sizeof(int));
+				for (x = 0; x < res; x++) {
+					ImageColor[x] = img->colour;//img->colour;
+				}
+				OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, size_x, size_y, rp, ImageColor);
+				//colour_scanned = img->colour;
+				//free(ImageColor);
+				//free(img->relevant_pixels);
+				//free(img);
+				curr_sort = SORT_IMG_READY;
+				**/
 			}
 			// Once image has been captured, process image
 			else if (curr_sort == SORT_IMG_READY) {
 				// process image
-				int x = rand() % 4;
-				scanned_obj* obj = objects[x];			
+				scanned_obj* obj = objects[colour_scanned-2];
 				// update and draw new object count
 				draw_counter(obj->loc, ++obj->count);
-				// draw image on screen
-				int random = rand() % 64 + 1;
-				for (x = 0; x < 160*128; x++) {
-					ImageColor[x] = random;
-				}
-				//OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, 160, 128, Trump, ImageColor);
 				// set flag to draw timestamp at time scanned
 				image_scanned = 1;
 				// set direction
@@ -408,10 +458,12 @@ void handle_arduino() {
 	}
 	// timeout has been reached, stop process and send completion text
 	else if (strcmp(ard_buff, "dn\n") == 0) {
-		char text[512];
+		char text[256];
 		sprintf(text, "Sorting complete!\\\nResults - Red: %i   Green: %i   Blue: %i   Other: %i",
 			red_object->count, green_object->count, blue_object->count, other_object->count);
+		printf("%s\n", text);
 		send_text(text);
+		printf("Succesfully alerted\n", text);
 
 		// reset GUI and states
 		reset_button(boxes[curr_btn]);

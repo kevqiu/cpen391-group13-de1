@@ -22,6 +22,24 @@ void convert_8_bit_to_16_bit(int* r, int* g, int* b, colour_t* img, int size) {
 }
 
 /*
+ * Given an 8 bit value representing RGB (3 red, 3 green, 2 blue), generate an array representing
+ * an image in 16 bit colour space. Each entry in the output array contains the RGB values
+ * in this format: RRRRR GGGGGG BBBBB
+ */
+void convert_8_bit_to_16_bit_byte(char* rgb, colour_t* img, int size) {
+	int i;
+	for(i = 0; i < size; i++) {
+        char pixel = rgb[i];
+        char red = (pixel >> 5) & 0b111;
+        char green = (pixel >> 2) & 0b111;
+        char blue = pixel & 0b11;
+        colour_t new_val = (red << 11) | (green << 5) | (blue);
+        //printf("r: %d, r: %d, b: %d", red, green, blue);
+        img[i] = new_val;
+	}
+}
+
+/*
  * Converts an image in 16 bit colour space to an image to be
  * consumed by OutGraphics.
  * input: array in 16 bit colour space, from memory

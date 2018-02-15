@@ -130,7 +130,7 @@
          type = "int";
       }
    }
-   element clipper_640
+   element clipper_320x256
    {
       datum _sortIndex
       {
@@ -168,6 +168,19 @@
       {
          value = "22";
          type = "int";
+      }
+   }
+   element dma_stream_to_mem.avalon_dma_control_slave
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "0";
+         type = "String";
       }
    }
    element jtag_uart_0
@@ -270,7 +283,7 @@
          type = "int";
       }
    }
-   element scaler_320
+   element scaler_160
    {
       datum _sortIndex
       {
@@ -554,26 +567,26 @@
   <parameter name="output_type" value="YCrCb 444" />
  </module>
  <module
-   name="clipper_640"
+   name="clipper_320x256"
    kind="altera_up_avalon_video_clipper"
    version="15.0"
    enabled="1">
   <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone V" />
-  <parameter name="add_bottom" value="0" />
+  <parameter name="add_bottom" value="6" />
   <parameter name="add_left" value="0" />
   <parameter name="add_right" value="0" />
-  <parameter name="add_top" value="0" />
+  <parameter name="add_top" value="6" />
   <parameter name="add_value_plane_1" value="0" />
   <parameter name="add_value_plane_2" value="0" />
   <parameter name="add_value_plane_3" value="0" />
   <parameter name="add_value_plane_4" value="0" />
   <parameter name="color_bits" value="8" />
   <parameter name="color_planes" value="1" />
-  <parameter name="drop_bottom" value="2" />
-  <parameter name="drop_left" value="40" />
-  <parameter name="drop_right" value="40" />
-  <parameter name="drop_top" value="2" />
+  <parameter name="drop_bottom" value="0" />
+  <parameter name="drop_left" value="200" />
+  <parameter name="drop_right" value="200" />
+  <parameter name="drop_top" value="0" />
   <parameter name="height_in" value="244" />
   <parameter name="width_in" value="720" />
  </module>
@@ -615,14 +628,14 @@
   <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone V" />
   <parameter name="addr_mode" value="Consecutive" />
-  <parameter name="back_start_address" value="201129984" />
+  <parameter name="back_start_address" value="200933376" />
   <parameter name="color_bits" value="8" />
   <parameter name="color_planes" value="1" />
   <parameter name="dma_enabled" value="true" />
-  <parameter name="height" value="240" />
+  <parameter name="height" value="128" />
   <parameter name="mode">From Stream to Memory</parameter>
-  <parameter name="start_address" value="201129984" />
-  <parameter name="width" value="320" />
+  <parameter name="start_address" value="200933376" />
+  <parameter name="width" value="160" />
  </module>
  <module
    name="jtag_uart_0"
@@ -671,7 +684,7 @@
   <parameter name="cpuReset" value="false" />
   <parameter name="customInstSlavesSystemInfo" value="&lt;info/&gt;" />
   <parameter name="dataAddrWidth" value="28" />
-  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='nios2_qsys_0.jtag_debug_module' start='0x1800' end='0x2000' /><slave name='switches.s1' start='0x2000' end='0x2010' /><slave name='leds.s1' start='0x2010' end='0x2020' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x2020' end='0x2028' /><slave name='HEX0_1.s1' start='0x2030' end='0x2040' /><slave name='HEX2_3.s1' start='0x2040' end='0x2050' /><slave name='HEX4_5.s1' start='0x2050' end='0x2060' /><slave name='PushButtons.s1' start='0x2060' end='0x2070' /><slave name='timer_0.s1' start='0x2080' end='0x20A0' /><slave name='timer_1.s1' start='0x20A0' end='0x20C0' /><slave name='character_lcd_0.avalon_lcd_slave' start='0x20C0' end='0x20C2' /><slave name='to_external_bus_bridge_0.avalon_slave' start='0x4000000' end='0x4010000' /><slave name='sdram.s1' start='0x8000000' end='0xC000000' /></address-map>]]></parameter>
+  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='dma_stream_to_mem.avalon_dma_control_slave' start='0x0' end='0x10' /><slave name='nios2_qsys_0.jtag_debug_module' start='0x1800' end='0x2000' /><slave name='switches.s1' start='0x2000' end='0x2010' /><slave name='leds.s1' start='0x2010' end='0x2020' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x2020' end='0x2028' /><slave name='HEX0_1.s1' start='0x2030' end='0x2040' /><slave name='HEX2_3.s1' start='0x2040' end='0x2050' /><slave name='HEX4_5.s1' start='0x2050' end='0x2060' /><slave name='PushButtons.s1' start='0x2060' end='0x2070' /><slave name='timer_0.s1' start='0x2080' end='0x20A0' /><slave name='timer_1.s1' start='0x20A0' end='0x20C0' /><slave name='character_lcd_0.avalon_lcd_slave' start='0x20C0' end='0x20C2' /><slave name='to_external_bus_bridge_0.avalon_slave' start='0x4000000' end='0x4010000' /><slave name='sdram.s1' start='0x8000000' end='0xC000000' /></address-map>]]></parameter>
   <parameter name="dcache_bursts" value="false" />
   <parameter name="dcache_lineSize" value="32" />
   <parameter name="dcache_numTCDM" value="0" />
@@ -809,7 +822,7 @@
   <parameter name="output_type" value="8-bit RGB" />
  </module>
  <module
-   name="scaler_320"
+   name="scaler_160"
    kind="altera_up_avalon_video_scaler"
    version="15.0"
    enabled="1">
@@ -817,9 +830,9 @@
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone V" />
   <parameter name="color_bits" value="8" />
   <parameter name="color_planes" value="1" />
-  <parameter name="height_in" value="240" />
-  <parameter name="height_scaling" value="1" />
-  <parameter name="width_in" value="640" />
+  <parameter name="height_in" value="256" />
+  <parameter name="height_scaling" value="0.5" />
+  <parameter name="width_in" value="320" />
   <parameter name="width_scaling" value="0.5" />
  </module>
  <module
@@ -929,6 +942,15 @@
    end="sdram.s1">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x08000000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.0"
+   start="nios2_qsys_0.data_master"
+   end="dma_stream_to_mem.avalon_dma_control_slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -1074,8 +1096,8 @@
  <connection
    kind="avalon_streaming"
    version="15.0"
-   start="clipper_640.avalon_clipper_source"
-   end="scaler_320.avalon_scaler_sink" />
+   start="clipper_320x256.avalon_clipper_source"
+   end="scaler_160.avalon_scaler_sink" />
  <connection
    kind="avalon_streaming"
    version="15.0"
@@ -1090,11 +1112,11 @@
    kind="avalon_streaming"
    version="15.0"
    start="rgb_resampler_24_to_16.avalon_rgb_source"
-   end="clipper_640.avalon_clipper_sink" />
+   end="clipper_320x256.avalon_clipper_sink" />
  <connection
    kind="avalon_streaming"
    version="15.0"
-   start="scaler_320.avalon_scaler_source"
+   start="scaler_160.avalon_scaler_source"
    end="dma_stream_to_mem.avalon_dma_sink" />
  <connection kind="clock" version="15.0" start="clk_0.clk" end="jtag_uart_0.clk" />
  <connection kind="clock" version="15.0" start="clk_0.clk" end="switches.clk" />
@@ -1145,12 +1167,12 @@
    kind="clock"
    version="15.0"
    start="clocks.sys_clk"
-   end="clipper_640.clk" />
+   end="clipper_320x256.clk" />
  <connection
    kind="clock"
    version="15.0"
    start="clocks.sys_clk"
-   end="scaler_320.clk" />
+   end="scaler_160.clk" />
  <connection
    kind="clock"
    version="15.0"
@@ -1275,12 +1297,12 @@
    kind="reset"
    version="15.0"
    start="clk_0.clk_reset"
-   end="clipper_640.reset" />
+   end="clipper_320x256.reset" />
  <connection
    kind="reset"
    version="15.0"
    start="clk_0.clk_reset"
-   end="scaler_320.reset" />
+   end="scaler_160.reset" />
  <connection
    kind="reset"
    version="15.0"
@@ -1385,12 +1407,12 @@
    kind="reset"
    version="15.0"
    start="nios2_qsys_0.jtag_debug_module_reset"
-   end="clipper_640.reset" />
+   end="clipper_320x256.reset" />
  <connection
    kind="reset"
    version="15.0"
    start="nios2_qsys_0.jtag_debug_module_reset"
-   end="scaler_320.reset" />
+   end="scaler_160.reset" />
  <connection
    kind="reset"
    version="15.0"

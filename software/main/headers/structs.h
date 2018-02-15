@@ -2,6 +2,8 @@
 #include <inttypes.h>
 #define _STRUCTS_
 
+typedef uint16_t colour_t;
+
 // GUI Structs
 typedef struct {
 	int x1, x2, y1, y2;
@@ -36,9 +38,14 @@ typedef struct {
 
 typedef struct {
 	int colour;
-	char* relevant_pixels;
+	colour_t* colour_data;
 } image_t;
 
-typedef uint16_t colour_t;
+typedef struct {
+	int colour;
+	int* colour_data;
+} image8_t;
+
+
 
 #endif
