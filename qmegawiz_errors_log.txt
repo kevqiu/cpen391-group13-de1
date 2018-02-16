@@ -1,0 +1,6 @@
+
+
+C:/Users/lerir/Documents/cpen391-group13/PLL30Mhz.vhd
+
+Feb 12 03PM:39:50>: Megafunction Altera PLL v15.1 is not listed in any 
+wizard.lst file in the specified library path(s).Wizard launch aborted

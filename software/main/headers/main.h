@@ -1,0 +1,31 @@
+/*
+ * main.h contains enums for state machines present in the main loop
+ * mode_state: state of the button presses
+ * sort_state: state of the auto sort process
+ */
+typedef enum {
+    MODE_IDLE,
+    MODE_AUTO_SORT,
+    MODE_SWEEP,
+    MODE_OVERRIDE
+} mode_state;
+
+typedef enum {
+    SORT_IDLE,     
+    SORT_ARD_READY,
+    SORT_CAM_READY,
+    SORT_IMG_READY
+} sort_state;
+
+
+// ---------- FUNCTION PROTOTYPES --------- //
+void poll_gps(void);
+void handle_gps(void);
+
+void poll_touchscreen(void);
+void handle_touchscreen(void);
+
+void poll_arduino(void);
+void handle_arduino(void);
+
+scanned_obj* init_scanned_obj(int colour, int position, point location);

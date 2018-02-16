@@ -4,7 +4,7 @@
 
 # List of include directories for -I compiler option (-I added when used).
 # Includes the BSP.
-ALT_INCLUDE_DIRS :=
+ALT_INCLUDE_DIRS := headers
 
 # List of library directories for -L linker option (-L added when used).
 # Includes the BSP.
@@ -142,14 +142,21 @@ ACDS_VERSION := 15.0
 ELF := main.elf
 
 # Paths to C, C++, and assembly source files.
-C_SRCS += arduino.c
 C_SRCS += main.c
-C_SRCS += rs232.c
-C_SRCS += wifi.c
-C_SRCS += Fonts.c
-C_SRCS += OutGraphicsCharFont1.c
-C_SRCS += OutGraphicsCharFont2.c
-C_SRCS += graphics.c
+C_SRCS += modules/arduino.c
+C_SRCS += modules/wifi.c
+C_SRCS += gui/Fonts.c
+C_SRCS += gui/OutGraphicsCharFont1.c
+C_SRCS += gui/OutGraphicsCharFont2.c
+C_SRCS += gui/graphics.c
+C_SRCS += gui/gui.c
+C_SRCS += modules/touchscreen.c
+C_SRCS += modules/gps.c
+C_SRCS += gui/OutGraphicsImage.c
+C_SRCS += gui/ColourPalette.c
+C_SRCS += image/image_converter.c
+C_SRCS += image/images.c
+C_SRCS += image/image_processor.c
 CXX_SRCS :=
 ASM_SRCS :=
 

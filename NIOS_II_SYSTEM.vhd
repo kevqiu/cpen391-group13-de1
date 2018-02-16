@@ -11,20 +11,20 @@ USE ieee.std_logic_unsigned.ALL;
 ENTITY NIOS_II_SYSTEM IS
 	PORT (
 		-- clock and Reset Button
-		CLOCK_50 		: IN STD_LOGIC;
+		CLOCK_50 			: IN STD_LOGIC;
 		KEY 				: IN STD_LOGIC_VECTOR (0 DOWNTO 0);
 		
 		-- RED LEDs and Switches
-		SW 				: IN STD_LOGIC_VECTOR (9 DOWNTO 0);
+		SW 					: IN STD_LOGIC_VECTOR (9 DOWNTO 0);
 		LEDR 				: OUT STD_LOGIC_VECTOR (9 DOWNTO 0);
 
 		-- DRam Signals
-		DRAM_ADDR						: OUT STD_LOGIC_VECTOR (12 DOWNTO 0);
-		DRAM_CLK,DRAM_CKE				: OUT STD_LOGIC;
-		DRAM_BA 							: BUFFER STD_LOGIC_VECTOR(1 downto 0);
+		DRAM_ADDR					: OUT STD_LOGIC_VECTOR (12 DOWNTO 0);
+		DRAM_CLK,DRAM_CKE			: OUT STD_LOGIC;
+		DRAM_BA 					: BUFFER STD_LOGIC_VECTOR(1 downto 0);
 		DRAM_CS_N, DRAM_CAS_N 		: OUT STD_LOGIC;
 		DRAM_RAS_N, DRAM_WE_N		: OUT STD_LOGIC;
-		DRAM_DQ 							: INOUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+		DRAM_DQ 					: INOUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 		DRAM_UDQM, DRAM_LDQM 		: BUFFER STD_LOGIC;
 		
 		-- IO Bridge
@@ -40,11 +40,11 @@ ENTITY NIOS_II_SYSTEM IS
 		
 		
 		lcd_RS         : out   std_logic;                                        -- RS
-      lcd_RW         : out   std_logic;                                        -- RW
-      lcd_data       : inout std_logic_vector(7 downto 0)  := (others => 'X'); -- data
-      lcd_EN          : out   std_logic;                                        -- E
+		lcd_RW         : out   std_logic;                                        -- RW
+		lcd_data       : inout std_logic_vector(7 downto 0)  := (others => 'X'); -- data
+		lcd_EN         : out   std_logic;                                        -- E
 		lcd_ON         : out   std_logic;                                        -- ON
-      lcd_BLON       : out   std_logic;   												 -- Backlight ON
+		lcd_BLON       : out   std_logic;   												 -- Backlight ON
 
 			
 		-- 3 push buttons
@@ -53,7 +53,30 @@ ENTITY NIOS_II_SYSTEM IS
 		-- Hex Display
 		Hex0_1			: out   std_logic_vector(7 downto 0) ;
 		Hex2_3			: out   std_logic_vector(7 downto 0) ;
-		Hex4_5			: out   std_logic_vector(7 downto 0) 
+		Hex4_5			: out   std_logic_vector(7 downto 0) ;
+
+		----------------------------------------------------------------
+		-- NTSC Decoder
+		----------------------------------------------------------------
+		TD_CLK27 					: in std_logic;
+		TD_DATA					: in std_logic_vector(7 downto 0);
+		TD_HS						: in std_logic;
+		TD_VS 						: in std_logic;
+		TD_RESET					: out std_logic
+		 -- Not used ? 
+		-- ntsc_decoder_clk27_reset	: in std_logic;
+		-- ntsc_decoder_overflow_flag 	: out std_logic;
+
+		-----------------------------------------------------------------
+		-- SRAM 
+		-----------------------------------------------------------------
+		-- image_address         : in    std_logic_vector(16 downto 0); -- address
+		-- image_chipselect      : in    std_logic;                              -- chipselect
+		-- image_clken           : in    std_logic;                              -- clken
+		-- image_write           : in    std_logic;                              -- write
+		-- image_readdata        : out   std_logic_vector(15 downto 0);          -- readdata
+		-- image_writedata       : in    std_logic_vector(15 downto 0); -- writedata
+		-- image_byteenable      : in    std_logic_vector(1 downto 0)  -- byteenable
 	);
 END NIOS_II_SYSTEM;
 
@@ -89,11 +112,11 @@ ARCHITECTURE NIOS_II_SYSTEM_rtl OF NIOS_II_SYSTEM IS
 		io_read_data           : in    std_logic_vector(15 downto 0) := (others => 'X'); -- read_data
 		
 		lcd_data_RS         : out   std_logic;                                        -- RS
-      lcd_data_RW         : out   std_logic;                                        -- RW
-      lcd_data_DATA       : inout std_logic_vector(7 downto 0)  := (others => 'X'); -- data
-      lcd_data_EN         : out   std_logic;                                        -- E
+		lcd_data_RW         : out   std_logic;                                        -- RW
+		lcd_data_DATA       : inout std_logic_vector(7 downto 0)  := (others => 'X'); -- data
+		lcd_data_EN         : out   std_logic;                                        -- E
 		lcd_data_ON         : out   std_logic;                                        -- ON
-      lcd_data_BLON       : out   std_logic;   		 										   -- Backlight ON
+		lcd_data_BLON       : out   std_logic;   		 										   -- Backlight ON
 
 
 
@@ -103,7 +126,28 @@ ARCHITECTURE NIOS_II_SYSTEM_rtl OF NIOS_II_SYSTEM IS
 		-- Hex display signals
 		hex0_1_export          : out   std_logic_vector(7 downto 0);                     -- export
 		hex2_3_export          : out   std_logic_vector(7 downto 0);                     -- export
-		hex4_5_export          : out   std_logic_vector(7 downto 0)                    	-- export
+		hex4_5_export          : out   std_logic_vector(7 downto 0);                   	-- export
+
+		-----------------------------------------------------------------
+		-- NTSC Decoder
+		-----------------------------------------------------------------
+		ntsc_decoder_TD_CLK27      : in    std_logic                     := 'X';             -- TD_CLK27
+		ntsc_decoder_TD_DATA       : in    std_logic_vector(7 downto 0)  := (others => 'X'); -- TD_DATA
+		ntsc_decoder_TD_HS         : in    std_logic                     := 'X';             -- TD_HS
+		ntsc_decoder_TD_VS         : in    std_logic                     := 'X';             -- TD_VS
+		ntsc_decoder_TD_RESET      : out   std_logic                                        -- TD_RESET
+		
+		---------------------------------------------------------------
+		-- Image data SRAM
+		---------------------------------------------------------------
+		--image_data_address         : in    std_logic_vector(16 downto 0) := (others => 'X'); -- address
+		--image_data_chipselect      : in    std_logic                     := 'X';             -- chipselect
+		--image_data_clken           : in    std_logic                     := 'X';             -- clken
+		--image_data_write           : in    std_logic                     := 'X';             -- write
+		--image_data_readdata        : out   std_logic_vector(15 downto 0);                    -- readdata
+		--image_data_writedata       : in    std_logic_vector(15 downto 0) := (others => 'X'); -- writedata
+		--image_data_byteenable      : in    std_logic_vector(1 downto 0)  := (others => 'X')  -- byteenable
+
 	);
 	END COMPONENT;
 	
@@ -118,7 +162,7 @@ BEGIN
 	
 	NiosII: nios_system		-- create NIOSII as an instance of nios_system
 	PORT MAP(
-		clk_clk 					=> CLOCK_50,
+		clk_clk 				=> CLOCK_50,
 		reset_reset_n 			=> KEY(0),
 		switches_export 		=> SW(9 DOWNTO 0),
 		leds_export 			=> LEDR(9 DOWNTO 0),
@@ -134,26 +178,42 @@ BEGIN
 		sdram_we_n 				=> DRAM_WE_N,
 		sdram_clk_clk 			=> DRAM_CLK,
 		
-		io_acknowledge 		=> IO_acknowledge,
+		io_acknowledge 			=> IO_acknowledge,
 		io_irq 					=> IO_irq,
 		io_address 				=> IO_address,
 		io_bus_enable 			=> IO_bus_enable,
-		io_byte_enable 		=> IO_byte_enable,
+		io_byte_enable			=> IO_byte_enable,
 		io_rw 					=> IO_rw,
 		io_write_data 			=> IO_write_data,
 		io_read_data 			=> IO_read_data,
 		
 		lcd_data_RS => lcd_RS,
-      lcd_data_RW => lcd_RW,
-      lcd_data_DATA => lcd_data,
-      lcd_data_EN => lcd_EN,
+		lcd_data_RW => lcd_RW,
+		lcd_data_DATA => lcd_data,
+		lcd_data_EN => lcd_EN,
 		lcd_data_ON => lcd_ON,
-      lcd_data_BLON => lcd_BLON,
+		lcd_data_BLON => lcd_BLON,
 		
 		push_buttons_export 	=> Push_Buttons,
 		
 		hex0_1_export 			=> Hex0_1,
 		hex2_3_export 			=> Hex2_3,
-		hex4_5_export 			=> Hex4_5
+		hex4_5_export 			=> Hex4_5,
+
+		ntsc_decoder_TD_CLK27      => TD_CLK27,      -- ntsc_decoder.TD_CLK27
+		ntsc_decoder_TD_DATA       => TD_DATA,       --             .TD_DATA
+		ntsc_decoder_TD_HS         => TD_HS,         --             .TD_HS
+		ntsc_decoder_TD_VS         => TD_VS,         --             .TD_VS
+		ntsc_decoder_TD_RESET      => TD_RESET      --             .TD_RESET
+		--ntsc_decoder_clk27_reset   => ,   --             .clk27_reset
+		--ntsc_decoder_overflow_flag => CONNECTED_TO_ntsc_decoder_overflow_flag, --             .overflow_flag
+		
+		--image_data_address         => image_address,         --   image_data.address
+		--image_data_chipselect      => image_chipselect,      --             .chipselect
+		--image_data_clken           => image_clken,           --             .clken
+		--image_data_write           => image_write,           --             .write
+		--image_data_readdata        => image_readdata,        --             .readdata
+		--image_data_writedata       => image_writedata,       --             .writedata
+		--image_data_byteenable      => image_byteenable		 --             .byteenable
 	);
 END NIOS_II_SYSTEM_rtl;

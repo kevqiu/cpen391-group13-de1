@@ -32,7 +32,7 @@ output_files
 *.html
 *.jdi
 *.jpg
-*.mif
+#*.mif
 *.pin
 *.pof
 *.ptf.*
@@ -41,7 +41,7 @@ output_files
 *.qws
 *.rpt
 *.smsg
-*.sof
+#*.sof
 *.sopc_builder
 *.summary
 *.tcl
@@ -56,3 +56,4 @@ obj
 *.elf
 *.map
 *.objdump
+/nios_system/synthesis/submodules/*.mif
