@@ -66,6 +66,15 @@ image_t* process_image(colour_t* img, int res) {
     return image;
 }
 
+/*
+ * Processes an image in 8 bit colour space to determine the majority colour of an image
+ * and the relevant pixels to be drawn in that colour.
+ * In:
+ *  img: array of 8 bit values representing the image
+ *  res: resolution of the image, representing x*y
+ * Out:
+ *  image_t*: image_t struct containing the majority colour and relevant pixels
+ */
 image8_t* process_8_bit_image(int* img, int res) {
     image8_t* image = malloc(sizeof(image8_t));
     image->colour_data = malloc(res*sizeof(image8_t));

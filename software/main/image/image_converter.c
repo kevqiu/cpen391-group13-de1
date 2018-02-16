@@ -34,7 +34,6 @@ void convert_8_bit_to_16_bit_byte(char* rgb, colour_t* img, int size) {
         char green = (pixel >> 2) & 0b111;
         char blue = pixel & 0b11;
         colour_t new_val = (red << 11) | (green << 5) | (blue);
-        //printf("r: %d, r: %d, b: %d", red, green, blue);
         img[i] = new_val;
 	}
 }

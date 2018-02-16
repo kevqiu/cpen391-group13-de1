@@ -24,7 +24,6 @@ extern rectangle boxes[];
 extern colour_t whacky_R[];
 extern colour_t whacky_G[];
 extern colour_t whacky_B[];
-extern char Trump[];
 // ----------- GLOBAL VARIABLES ----------- //
 // Timestamp
 char curr_time[12];
@@ -140,10 +139,12 @@ int main() {
 				for (x = 0; x < res; x++) {
 					ImageColor[x] = colour_scanned;
 				}
-
 				char tmp[160*128/8];
 				int q = 0;
+				// Slight delay in taking image
 				usleep(500000);
+				// Read image taken from SDRAM
+				*(RAMControl) = 0b000;
 				for (; q < 160*128/8; q++){
 					int r = 0;
 					char c = 0;
@@ -156,93 +157,21 @@ int main() {
 						//printf("R: %d, G: %d, B: %d\n", red, green, blue);
 						int sum = red + green + blue;
 						int turn_on = 0;
-						if (sum > 10) {
+						if (sum > 8) {
 							turn_on = 1;
 						}
 						c |= turn_on << (7 - r);
 					}
 					tmp[q] = c;
 				}
+				*(RAMControl) = 0b100;
+				//Draw image on screen
 				OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, size_x, size_y, tmp, ImageColor);
 				curr_sort = SORT_IMG_READY;
-
-				// char tmp[160*128/8];
-				// uint16_t pixels[res];
-				// int q = 0;
-				// //*(RAMControl) = 0b000;
-				// for (; q < 160*128/8; q++) {
-				// 	int r = 0;
-				// 	char ch = 0;
-				// 	for (; r < 8; r++){
-				// 		//char pixel = *(RAMStart + q*8 + r);
-				// 		//char pixel2 = *(RAMStart + q*8 + r + 1);
-				// 		uint16_t c = *(RAMStart + q*8 + r); //(pixel << 8) | pixel2;
-				// 		pixels[q*8 + r/2] = c;
-				// 		//printf("%x\n", pixel);
-				// 		int red = (c >> 11) & 0b11111;
-				// 		int green = (c >> 6) & 0b11111;
-				// 		int blue = c & 0b11111;
-				// 		/printf("R: %d, G: %d, B: %d\n", red, green, blue);
-				// 		int sum = red + green + blue;
-				// 		int turn_on = 0;
-				// 		if (sum > 50) {
-				// 			turn_on = 1;
-				// 		}
-				// 		ch = ch | (turn_on << (7 - (r/2)));
-				// 	}
-				// 	tmp[q] = ch;
-				// }
-
-				//*(RAMControl) = 0b100;
-				// image8_t* img = process_8_bit_image(pixels, res);
-				// int colour_scanned = img->colour;
-				// if (colour_scanned == RED)
-				// {
-				// 	printf("Red\n");
-				// } else if (colour_scanned == LIME) {
-				// 	printf("Green\n");
-				// } else if (colour_scanned == BLUE) {
-				// 	printf("Blue\n");
-				// } else {
-				// 	printf("Other\n");
-				// }
-
-
-				/**
-				*(RAMControl) = 0b0;
-				leds = 0b111111111;
-				int q;
-				char tmp[res];
-				for (q = 0; q < res; q++) {
-					tmp[q] = *(RAMStart + q);
-					//printf("%x\n", tmp[q]);
-				}
-				// Image array
-				colour_t img_in_rgb[res];
-				convert_8_bit_to_16_bit_byte(tmp, img_in_rgb, res);
-				image_t* img = process_image(img_in_rgb, res);
-				char rp[res];
-				calculate_relevant_pixels(img->colour_data, rp, res);
-				int m;
-				for (m = 0; m < res/8; m++){
-					//printf("%x\n", rp[m]);
-				}
-				int x;
-				int ImageColor[res];// = malloc(res*sizeof(int));
-				for (x = 0; x < res; x++) {
-					ImageColor[x] = img->colour;//img->colour;
-				}
-				OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, size_x, size_y, rp, ImageColor);
-				//colour_scanned = img->colour;
-				//free(ImageColor);
-				//free(img->relevant_pixels);
-				//free(img);
-				curr_sort = SORT_IMG_READY;
-				**/
 			}
 			// Once image has been captured, process image
 			else if (curr_sort == SORT_IMG_READY) {
-				// process image
+				// Update the image category
 				scanned_obj* obj = objects[colour_scanned-2];
 				// update and draw new object count
 				draw_counter(obj->loc, ++obj->count);
