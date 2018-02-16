@@ -3,8 +3,8 @@
 #define CW 1
 #define CCW -1
 #define SWEEP_DELAY 10
-#define CONVEYOR_SPD 255
-#define DEBOUNCE_DELAY 50
+#define CONVEYOR_SPD 85
+#define DEBOUNCE_DELAY 35
 #define TIMEOUT 5000
 
 #define CW_CMD "cw:"
@@ -111,7 +111,7 @@ void loop() {
 void autoSort() {
   // allow laser to turn on
   digitalWrite(laserPin, HIGH);
-  delay(750);
+  delay(300);
   
   // turn on conveyor
   conveyor(FORWARD, CONVEYOR_SPD);
@@ -171,7 +171,7 @@ void autoSort() {
 }
 
 void conveyor(int dir, int spd) {
-  digitalWrite(M1, dir);   
+  digitalWrite(M1, dir);
   analogWrite(E1, spd);   //PWM Speed Control
 }
 

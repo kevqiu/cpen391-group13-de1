@@ -4,6 +4,13 @@ module nios_system (
 	hex0_1_export,
 	hex2_3_export,
 	hex4_5_export,
+	image_data_address,
+	image_data_chipselect,
+	image_data_clken,
+	image_data_write,
+	image_data_readdata,
+	image_data_writedata,
+	image_data_byteenable,
 	io_acknowledge,
 	io_irq,
 	io_address,
@@ -19,6 +26,13 @@ module nios_system (
 	lcd_data_RS,
 	lcd_data_RW,
 	leds_export,
+	ntsc_decoder_TD_CLK27,
+	ntsc_decoder_TD_DATA,
+	ntsc_decoder_TD_HS,
+	ntsc_decoder_TD_VS,
+	ntsc_decoder_clk27_reset,
+	ntsc_decoder_TD_RESET,
+	ntsc_decoder_overflow_flag,
 	push_buttons_export,
 	reset_reset_n,
 	sdram_addr,
@@ -37,6 +51,13 @@ module nios_system (
 	output	[7:0]	hex0_1_export;
 	output	[7:0]	hex2_3_export;
 	output	[7:0]	hex4_5_export;
+	input	[16:0]	image_data_address;
+	input		image_data_chipselect;
+	input		image_data_clken;
+	input		image_data_write;
+	output	[15:0]	image_data_readdata;
+	input	[15:0]	image_data_writedata;
+	input	[1:0]	image_data_byteenable;
 	input		io_acknowledge;
 	input		io_irq;
 	output	[15:0]	io_address;
@@ -52,6 +73,13 @@ module nios_system (
 	output		lcd_data_RS;
 	output		lcd_data_RW;
 	output	[9:0]	leds_export;
+	input		ntsc_decoder_TD_CLK27;
+	input	[7:0]	ntsc_decoder_TD_DATA;
+	input		ntsc_decoder_TD_HS;
+	input		ntsc_decoder_TD_VS;
+	input		ntsc_decoder_clk27_reset;
+	output		ntsc_decoder_TD_RESET;
+	output		ntsc_decoder_overflow_flag;
 	input	[2:0]	push_buttons_export;
 	input		reset_reset_n;
 	output	[12:0]	sdram_addr;
