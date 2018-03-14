@@ -113,6 +113,7 @@ int main() {
 
 	printf("Ready!\n");
 	// Main loop
+	int sw_lock = 0;
 	while (1) {
 		// Handle module Rx inputs
 		poll_gps();
@@ -130,6 +131,14 @@ int main() {
 		if (rpi_ready) {
 			handle_rpi();
 		}
+
+		if (switches == 0b1 && sw_lock == 0) {
+			capture_image(gpgga_sentence);
+			printf("sending %s\n", gpgga_sentence);
+			sw_lock = 1;
+			//usleep(3000000);
+		}
+		sw_lock = switches;
 		// Auto sort process
 		if (curr_mode == MODE_AUTO_SORT) {
 			// Check if Arduino has detected object in laser or has timed out
@@ -139,7 +148,7 @@ int main() {
 			// If object detected, capture image
 			else if (curr_sort == SORT_CAM_READY) {
 				draw_silhouette(size_x, size_y);
-				capture_image(curr_time);
+				capture_image(gpgga_sentence);
 			}
 			// Once image has been captured, process image
 			else if (curr_sort == SORT_IMG_READY) {
@@ -207,8 +216,14 @@ void poll_rpi() {
 	if (is_rpi_data_ready()) {
 		char c = get_char_rpi();
 		rpi_buff[rpi_inc++] = c;
-		if (c == '\n') {
-			rpi_ready = 1;
+		if (c == '\r') {
+			// TEST
+			printf("%s\n", rpi_buff);
+			rpi_inc = 0;
+			memset(rpi_buff, 0, 8);
+			// END TEST
+
+//			rpi_ready = 1;
 		}
 	}
 }
@@ -230,6 +245,11 @@ void poll_arduino() {
  */
 void handle_gps() {
 	char new_time[12] = "";
+	if (strstr(gps_buff, GPGGA_COMMAND) != NULL) {
+		strcpy(gpgga_sentence, gps_buff);
+		gpgga_sentence[strlen(gpgga_sentence) - 2] = '\0';
+	}
+
 	parse_gps_buffer(gps_buff, new_time);
 	// if the timestamps are different, redraw the time
 	if (new_time[0] != '\0' && strcmp(curr_time, new_time) != 0) {
@@ -244,7 +264,7 @@ void handle_gps() {
 		}
 	}	
 	gps_inc = gps_ready = 0;
-	strcpy(gps_buff, "");
+	memset(gps_buff, 0, 256);
 }
 
 /*
@@ -362,7 +382,7 @@ void handle_touchscreen() {
 	}
 	// clear ready flag and buffer
 	ts_ready = 0;
-	strcpy(ts_buff, "");
+	memset(ts_buff, 0, 8);
 }
 
 /*
@@ -398,15 +418,27 @@ void handle_arduino() {
 	}
 	// clear ready flag and buffer
 	ard_inc = 0;
-	strcpy(ard_buff, "");
+	memset(ard_buff, 0, 8);
 }
 
+/*
+ * Check if the Raspberry Pi has returned a serial message
+ * cat: 		object has been identified on the server and has been stored
+ * ctrl/as=:  	enable/disable autosort
+ * ctrl/pos=: 	override to position
+ */
 void handle_rpi() {
-	if (strstr(rpi_buff, "ct:") != NULL) {
-		category_scanned = rpi_buff[3] - '0';
+	if (strstr(rpi_buff, "cat:") != NULL) {
+		category_scanned = rpi_buff[4] - '0';
+	}
+	else if (strstr(rpi_buff, "ctrl/as=") != NULL) {
+		// autosort
+	}
+	else if (strstr(rpi_buff, "ctrl/pos=") != NULL) {
+		// autosort
 	}
 	rpi_inc = 0;
-	strcpy(rpi_buff, "");
+	memset(rpi_buff, 0, 8);
 }
 
 void set_mode(mode_state state, int value) {
