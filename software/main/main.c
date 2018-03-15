@@ -25,12 +25,13 @@ extern rectangle boxes[];
 // ----------- GLOBAL VARIABLES ----------- //
 // Timestamp
 char* curr_time = "00:00:00";
+char gpgga_sentence[128] = {0};
 
 // Serial handling
 char gps_buff[256],
 	ts_buff[8],
 	ard_buff[8],
-	rpi_buff[8];
+	rpi_buff[16];
 
 int gps_inc,
 	ard_inc,
@@ -94,7 +95,7 @@ int main() {
 	};
 
 	// Initialiize modules
-	init_touch();
+	//init_touch();
 	init_gps();
 	init_arduino();
 	init_wifi();
@@ -117,8 +118,8 @@ int main() {
 	while (1) {
 		// Handle module Rx inputs
 		poll_gps();
-		poll_touchscreen();
-		poll_arduino();
+		//poll_touchscreen();
+		//poll_arduino();
 		poll_rpi();
 		
 		// Check if any module has finished sending a command
@@ -152,7 +153,7 @@ int main() {
 			}
 			// Once image has been captured, process image
 			else if (curr_sort == SORT_IMG_READY) {
-				// Update the image category
+				// Update the image category, subtract 1 to offset id index starting at 1
 				scanned_obj* obj = objects[category_scanned - 1];
 				// update and draw new object count
 				draw_counter(obj->loc, ++obj->count);
@@ -380,10 +381,12 @@ void handle_arduino() {
 	// timeout has been reached, stop process and send completion text
 	else if (strcmp(ard_buff, "dn\n") == 0) {
 		char text[256];
-		sprintf(text, "Sorting complete!\\\nResults - Red: %i   Green: %i   Blue: %i   Other: %i",
+		sprintf(text, "done:r=%i,g=%i,b=%i,o=%i",
+//		sprintf(text, "Sorting complete!\\\nResults - Red: %i   Green: %i   Blue: %i   Other: %i",
 			red_object->count, green_object->count, blue_object->count, other_object->count);
-		printf("%s\n", text);
+//		printf("%s\n", text);
 		//send_text(text);
+		send_message_rpi(text);
 		printf("Succesfully alerted\n");
 
 		// reset GUI and states
