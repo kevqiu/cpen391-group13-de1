@@ -95,7 +95,7 @@ int main() {
 	};
 
 	// Initialiize modules
-	//init_touch();
+	init_touch();
 	init_gps();
 	init_arduino();
 	init_wifi();
@@ -118,8 +118,8 @@ int main() {
 	while (1) {
 		// Handle module Rx inputs
 		poll_gps();
-		//poll_touchscreen();
-		//poll_arduino();
+		poll_touchscreen();
+		poll_arduino();
 		poll_rpi();
 		
 		// Check if any module has finished sending a command
@@ -133,13 +133,6 @@ int main() {
 			handle_rpi();
 		}
 
-		if (switches == 0b1 && sw_lock == 0) {
-			capture_image(gpgga_sentence);
-			printf("sending %s\n", gpgga_sentence);
-			sw_lock = 1;
-			//usleep(3000000);
-		}
-		sw_lock = switches;
 		// Auto sort process
 		if (curr_mode == MODE_AUTO_SORT) {
 			// Check if Arduino has detected object in laser or has timed out
@@ -150,6 +143,7 @@ int main() {
 			else if (curr_sort == SORT_CAM_READY) {
 				draw_silhouette(size_x, size_y);
 				capture_image(gpgga_sentence);
+				curr_sort = SORT_IMG_WAIT;
 			}
 			// Once image has been captured, process image
 			else if (curr_sort == SORT_IMG_READY) {
@@ -218,13 +212,7 @@ void poll_rpi() {
 		char c = get_char_rpi();
 		rpi_buff[rpi_inc++] = c;
 		if (c == '\r') {
-			// TEST
-			printf("%s\n", rpi_buff);
-			rpi_inc = 0;
-			memset(rpi_buff, 0, 8);
-			// END TEST
-
-//			rpi_ready = 1;
+			rpi_ready = 1;
 		}
 	}
 }
@@ -290,8 +278,6 @@ void handle_touchscreen() {
 				if (touch_in_button(p, STOP_BTN)) {
 					stop_btn_pressed = 1;
 					set_mode(MODE_IDLE, 0);
-//					curr_mode = MODE_IDLE;
-//					conveyor(OFF);
 				}
 			}
 			else if (curr_mode != MODE_SWEEP) {
@@ -413,15 +399,13 @@ void handle_arduino() {
 void handle_rpi() {
 	if (strstr(rpi_buff, "cat:") != NULL) {
 		category_scanned = rpi_buff[4] - '0';
+		curr_sort = SORT_IMG_READY;
 	}
-	else if (strstr(rpi_buff, "ctrl/as=") != NULL) {
-		int mode = rpi_buff[8] - '0';
-		if (mode == 1) {
-			set_mode(MODE_AUTO_SORT, 1);
-		}
-		else if (mode == 0) {
-			set_mode(MODE_IDLE, 1);
-		}
+	else if (strstr(rpi_buff, "ctrl/as") != NULL) {
+		set_mode(MODE_AUTO_SORT, 1);
+	}
+	else if (strstr(rpi_buff, "ctrl/st") != NULL) {
+		set_mode(MODE_IDLE, 1);
 	}
 	else if (strstr(rpi_buff, "ctrl/pos=") != NULL) {
 		int position = rpi_buff[9] - '0';
@@ -429,7 +413,7 @@ void handle_rpi() {
 			set_mode(MODE_OVERRIDE, position);
 		}
 	}
-	rpi_inc = 0;
+	rpi_inc = rpi_ready = 0;
 	memset(rpi_buff, 0, 16);
 }
 
