@@ -10,14 +10,14 @@ void init_rpi(void) {
 	RPi_Control = 0x15;
 
 	// program for 115k baud
-	RPi_Baud = 0x01;
+	RPi_Baud = 0x05;
 
 	get_char_rpi();
 }
 
-void capture_image(char* timestamp) {
-	char message[16];
-	sprintf(message, "t %s", timestamp);
+void capture_image(char* gpgga_sentence) {
+	char message[256];
+	sprintf(message, "capture: gps=%s", gpgga_sentence);
 	send_message_rpi(message);
 }
 

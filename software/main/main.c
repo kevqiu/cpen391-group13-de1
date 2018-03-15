@@ -298,52 +298,32 @@ void handle_touchscreen() {
 				if (touch_in_button(p, AUTO_SORT_BTN)) {
 					curr_btn = 0;
 					set_mode(MODE_AUTO_SORT, 0);
-//					curr_mode = MODE_AUTO_SORT;
-//					red_object->count = green_object->count = blue_object->count = other_object->count = 0;
-//					reset_counters();
-//					auto_sort();
 				}
 				// SWEEP_CW and SWEEP_CCW sweep the servo in it's respective direction
 				else if (touch_in_button(p, SWEEP_CW_BTN)) {
 					curr_btn = 2;
 					set_mode(MODE_SWEEP, CW);
-//					curr_mode = MODE_SWEEP;
-//					sweep(CW);
 				}
 				else if (touch_in_button(p, SWEEP_CCW_BTN)) {
 					curr_btn = 3;
 					set_mode(MODE_SWEEP, CCW);
-//					curr_mode = MODE_SWEEP;
-//					sweep(CCW);
 				}
 				// POS_1 to POS_4 buttons are overrides. Sets servo position and runs conveyor
 				else if (touch_in_button(p, POS_1_BTN)) {
 					curr_btn = 4;
 					set_mode(MODE_OVERRIDE, RED_POS);
-//					curr_mode = MODE_OVERRIDE;
-//					set_servo(RED_POS);
-//					conveyor(ON);
 				}
 				else if (touch_in_button(p, POS_2_BTN)) {
 					curr_btn = 5;
 					set_mode(MODE_OVERRIDE, GREEN_POS);
-//					curr_mode = MODE_OVERRIDE;
-//					set_servo(GREEN_POS);
-//					conveyor(ON);
 				}
 				else if (touch_in_button(p, POS_3_BTN)) {
 					curr_btn = 6;
 					set_mode(MODE_OVERRIDE, BLUE_POS);
-//					curr_mode = MODE_OVERRIDE;
-//					set_servo(BLUE_POS);
-//					conveyor(ON);
 				}
 				else if (touch_in_button(p, POS_4_BTN)) {
 					curr_btn = 7;
 					set_mode(MODE_OVERRIDE, OTHER_POS);
-//					curr_mode = MODE_OVERRIDE;
-//					set_servo(OTHER_POS);
-//					conveyor(ON);
 				}
 			}
 			// No button is pressed
@@ -432,13 +412,22 @@ void handle_rpi() {
 		category_scanned = rpi_buff[4] - '0';
 	}
 	else if (strstr(rpi_buff, "ctrl/as=") != NULL) {
-		// autosort
+		int mode = rpi_buff[8] - '0';
+		if (mode == 1) {
+			set_mode(MODE_AUTO_SORT, 1);
+		}
+		else if (mode == 0) {
+			set_mode(MODE_IDLE, 1);
+		}
 	}
 	else if (strstr(rpi_buff, "ctrl/pos=") != NULL) {
-		// autosort
+		int position = rpi_buff[9] - '0';
+		if (position < 4) {
+			set_mode(MODE_OVERRIDE, position);
+		}
 	}
 	rpi_inc = 0;
-	memset(rpi_buff, 0, 8);
+	memset(rpi_buff, 0, 16);
 }
 
 void set_mode(mode_state state, int value) {
