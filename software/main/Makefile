@@ -157,6 +157,7 @@ C_SRCS += gui/ColourPalette.c
 C_SRCS += image/image_converter.c
 C_SRCS += image/images.c
 C_SRCS += image/image_processor.c
+C_SRCS += modules/rpi.c
 CXX_SRCS :=
 ASM_SRCS :=
 

@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_qsys_0' in SOPC Builder design 'nios_system'
  * SOPC Builder design path: ../../nios_system.sopcinfo
  *
- * Generated: Wed Jan 24 00:08:40 PST 2018
+ * Generated: Tue Mar 06 13:24:06 PST 2018
  */
 
 /*
@@ -130,6 +130,7 @@
 #define __ALTERA_NIOS2_QSYS
 #define __ALTERA_UP_AVALON_CHARACTER_LCD
 #define __ALTERA_UP_AVALON_TO_EXTERNAL_BUS_BRIDGE
+#define __ALTERA_UP_AVALON_VIDEO_DMA_CONTROLLER
 
 
 /*
@@ -288,6 +289,20 @@
 #define CHARACTER_LCD_0_NAME "/dev/character_lcd_0"
 #define CHARACTER_LCD_0_SPAN 2
 #define CHARACTER_LCD_0_TYPE "altera_up_avalon_character_lcd"
+
+
+/*
+ * dma_stream_to_mem configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_dma_stream_to_mem altera_up_avalon_video_dma_controller
+#define DMA_STREAM_TO_MEM_BASE 0x0
+#define DMA_STREAM_TO_MEM_IRQ -1
+#define DMA_STREAM_TO_MEM_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define DMA_STREAM_TO_MEM_NAME "/dev/dma_stream_to_mem"
+#define DMA_STREAM_TO_MEM_SPAN 16
+#define DMA_STREAM_TO_MEM_TYPE "altera_up_avalon_video_dma_controller"
 
 
 /*

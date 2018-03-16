@@ -63,22 +63,22 @@ module nios_system_dma_stream_to_mem (
  *                           Parameter Declarations                          *
  *****************************************************************************/
 
-parameter DW								= 15; // Frame's datawidth
+parameter DW								= 7; // Frame's datawidth
 parameter EW								= 0; // Frame's empty width
-parameter WIDTH							= 320; // Frame's width in pixels
-parameter HEIGHT							= 240; // Frame's height in lines
+parameter WIDTH							= 160; // Frame's width in pixels
+parameter HEIGHT							= 128; // Frame's height in lines
 
-parameter AW								= 16; // Frame's address width
-parameter WW								= 8; // Frame width's address width
-parameter HW								= 7; // Frame height's address width
+parameter AW								= 14; // Frame's address width
+parameter WW								= 7; // Frame width's address width
+parameter HW								= 6; // Frame height's address width
 
-parameter MDW								= 15; // Avalon master's datawidth
+parameter MDW								= 7; // Avalon master's datawidth
 
-parameter DEFAULT_BUFFER_ADDRESS		= 32'd0;
-parameter DEFAULT_BACK_BUF_ADDRESS	= 32'd0;
+parameter DEFAULT_BUFFER_ADDRESS		= 32'd200933376;
+parameter DEFAULT_BACK_BUF_ADDRESS	= 32'd200933376;
 
-parameter ADDRESSING_BITS				= 16'd2057;
-parameter COLOR_BITS						= 4'd15;
+parameter ADDRESSING_BITS				= 16'd15;
+parameter COLOR_BITS						= 4'd7;
 parameter COLOR_PLANES					= 2'd0;
 
 parameter DEFAULT_DMA_ENABLED			= 1'b1; // 0: OFF or 1: ON
@@ -133,8 +133,7 @@ wire			[31: 0]	buffer_start_address;
 wire						dma_enabled;
 
 // Internal Registers
-reg			[WW: 0]	w_address;		// Frame's width address
-reg			[HW: 0]	h_address;		// Frame's height address
+reg			[AW: 0]	pixel_address;
 
 // State Machine Registers
 
@@ -155,25 +154,11 @@ reg			[HW: 0]	h_address;		// Frame's height address
 always @(posedge clk)
 begin
 	if (reset)
-	begin
-		w_address 	<= 'h0;
-		h_address 	<= 'h0;
-	end
+		pixel_address 	<= 'h0;
 	else if (reset_address)
-	begin
-		w_address 	<= 'h0;
-		h_address 	<= 'h0;
-	end
+		pixel_address 	<= 'h0;
 	else if (inc_address)
-	begin
-		if (w_address == (WIDTH - 1))
-		begin
-			w_address 	<= 'h0;
-			h_address	<= h_address + 1;
-		end
-		else
-			w_address 	<= w_address + 1;
-	end
+		pixel_address 	<= pixel_address + 1;
 end
 
 /*****************************************************************************
@@ -182,7 +167,7 @@ end
 
 // Output Assignments
 assign master_address		= buffer_start_address +
-								{h_address, w_address, 1'b0};
+								pixel_address;
 
 // Internal Assignments
 
@@ -221,7 +206,7 @@ defparam
 	DMA_Control_Slave.ADDRESSING_BITS				= ADDRESSING_BITS,
 	DMA_Control_Slave.COLOR_BITS						= COLOR_BITS,
 	DMA_Control_Slave.COLOR_PLANES					= COLOR_PLANES,
-	DMA_Control_Slave.ADDRESSING_MODE				= 1'b0,
+	DMA_Control_Slave.ADDRESSING_MODE				= 1'b1,
 
 	DMA_Control_Slave.DEFAULT_DMA_ENABLED			= DEFAULT_DMA_ENABLED;
 

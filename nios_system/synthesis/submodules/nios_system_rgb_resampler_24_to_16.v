@@ -56,7 +56,7 @@ module nios_system_rgb_resampler_24_to_16 (
  *****************************************************************************/
 
 parameter IDW		= 23;
-parameter ODW		= 15;
+parameter ODW		= 7;
 
 parameter IEW		= 1;
 parameter OEW		= 0;
@@ -160,9 +160,9 @@ assign b = {stream_in_data[ 7: 0], stream_in_data[ 7: 6]};
 
 assign a = ALPHA;
 
-assign converted_data[15:11] = r[ 9: 5];
-assign converted_data[10: 5] = g[ 9: 4];
-assign converted_data[ 4: 0] = b[ 9: 5];
+assign converted_data[ 7: 5] = r[ 9: 7];
+assign converted_data[ 4: 2] = g[ 9: 7];
+assign converted_data[ 1: 0] = b[ 9: 8];
 
 /*****************************************************************************
  *                              Internal Modules                             *

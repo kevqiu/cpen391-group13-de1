@@ -14,6 +14,7 @@ typedef enum {
     SORT_IDLE,     
     SORT_ARD_READY,
     SORT_CAM_READY,
+    SORT_IMG_WAIT,
     SORT_IMG_READY
 } sort_state;
 
@@ -27,5 +28,11 @@ void handle_touchscreen(void);
 
 void poll_arduino(void);
 void handle_arduino(void);
+
+void poll_rpi(void);
+void handle_rpi(void);
+
+void set_mode(mode_state state, int value);
+void draw_silhouette(int size_x, int size_y);
 
 scanned_obj* init_scanned_obj(int colour, int position, point location);
