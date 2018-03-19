@@ -409,16 +409,16 @@ void handle_rpi() {
 	}
 	else if (strstr(rpi_buff, "ctrl/pos=") != NULL) {
 		int position = rpi_buff[9] - '0';
-		if (position  == 1) {
+		if (position == 1) {
 			set_mode(MODE_OVERRIDE, RED_POS);
 		}
-		else if (position  == 2) {
+		else if (position == 2) {
 			set_mode(MODE_OVERRIDE, GREEN_POS);
 		}
-		else if (position  == 3) {
+		else if (position == 3) {
 			set_mode(MODE_OVERRIDE, BLUE_POS);
 		}
-		else if (position  == 4) {
+		else if (position == 4) {
 			set_mode(MODE_OVERRIDE, OTHER_POS);
 		}
 	}
