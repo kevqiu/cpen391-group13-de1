@@ -55,15 +55,15 @@ agreement for further details.
 	(port
 		(pt 272 32)
 		(output)
-		(text "RS232_Port_Enable" (rect 0 0 83 12)(font "Arial" ))
-		(text "RS232_Port_Enable" (rect 168 27 251 39)(font "Arial" ))
+		(text "RPi_Port_Enable" (rect 0 0 70 12)(font "Arial" ))
+		(text "RPi_Port_Enable" (rect 181 27 251 39)(font "Arial" ))
 		(line (pt 272 32)(pt 256 32)(line_width 1))
 	)
 	(port
 		(pt 272 48)
 		(output)
-		(text "RS232_Baud_Enable" (rect 0 0 87 12)(font "Arial" ))
-		(text "RS232_Baud_Enable" (rect 164 43 251 55)(font "Arial" ))
+		(text "RPi_Baud_Enable" (rect 0 0 74 12)(font "Arial" ))
+		(text "RPi_Baud_Enable" (rect 177 43 251 55)(font "Arial" ))
 		(line (pt 272 48)(pt 256 48)(line_width 1))
 	)
 	(port

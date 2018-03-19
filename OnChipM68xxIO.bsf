@@ -76,8 +76,8 @@ agreement for further details.
 	(port
 		(pt 0 144)
 		(input)
-		(text "RS232_RxData" (rect 0 0 86 14)(font "Arial" (font_size 8)))
-		(text "RS232_RxData" (rect 21 139 107 153)(font "Arial" (font_size 8)))
+		(text "RPi_RxData" (rect 0 0 66 14)(font "Arial" (font_size 8)))
+		(text "RPi_RxData" (rect 21 139 87 153)(font "Arial" (font_size 8)))
 		(line (pt 0 144)(pt 16 144))
 	)
 	(port
@@ -132,8 +132,8 @@ agreement for further details.
 	(port
 		(pt 304 64)
 		(output)
-		(text "RS232_TxData" (rect 0 0 84 14)(font "Arial" (font_size 8)))
-		(text "RS232_TxData" (rect 199 59 283 73)(font "Arial" (font_size 8)))
+		(text "RPi_TxData" (rect 0 0 64 14)(font "Arial" (font_size 8)))
+		(text "RPi_TxData" (rect 219 59 283 73)(font "Arial" (font_size 8)))
 		(line (pt 304 64)(pt 288 64))
 	)
 	(port

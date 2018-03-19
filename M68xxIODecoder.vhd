@@ -10,8 +10,8 @@ entity M68xxIODecoder is
 		ByteSelect_L		: in Std_Logic ;
 		WE_L					: in Std_Logic  ;
 		
-		RS232_Port_Enable 		 		: out std_logic;
-		RS232_Baud_Enable 		 		: out std_logic;
+		RPi_Port_Enable 		 		: out std_logic;
+		RPi_Baud_Enable 		 		: out std_logic;
 		GPS_Port_Enable		 			: out std_logic;
 		GPS_Baud_Enable 		 			: out std_logic;
 		Bluetooth_Port_Enable		 	: out std_logic;
@@ -35,8 +35,8 @@ Begin
 		-- they are overridden below when necessary - default values for outputs avoids inferring latches in VHDL 
 		-- so we must do it for all our outputs
 		
-		RS232_Port_Enable <= '0' ;
-		RS232_Baud_Enable <= '0' ;
+		RPi_Port_Enable <= '0' ;
+		RPi_Baud_Enable <= '0' ;
 		
 		GPS_Port_Enable <= '0' ;
 		GPS_Baud_Enable <= '0' ;
@@ -58,18 +58,18 @@ Begin
 -- a smaller  chip selects, i.e. A15:A0. All addresses for our chips should be even address as they are byte wide and connected to 
 -- the upper half of the data bus (ByteSelect_L is asserted for an even byte transfer of D15-D8
 
--- decoder for the 1st 6850 chip (RS232 Port) - 2 registers at locations 0x8400 0200 and 0x8400 0202 so that they occupy
+-- decoder for the 1st 6850 chip (RPi Port) - 2 registers at locations 0x8400 0200 and 0x8400 0202 so that they occupy
 -- same half of data bus on D15-D8 and ByteSelect_L = 0
 -- decoder for the Baud Rate generator at 00x8400_0204 on D15-D8 and ByteSelect_L = 0
 
 		if(IOSelect_H = '1') then
 			if((Address(15 downto 4) = X"020") and ByteSelect_L = '0') then		-- address = hex 0x8400_020X
 			    if((Address(3 downto 0) = X"0") OR (Address(3 downto 0) = X"2")) then	-- address = hex 0x8400_0200 or 0202
-					RS232_Port_Enable <= '1' ;					-- enable the serial ACIA device
+					RPi_Port_Enable <= '1' ;					-- enable the serial ACIA device
 				end if ;
 				
 				if(Address(3 downto 0) = X"4") then	-- enable baud rate generator at address = hex 8400_0204
-					RS232_Baud_Enable <= '1' ;
+					RPi_Baud_Enable <= '1' ;
 				end if ;
 			end if ;
 		end if ;		

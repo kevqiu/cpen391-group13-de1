@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>Jan 25, 2018 12:52:35 PM</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1516913555707</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>Mar 8, 2018 2:18:44 PM</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1520547524471</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>C:\Dev\School\CPEN391\cpen391-group13\software\main_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\nios_system.sopcinfo</SopcDesignFile>
@@ -886,6 +886,12 @@
                 <Enabled>false</Enabled>
                 <Group xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
         </Setting>
+        <MemoryMap>
+                <slaveDescriptor>dma_stream_to_mem</slaveDescriptor>
+                <addressRange>0x00000000 - 0x0000000F</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>switches</slaveDescriptor>
                 <addressRange>0x00002000 - 0x0000200F</addressRange>
