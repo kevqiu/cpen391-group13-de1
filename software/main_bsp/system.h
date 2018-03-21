@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_qsys_0' in SOPC Builder design 'nios_system'
  * SOPC Builder design path: ../../nios_system.sopcinfo
  *
- * Generated: Tue Mar 06 13:24:06 PST 2018
+ * Generated: Wed Mar 21 11:36:48 PDT 2018
  */
 
 /*
@@ -134,84 +134,165 @@
 
 
 /*
- * HEX0_1 configuration
+ * HEX_0 configuration
  *
  */
 
-#define ALT_MODULE_CLASS_HEX0_1 altera_avalon_pio
-#define HEX0_1_BASE 0x2030
-#define HEX0_1_BIT_CLEARING_EDGE_REGISTER 0
-#define HEX0_1_BIT_MODIFYING_OUTPUT_REGISTER 0
-#define HEX0_1_CAPTURE 0
-#define HEX0_1_DATA_WIDTH 8
-#define HEX0_1_DO_TEST_BENCH_WIRING 0
-#define HEX0_1_DRIVEN_SIM_VALUE 0
-#define HEX0_1_EDGE_TYPE "NONE"
-#define HEX0_1_FREQ 50000000
-#define HEX0_1_HAS_IN 0
-#define HEX0_1_HAS_OUT 1
-#define HEX0_1_HAS_TRI 0
-#define HEX0_1_IRQ -1
-#define HEX0_1_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define HEX0_1_IRQ_TYPE "NONE"
-#define HEX0_1_NAME "/dev/HEX0_1"
-#define HEX0_1_RESET_VALUE 0
-#define HEX0_1_SPAN 16
-#define HEX0_1_TYPE "altera_avalon_pio"
+#define ALT_MODULE_CLASS_HEX_0 altera_avalon_pio
+#define HEX_0_BASE 0x2030
+#define HEX_0_BIT_CLEARING_EDGE_REGISTER 0
+#define HEX_0_BIT_MODIFYING_OUTPUT_REGISTER 0
+#define HEX_0_CAPTURE 0
+#define HEX_0_DATA_WIDTH 7
+#define HEX_0_DO_TEST_BENCH_WIRING 0
+#define HEX_0_DRIVEN_SIM_VALUE 0
+#define HEX_0_EDGE_TYPE "NONE"
+#define HEX_0_FREQ 50000000
+#define HEX_0_HAS_IN 0
+#define HEX_0_HAS_OUT 1
+#define HEX_0_HAS_TRI 0
+#define HEX_0_IRQ -1
+#define HEX_0_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define HEX_0_IRQ_TYPE "NONE"
+#define HEX_0_NAME "/dev/HEX_0"
+#define HEX_0_RESET_VALUE 0
+#define HEX_0_SPAN 16
+#define HEX_0_TYPE "altera_avalon_pio"
 
 
 /*
- * HEX2_3 configuration
+ * HEX_1 configuration
  *
  */
 
-#define ALT_MODULE_CLASS_HEX2_3 altera_avalon_pio
-#define HEX2_3_BASE 0x2040
-#define HEX2_3_BIT_CLEARING_EDGE_REGISTER 0
-#define HEX2_3_BIT_MODIFYING_OUTPUT_REGISTER 0
-#define HEX2_3_CAPTURE 0
-#define HEX2_3_DATA_WIDTH 8
-#define HEX2_3_DO_TEST_BENCH_WIRING 0
-#define HEX2_3_DRIVEN_SIM_VALUE 0
-#define HEX2_3_EDGE_TYPE "NONE"
-#define HEX2_3_FREQ 50000000
-#define HEX2_3_HAS_IN 0
-#define HEX2_3_HAS_OUT 1
-#define HEX2_3_HAS_TRI 0
-#define HEX2_3_IRQ -1
-#define HEX2_3_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define HEX2_3_IRQ_TYPE "NONE"
-#define HEX2_3_NAME "/dev/HEX2_3"
-#define HEX2_3_RESET_VALUE 0
-#define HEX2_3_SPAN 16
-#define HEX2_3_TYPE "altera_avalon_pio"
+#define ALT_MODULE_CLASS_HEX_1 altera_avalon_pio
+#define HEX_1_BASE 0x2040
+#define HEX_1_BIT_CLEARING_EDGE_REGISTER 0
+#define HEX_1_BIT_MODIFYING_OUTPUT_REGISTER 0
+#define HEX_1_CAPTURE 0
+#define HEX_1_DATA_WIDTH 7
+#define HEX_1_DO_TEST_BENCH_WIRING 0
+#define HEX_1_DRIVEN_SIM_VALUE 0
+#define HEX_1_EDGE_TYPE "NONE"
+#define HEX_1_FREQ 50000000
+#define HEX_1_HAS_IN 0
+#define HEX_1_HAS_OUT 1
+#define HEX_1_HAS_TRI 0
+#define HEX_1_IRQ -1
+#define HEX_1_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define HEX_1_IRQ_TYPE "NONE"
+#define HEX_1_NAME "/dev/HEX_1"
+#define HEX_1_RESET_VALUE 0
+#define HEX_1_SPAN 16
+#define HEX_1_TYPE "altera_avalon_pio"
 
 
 /*
- * HEX4_5 configuration
+ * HEX_2 configuration
  *
  */
 
-#define ALT_MODULE_CLASS_HEX4_5 altera_avalon_pio
-#define HEX4_5_BASE 0x2050
-#define HEX4_5_BIT_CLEARING_EDGE_REGISTER 0
-#define HEX4_5_BIT_MODIFYING_OUTPUT_REGISTER 0
-#define HEX4_5_CAPTURE 0
-#define HEX4_5_DATA_WIDTH 8
-#define HEX4_5_DO_TEST_BENCH_WIRING 0
-#define HEX4_5_DRIVEN_SIM_VALUE 0
-#define HEX4_5_EDGE_TYPE "NONE"
-#define HEX4_5_FREQ 50000000
-#define HEX4_5_HAS_IN 0
-#define HEX4_5_HAS_OUT 1
-#define HEX4_5_HAS_TRI 0
-#define HEX4_5_IRQ -1
-#define HEX4_5_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define HEX4_5_IRQ_TYPE "NONE"
-#define HEX4_5_NAME "/dev/HEX4_5"
-#define HEX4_5_RESET_VALUE 0
-#define HEX4_5_SPAN 16
-#define HEX4_5_TYPE "altera_avalon_pio"
+#define ALT_MODULE_CLASS_HEX_2 altera_avalon_pio
+#define HEX_2_BASE 0x2050
+#define HEX_2_BIT_CLEARING_EDGE_REGISTER 0
+#define HEX_2_BIT_MODIFYING_OUTPUT_REGISTER 0
+#define HEX_2_CAPTURE 0
+#define HEX_2_DATA_WIDTH 7
+#define HEX_2_DO_TEST_BENCH_WIRING 0
+#define HEX_2_DRIVEN_SIM_VALUE 0
+#define HEX_2_EDGE_TYPE "NONE"
+#define HEX_2_FREQ 50000000
+#define HEX_2_HAS_IN 0
+#define HEX_2_HAS_OUT 1
+#define HEX_2_HAS_TRI 0
+#define HEX_2_IRQ -1
+#define HEX_2_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define HEX_2_IRQ_TYPE "NONE"
+#define HEX_2_NAME "/dev/HEX_2"
+#define HEX_2_RESET_VALUE 0
+#define HEX_2_SPAN 16
+#define HEX_2_TYPE "altera_avalon_pio"
+
+
+/*
+ * HEX_3 configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_HEX_3 altera_avalon_pio
+#define HEX_3_BASE 0x20d0
+#define HEX_3_BIT_CLEARING_EDGE_REGISTER 0
+#define HEX_3_BIT_MODIFYING_OUTPUT_REGISTER 0
+#define HEX_3_CAPTURE 0
+#define HEX_3_DATA_WIDTH 7
+#define HEX_3_DO_TEST_BENCH_WIRING 0
+#define HEX_3_DRIVEN_SIM_VALUE 0
+#define HEX_3_EDGE_TYPE "NONE"
+#define HEX_3_FREQ 50000000
+#define HEX_3_HAS_IN 0
+#define HEX_3_HAS_OUT 1
+#define HEX_3_HAS_TRI 0
+#define HEX_3_IRQ -1
+#define HEX_3_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define HEX_3_IRQ_TYPE "NONE"
+#define HEX_3_NAME "/dev/HEX_3"
+#define HEX_3_RESET_VALUE 0
+#define HEX_3_SPAN 16
+#define HEX_3_TYPE "altera_avalon_pio"
+
+
+/*
+ * HEX_4 configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_HEX_4 altera_avalon_pio
+#define HEX_4_BASE 0x20e0
+#define HEX_4_BIT_CLEARING_EDGE_REGISTER 0
+#define HEX_4_BIT_MODIFYING_OUTPUT_REGISTER 0
+#define HEX_4_CAPTURE 0
+#define HEX_4_DATA_WIDTH 7
+#define HEX_4_DO_TEST_BENCH_WIRING 0
+#define HEX_4_DRIVEN_SIM_VALUE 0
+#define HEX_4_EDGE_TYPE "NONE"
+#define HEX_4_FREQ 50000000
+#define HEX_4_HAS_IN 0
+#define HEX_4_HAS_OUT 1
+#define HEX_4_HAS_TRI 0
+#define HEX_4_IRQ -1
+#define HEX_4_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define HEX_4_IRQ_TYPE "NONE"
+#define HEX_4_NAME "/dev/HEX_4"
+#define HEX_4_RESET_VALUE 0
+#define HEX_4_SPAN 16
+#define HEX_4_TYPE "altera_avalon_pio"
+
+
+/*
+ * HEX_5 configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_HEX_5 altera_avalon_pio
+#define HEX_5_BASE 0x20f0
+#define HEX_5_BIT_CLEARING_EDGE_REGISTER 0
+#define HEX_5_BIT_MODIFYING_OUTPUT_REGISTER 0
+#define HEX_5_CAPTURE 0
+#define HEX_5_DATA_WIDTH 7
+#define HEX_5_DO_TEST_BENCH_WIRING 0
+#define HEX_5_DRIVEN_SIM_VALUE 0
+#define HEX_5_EDGE_TYPE "NONE"
+#define HEX_5_FREQ 50000000
+#define HEX_5_HAS_IN 0
+#define HEX_5_HAS_OUT 1
+#define HEX_5_HAS_TRI 0
+#define HEX_5_IRQ -1
+#define HEX_5_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define HEX_5_IRQ_TYPE "NONE"
+#define HEX_5_NAME "/dev/HEX_5"
+#define HEX_5_RESET_VALUE 0
+#define HEX_5_SPAN 16
+#define HEX_5_TYPE "altera_avalon_pio"
 
 
 /*

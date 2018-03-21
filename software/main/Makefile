@@ -158,6 +158,8 @@ C_SRCS += image/image_converter.c
 C_SRCS += image/images.c
 C_SRCS += image/image_processor.c
 C_SRCS += modules/rpi.c
+C_SRCS += headers/ascii_to_7_seg.c
+C_SRCS += modules/io.c
 CXX_SRCS :=
 ASM_SRCS :=
 

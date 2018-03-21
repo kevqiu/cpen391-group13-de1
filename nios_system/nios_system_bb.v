@@ -1,16 +1,12 @@
 
 module nios_system (
 	clk_clk,
-	hex0_1_export,
-	hex2_3_export,
-	hex4_5_export,
-	image_data_address,
-	image_data_chipselect,
-	image_data_clken,
-	image_data_write,
-	image_data_readdata,
-	image_data_writedata,
-	image_data_byteenable,
+	hex_0_export,
+	hex_1_export,
+	hex_2_export,
+	hex_3_export,
+	hex_4_export,
+	hex_5_export,
 	io_acknowledge,
 	io_irq,
 	io_address,
@@ -48,16 +44,12 @@ module nios_system (
 	switches_export);	
 
 	input		clk_clk;
-	output	[7:0]	hex0_1_export;
-	output	[7:0]	hex2_3_export;
-	output	[7:0]	hex4_5_export;
-	input	[16:0]	image_data_address;
-	input		image_data_chipselect;
-	input		image_data_clken;
-	input		image_data_write;
-	output	[15:0]	image_data_readdata;
-	input	[15:0]	image_data_writedata;
-	input	[1:0]	image_data_byteenable;
+	output	[6:0]	hex_0_export;
+	output	[6:0]	hex_1_export;
+	output	[6:0]	hex_2_export;
+	output	[6:0]	hex_3_export;
+	output	[6:0]	hex_4_export;
+	output	[6:0]	hex_5_export;
 	input		io_acknowledge;
 	input		io_irq;
 	output	[15:0]	io_address;

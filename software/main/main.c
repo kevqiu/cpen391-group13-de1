@@ -21,6 +21,7 @@
 
 // ----------- EXTERN VARIABLES ----------- //
 extern rectangle boxes[];
+extern int SevenSegmentASCII[];
 
 // ----------- GLOBAL VARIABLES ----------- //
 // Timestamp
@@ -112,9 +113,12 @@ int main() {
 	int size_y = 128;
 	int res = size_x * size_y;
 
+	display_hex("test");
+
 	printf("Ready!\n");
 	// Main loop
 	while (1) {
+//		printf("hello\n");
 		// Handle module Rx inputs
 		poll_gps();
 		poll_touchscreen();
@@ -366,11 +370,9 @@ void handle_arduino() {
 	// timeout has been reached, stop process and send completion text
 	else if (strcmp(ard_buff, "dn\n") == 0) {
 		char text[256];
+		// trigger FCM notification on server
 		sprintf(text, "done:r=%i,g=%i,b=%i,o=%i",
-//		sprintf(text, "Sorting complete!\\\nResults - Red: %i   Green: %i   Blue: %i   Other: %i",
 			red_object->count, green_object->count, blue_object->count, other_object->count);
-//		printf("%s\n", text);
-		//send_text(text);
 		send_message_rpi(text);
 		printf("Succesfully alerted\n");
 

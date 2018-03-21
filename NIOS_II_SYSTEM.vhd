@@ -51,9 +51,12 @@ ENTITY NIOS_II_SYSTEM IS
 		Push_Buttons   : in    std_logic_vector(2 downto 0)  := (others => 'X');  -- export
 		
 		-- Hex Display
-		Hex0_1			: out   std_logic_vector(7 downto 0) ;
-		Hex2_3			: out   std_logic_vector(7 downto 0) ;
-		Hex4_5			: out   std_logic_vector(7 downto 0) ;
+		Hex_0          : out   std_logic_vector(6 downto 0);                     -- export
+		Hex_1          : out   std_logic_vector(6 downto 0);                     -- export
+		Hex_2          : out   std_logic_vector(6 downto 0);                   	-- export
+		Hex_3          : out   std_logic_vector(6 downto 0);                     -- export
+		Hex_4          : out   std_logic_vector(6 downto 0);                     -- export
+		Hex_5          : out   std_logic_vector(6 downto 0);                   	-- export
 
 		----------------------------------------------------------------
 		-- NTSC Decoder
@@ -124,9 +127,12 @@ ARCHITECTURE NIOS_II_SYSTEM_rtl OF NIOS_II_SYSTEM IS
 		push_buttons_export 	  : in    std_logic_vector(2 downto 0)  := (others => 'X'); -- export
 
 		-- Hex display signals
-		hex0_1_export          : out   std_logic_vector(7 downto 0);                     -- export
-		hex2_3_export          : out   std_logic_vector(7 downto 0);                     -- export
-		hex4_5_export          : out   std_logic_vector(7 downto 0);                   	-- export
+		hex_0_export          : out   std_logic_vector(6 downto 0);                     -- export
+		hex_1_export          : out   std_logic_vector(6 downto 0);                     -- export
+		hex_2_export          : out   std_logic_vector(6 downto 0);                   	-- export
+		hex_3_export          : out   std_logic_vector(6 downto 0);                     -- export
+		hex_4_export          : out   std_logic_vector(6 downto 0);                     -- export
+		hex_5_export          : out   std_logic_vector(6 downto 0);                   	-- export
 
 		-----------------------------------------------------------------
 		-- NTSC Decoder
@@ -196,9 +202,12 @@ BEGIN
 		
 		push_buttons_export 	=> Push_Buttons,
 		
-		hex0_1_export 			=> Hex0_1,
-		hex2_3_export 			=> Hex2_3,
-		hex4_5_export 			=> Hex4_5,
+		hex_0_export 			=> Hex_0,
+		hex_1_export 			=> Hex_1,
+		hex_2_export 			=> Hex_2,
+		hex_3_export 			=> Hex_3,
+		hex_4_export 			=> Hex_4,
+		hex_5_export 			=> Hex_5,
 
 		ntsc_decoder_TD_CLK27      => TD_CLK27,      -- ntsc_decoder.TD_CLK27
 		ntsc_decoder_TD_DATA       => TD_DATA,       --             .TD_DATA

@@ -6,6 +6,10 @@
 
 #define GPGGA_COMMAND "$GPGGA"
 
+#define LOCATION_UBC "UBC"
+#define LOCATION_UOFT "UofT"
+#define LOCATION_MCGILL "McGill"
+
 #define TIMEZONE_DIFF 80000
 
 void parse_gps_buffer(char* command, char* time_buffer);
