@@ -7,8 +7,14 @@
 #define GPGGA_COMMAND "$GPGGA"
 
 #define LOCATION_UBC "UBC"
+
 #define LOCATION_UOFT "UofT"
+#define LAT_UOFT "4339.774,N"
+#define LNG_UOFT "07923.742,W"
+
 #define LOCATION_MCGILL "McGill"
+#define LAT_MCGILL "4530.327,N"
+#define LNG_MCGILL "07334.610,W"
 
 #define TIMEZONE_DIFF 80000
 

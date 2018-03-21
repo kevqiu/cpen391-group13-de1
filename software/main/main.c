@@ -60,6 +60,12 @@ scanned_obj* green_object;
 scanned_obj* blue_object;
 scanned_obj* other_object;
 
+// Mock location
+int last_switch;
+int mock_location;
+char* mock_lat;
+char* mock_lng;
+
 int main() {
 	printf("Initializing...\n");
 
@@ -88,6 +94,9 @@ int main() {
 	blue_object = init_scanned_obj(BLUE, BLUE_POS, BLUE_OBJ_LOC);
 	other_object = init_scanned_obj(BLACK, OTHER_POS, OTHER_OBJ_LOC);
 
+	last_switch = -1;
+	mock_location = 0;
+
 	scanned_obj* objects[4] = {
 		red_object,
 		green_object,
@@ -113,12 +122,11 @@ int main() {
 	int size_y = 128;
 	int res = size_x * size_y;
 
-	display_hex("test");
-
 	printf("Ready!\n");
 	// Main loop
 	while (1) {
-//		printf("hello\n");
+		check_switches();
+
 		// Handle module Rx inputs
 		poll_gps();
 		poll_touchscreen();
@@ -240,6 +248,11 @@ void handle_gps() {
 	if (strstr(gps_buff, GPGGA_COMMAND) != NULL) {
 		strcpy(gpgga_sentence, gps_buff);
 		gpgga_sentence[strlen(gpgga_sentence) - 2] = '\0';
+
+		if (mock_location) {
+			memcpy(gpgga_sentence + 14, mock_lat, strlen(mock_lat) - 1);
+			memcpy(gpgga_sentence + 25, mock_lng, strlen(mock_lng) - 1);
+		}
 	}
 
 	parse_gps_buffer(gps_buff, new_time);
@@ -496,6 +509,35 @@ void draw_silhouette(int size_x, int size_y) {
 	*(RAMControl) = 0b100;
 	//Draw image on screen
 	OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, size_x, size_y, tmp, ImageColor);
+}
+
+void check_switches() {
+	// Mock our location, use last_switch to prevent cycling of this switch case
+	if (last_switch != switches) {
+		// debounce delay
+		usleep(50000);
+		switch (switches) {
+			case 0:
+				display_hex(LOCATION_UBC);
+				mock_location = 0;
+				break;
+			case 1:
+				display_hex(LOCATION_UOFT);
+				mock_location = 1;
+				mock_lat = LAT_UOFT;
+				mock_lng = LNG_UOFT;
+				break;
+			case 2:
+				display_hex(LOCATION_MCGILL);
+				mock_location = 1;
+				mock_lat = LAT_MCGILL;
+				mock_lng = LNG_MCGILL;
+				break;
+			default:
+				break;
+		}
+		last_switch = switches;
+	}
 }
 
 /*
