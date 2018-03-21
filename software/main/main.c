@@ -114,7 +114,6 @@ int main() {
 
 	printf("Ready!\n");
 	// Main loop
-	int sw_lock = 0;
 	while (1) {
 		// Handle module Rx inputs
 		poll_gps();
@@ -397,6 +396,7 @@ void handle_arduino() {
  * ctrl/pos=: 	override to position
  */
 void handle_rpi() {
+	printf("Pi: %s\n", rpi_buff);
 	if (strstr(rpi_buff, "cat:") != NULL) {
 		category_scanned = rpi_buff[4] - '0';
 		curr_sort = SORT_IMG_READY;
@@ -454,6 +454,8 @@ void set_mode(mode_state state, int value) {
 		default:
 			break;
 	}
+
+	curr_sort = SORT_IDLE;
 }
 
 void draw_silhouette(int size_x, int size_y) {
