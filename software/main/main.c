@@ -53,6 +53,7 @@ mode_state curr_mode;
 sort_state curr_sort;
 int image_scanned;
 int category_scanned;
+int cycle_id;
 
 // Scanned objects
 scanned_obj* red_object;
@@ -88,6 +89,7 @@ int main() {
 	curr_sort = SORT_IDLE;
 	image_scanned = 0;
 	category_scanned = 0;
+	cycle_id = 0;
 
 	red_object = init_scanned_obj(RED, RED_POS, RED_OBJ_LOC);
 	green_object = init_scanned_obj(LIME, GREEN_POS, GREEN_OBJ_LOC);
@@ -146,8 +148,18 @@ int main() {
 
 		// Auto sort process
 		if (curr_mode == MODE_AUTO_SORT) {
+			// send message to initialize autosort and get cycle
+			if (curr_sort == SORT_INIT) {
+				initialize_autosort(curr_time);
+				curr_sort = SORT_INIT_WAIT;
+			}
+			// turn on machinery			
+			else if (curr_sort == SORT_BEGIN_CYCLE) {
+				auto_sort();
+				curr_sort = SORT_ARD_WAIT;
+			}
 			// Check if Arduino has detected object in laser or has timed out
-			if (curr_sort == SORT_ARD_READY) {
+			else if (curr_sort == SORT_ARD_READY) {
 				handle_arduino();
 			}
 			// If object detected, capture image
@@ -176,7 +188,7 @@ int main() {
 				// run sort cycle again
 				auto_sort();
 				// wait for next object to arrive
-				curr_sort = SORT_IDLE;
+				curr_sort = SORT_INIT;
 			}
 		}
 	}
@@ -255,6 +267,7 @@ void handle_gps() {
 			strcat(gpgga_sentence, mock_string);
 		}
 	}
+	printf("%s\n", gpgga_sentence);
 
 	parse_gps_buffer(gps_buff, new_time);
 	// if the timestamps are different, redraw the time
@@ -294,7 +307,7 @@ void handle_touchscreen() {
 				// Terminates auto sort or override processes
 				if (touch_in_button(p, STOP_BTN)) {
 					stop_btn_pressed = 1;
-					set_mode(MODE_IDLE, 0);
+					set_mode(MODE_IDLE, 1);
 				}
 			}
 			else if (curr_mode != MODE_SWEEP) {
@@ -384,9 +397,8 @@ void handle_arduino() {
 	// timeout has been reached, stop process and send completion text
 	else if (strcmp(ard_buff, "dn\n") == 0) {
 		char text[256];
-		// trigger FCM notification on server
-		sprintf(text, "done:r=%i,g=%i,b=%i,o=%i",
-			red_object->count, green_object->count, blue_object->count, other_object->count);
+		// trigger FCM notification on server and save cycle end time
+		sprintf(text, "done:time=%s,cycle_id=%i", curr_time, cycle_id);
 		send_message_rpi(text);
 		printf("Succesfully alerted\n");
 
@@ -413,7 +425,16 @@ void handle_arduino() {
  */
 void handle_rpi() {
 	printf("Pi: %s\n", rpi_buff);
-	if (strstr(rpi_buff, "cat:") != NULL) {
+	if (strstr(rpi_buff, "cycle_id=") != NULL) {
+		// get cycle id substring from message
+		char sub[4];
+		memcpy(sub, rpi_buff + 9, strlen(rpi_buff) - 9);
+		sub[strlen(rpi_buff)-1] = '\0';
+		cycle_id = atoi(sub);
+
+		curr_sort = SORT_BEGIN_CYCLE;
+	}
+	else if (strstr(rpi_buff, "cat:") != NULL) {
 		category_scanned = rpi_buff[4] - '0';
 		curr_sort = SORT_IMG_READY;
 	}
@@ -446,9 +467,9 @@ void set_mode(mode_state state, int value) {
 	switch(state) {
 		case MODE_AUTO_SORT:
 			curr_mode = MODE_AUTO_SORT;
+			curr_sort = SORT_INIT;
 			red_object->count = green_object->count = blue_object->count = other_object->count = 0;
 			reset_counters();
-			auto_sort();
 			break;
 
 		case MODE_SWEEP:
@@ -463,6 +484,11 @@ void set_mode(mode_state state, int value) {
 			break;
 
 		case MODE_IDLE:
+			// stop command has been received, check if it was during Autosort
+			if (curr_mode == MODE_AUTO_SORT) {
+				sprintf(text, "done:time=%s,cycle_id=%i", curr_time, cycle_id);
+				send_message_rpi(text);
+			}
 			curr_mode = MODE_IDLE;
 			conveyor(OFF);
 			break;
@@ -470,8 +496,6 @@ void set_mode(mode_state state, int value) {
 		default:
 			break;
 	}
-
-	curr_sort = SORT_IDLE;
 }
 
 void draw_silhouette(int size_x, int size_y) {

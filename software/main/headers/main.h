@@ -11,7 +11,11 @@ typedef enum {
 } mode_state;
 
 typedef enum {
-    SORT_IDLE,     
+    SORT_IDLE,
+    SORT_INIT,
+    SORT_INIT_WAIT,
+    SORT_BEGIN_CYCLE,
+    SORT_ARD_WAIT,     
     SORT_ARD_READY,
     SORT_CAM_READY,
     SORT_IMG_WAIT,
