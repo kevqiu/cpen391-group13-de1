@@ -250,8 +250,9 @@ void handle_gps() {
 		gpgga_sentence[strlen(gpgga_sentence) - 2] = '\0';
 
 		if (mock_location) {
-			memcpy(gpgga_sentence + 14, mock_lat, strlen(mock_lat) - 1);
-			memcpy(gpgga_sentence + 25, mock_lng, strlen(mock_lng) - 1);
+			char mock_string[64];
+			sprintf(mock_string, " mock_lat=%s mock_lng=%s", mock_lat, mock_lng);
+			strcat(gpgga_sentence, mock_string);
 		}
 	}
 
