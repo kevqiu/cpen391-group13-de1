@@ -265,7 +265,6 @@ void handle_gps() {
 			strcat(gpgga_sentence, mock_string);
 		}
 	}
-	printf("%s\n", gpgga_sentence);
 
 	parse_gps_buffer(gps_buff, new_time);
 	// if the timestamps are different, redraw the time
