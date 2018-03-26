@@ -1,15 +1,11 @@
 	nios_system u0 (
 		.clk_clk                    (<connected-to-clk_clk>),                    //          clk.clk
-		.hex0_1_export              (<connected-to-hex0_1_export>),              //       hex0_1.export
-		.hex2_3_export              (<connected-to-hex2_3_export>),              //       hex2_3.export
-		.hex4_5_export              (<connected-to-hex4_5_export>),              //       hex4_5.export
-		.image_data_address         (<connected-to-image_data_address>),         //   image_data.address
-		.image_data_chipselect      (<connected-to-image_data_chipselect>),      //             .chipselect
-		.image_data_clken           (<connected-to-image_data_clken>),           //             .clken
-		.image_data_write           (<connected-to-image_data_write>),           //             .write
-		.image_data_readdata        (<connected-to-image_data_readdata>),        //             .readdata
-		.image_data_writedata       (<connected-to-image_data_writedata>),       //             .writedata
-		.image_data_byteenable      (<connected-to-image_data_byteenable>),      //             .byteenable
+		.hex_0_export               (<connected-to-hex_0_export>),               //        hex_0.export
+		.hex_1_export               (<connected-to-hex_1_export>),               //        hex_1.export
+		.hex_2_export               (<connected-to-hex_2_export>),               //        hex_2.export
+		.hex_3_export               (<connected-to-hex_3_export>),               //        hex_3.export
+		.hex_4_export               (<connected-to-hex_4_export>),               //        hex_4.export
+		.hex_5_export               (<connected-to-hex_5_export>),               //        hex_5.export
 		.io_acknowledge             (<connected-to-io_acknowledge>),             //           io.acknowledge
 		.io_irq                     (<connected-to-io_irq>),                     //             .irq
 		.io_address                 (<connected-to-io_address>),                 //             .address

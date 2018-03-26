@@ -34,5 +34,6 @@ void handle_rpi(void);
 
 void set_mode(mode_state state, int value);
 void draw_silhouette(int size_x, int size_y);
+void check_switches();
 
 scanned_obj* init_scanned_obj(int colour, int position, point location);

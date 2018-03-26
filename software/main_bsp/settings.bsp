@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>Mar 20, 2018 4:48:18 PM</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1521589698996</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>Mar 21, 2018 1:33:44 PM</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1521664424524</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>C:\Dev\School\CPEN391\cpen391-group13\software\main_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\nios_system.sopcinfo</SopcDesignFile>
@@ -911,19 +911,19 @@
                 <attributes>printable</attributes>
         </MemoryMap>
         <MemoryMap>
-                <slaveDescriptor>HEX0_1</slaveDescriptor>
+                <slaveDescriptor>HEX_0</slaveDescriptor>
                 <addressRange>0x00002030 - 0x0000203F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
-                <slaveDescriptor>HEX2_3</slaveDescriptor>
+                <slaveDescriptor>HEX_1</slaveDescriptor>
                 <addressRange>0x00002040 - 0x0000204F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
-                <slaveDescriptor>HEX4_5</slaveDescriptor>
+                <slaveDescriptor>HEX_2</slaveDescriptor>
                 <addressRange>0x00002050 - 0x0000205F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
@@ -950,6 +950,24 @@
                 <slaveDescriptor>character_lcd_0</slaveDescriptor>
                 <addressRange>0x000020C0 - 0x000020C1</addressRange>
                 <addressSpan>2</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>HEX_3</slaveDescriptor>
+                <addressRange>0x000020D0 - 0x000020DF</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>HEX_4</slaveDescriptor>
+                <addressRange>0x000020E0 - 0x000020EF</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>HEX_5</slaveDescriptor>
+                <addressRange>0x000020F0 - 0x000020FF</addressRange>
+                <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>

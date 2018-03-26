@@ -21,6 +21,7 @@
 
 // ----------- EXTERN VARIABLES ----------- //
 extern rectangle boxes[];
+extern int SevenSegmentASCII[];
 
 // ----------- GLOBAL VARIABLES ----------- //
 // Timestamp
@@ -59,6 +60,12 @@ scanned_obj* green_object;
 scanned_obj* blue_object;
 scanned_obj* other_object;
 
+// Mock location
+int last_switch;
+int mock_location;
+char* mock_lat;
+char* mock_lng;
+
 int main() {
 	printf("Initializing...\n");
 
@@ -86,6 +93,9 @@ int main() {
 	green_object = init_scanned_obj(LIME, GREEN_POS, GREEN_OBJ_LOC);
 	blue_object = init_scanned_obj(BLUE, BLUE_POS, BLUE_OBJ_LOC);
 	other_object = init_scanned_obj(BLACK, OTHER_POS, OTHER_OBJ_LOC);
+
+	last_switch = -1;
+	mock_location = 0;
 
 	scanned_obj* objects[4] = {
 		red_object,
@@ -115,6 +125,8 @@ int main() {
 	printf("Ready!\n");
 	// Main loop
 	while (1) {
+		check_switches();
+
 		// Handle module Rx inputs
 		poll_gps();
 		poll_touchscreen();
@@ -236,6 +248,12 @@ void handle_gps() {
 	if (strstr(gps_buff, GPGGA_COMMAND) != NULL) {
 		strcpy(gpgga_sentence, gps_buff);
 		gpgga_sentence[strlen(gpgga_sentence) - 2] = '\0';
+
+		if (mock_location) {
+			char mock_string[64];
+			sprintf(mock_string, " mock_lat=%s mock_lng=%s", mock_lat, mock_lng);
+			strcat(gpgga_sentence, mock_string);
+		}
 	}
 
 	parse_gps_buffer(gps_buff, new_time);
@@ -366,11 +384,9 @@ void handle_arduino() {
 	// timeout has been reached, stop process and send completion text
 	else if (strcmp(ard_buff, "dn\n") == 0) {
 		char text[256];
+		// trigger FCM notification on server
 		sprintf(text, "done:r=%i,g=%i,b=%i,o=%i",
-//		sprintf(text, "Sorting complete!\\\nResults - Red: %i   Green: %i   Blue: %i   Other: %i",
 			red_object->count, green_object->count, blue_object->count, other_object->count);
-//		printf("%s\n", text);
-		//send_text(text);
 		send_message_rpi(text);
 		printf("Succesfully alerted\n");
 
@@ -494,6 +510,35 @@ void draw_silhouette(int size_x, int size_y) {
 	*(RAMControl) = 0b100;
 	//Draw image on screen
 	OutGraphicsImage(IMG_LOC.x, IMG_LOC.y, size_x, size_y, tmp, ImageColor);
+}
+
+void check_switches() {
+	// Mock our location, use last_switch to prevent cycling of this switch case
+	if (last_switch != switches) {
+		// debounce delay
+		usleep(50000);
+		switch (switches) {
+			case 0:
+				display_hex(LOCATION_UBC);
+				mock_location = 0;
+				break;
+			case 1:
+				display_hex(LOCATION_UOFT);
+				mock_location = 1;
+				mock_lat = LAT_UOFT;
+				mock_lng = LNG_UOFT;
+				break;
+			case 2:
+				display_hex(LOCATION_MCGILL);
+				mock_location = 1;
+				mock_lat = LAT_MCGILL;
+				mock_lng = LNG_MCGILL;
+				break;
+			default:
+				break;
+		}
+		last_switch = switches;
+	}
 }
 
 /*
