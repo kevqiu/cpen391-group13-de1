@@ -185,10 +185,8 @@ int main() {
 				conveyor(ON);
 				// allow object to be dumped into a bin before sort cycle is run
 				usleep(500000);
-				// run sort cycle again
-				auto_sort();
 				// wait for next object to arrive
-				curr_sort = SORT_INIT;
+				curr_sort = SORT_BEGIN_CYCLE;
 			}
 		}
 	}
