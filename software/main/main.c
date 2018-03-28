@@ -483,6 +483,7 @@ void set_mode(mode_state state, int value) {
 		case MODE_IDLE:
 			// stop command has been received, check if it was during Autosort
 			if (curr_mode == MODE_AUTO_SORT) {
+				char text[128];
 				sprintf(text, "done:time=%s,cycle_id=%i", curr_time, cycle_id);
 				send_message_rpi(text);
 			}

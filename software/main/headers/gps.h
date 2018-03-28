@@ -6,7 +6,7 @@
 
 #define GPGGA_COMMAND "$GPGGA"
 
-#define TIMEZONE_DIFF 70000
+#define TIMEZONE_DIFF 0
 
 #define LOCATION_UBC "UBC"
 
