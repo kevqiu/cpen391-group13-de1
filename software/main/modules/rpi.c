@@ -17,7 +17,13 @@ void init_rpi(void) {
 
 void capture_image(char* gpgga_sentence) {
 	char message[256];
-	sprintf(message, "capture: gps=%s", gpgga_sentence);
+	sprintf(message, "capture:gps=%s", gpgga_sentence);
+	send_message_rpi(message);
+}
+
+void initialize_autosort(char* time) {
+	char message[64];
+	sprintf(message, "init:time=%s", time);
 	send_message_rpi(message);
 }
 

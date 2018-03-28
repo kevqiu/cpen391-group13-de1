@@ -46,7 +46,8 @@ void parse_gps_buffer(char* command, char* time_buffer) {
 		gpgga = strsep(&r, ",");
 		time = strsep(&r, ",");
 
-		sprintf(time_buffer, "%i", atoi(time) - TIMEZONE_DIFF);
+		memcpy(time_buffer, time, 6);
+
 		insert_time_colons(time_buffer);
 	}
 }

@@ -7,6 +7,7 @@
 void init_rpi(void);
 
 void capture_image(char* gpgga_sentence);
+void initialize_autosort(char* gpgga_sentence);
 
 void send_message_rpi(char* message);
 
