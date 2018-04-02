@@ -164,7 +164,6 @@ int main() {
 			}
 			// If object detected, capture image
 			else if (curr_sort == SORT_CAM_READY) {
-				draw_silhouette(size_x, size_y);
 				capture_image(gpgga_sentence);
 				curr_sort = SORT_IMG_WAIT;
 			}
@@ -174,11 +173,12 @@ int main() {
 				scanned_obj* obj = objects[category_scanned - 1];
 				// update and draw new object count
 				draw_counter(obj->loc, ++obj->count);
+				// draw silhouette
+				draw_silhouette(size_x, size_y);
 				// set flag to draw timestamp at time scanned
 				image_scanned = 1;
 				// set direction
 				set_servo(obj->pos);
-
 				// allow servo to reach a position
 				usleep(500000);
 				// run conveyor
@@ -430,6 +430,10 @@ void handle_rpi() {
 		cycle_id = atoi(sub);
 
 		curr_sort = SORT_BEGIN_CYCLE;
+	}
+	else if (strstr(rpi_buff, "retry") != NULL) {
+		// resend the gps string to the server
+		curr_sort = SORT_CAM_READY;
 	}
 	else if (strstr(rpi_buff, "cat:") != NULL) {
 		category_scanned = rpi_buff[4] - '0';
